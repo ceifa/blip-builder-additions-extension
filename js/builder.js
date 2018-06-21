@@ -68,8 +68,11 @@ async function createBuilderHandler(doc) {
     }
 
     builderButton.onmousedown = async function() {
-      hasSearch = false;
-      await start(doc);
+      var li = builderButton.childNodes[0];
+      if (li.className.indexOf("active") === -1){
+        hasSearch = false;
+        await start(doc);
+      }
     };
   }, 350);
 }
