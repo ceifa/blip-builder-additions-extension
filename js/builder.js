@@ -114,7 +114,7 @@ function loadAllInteractionImages() {
   var nodeFlow = botFlows.nodes;
 
   for (var key in jsonFlow) {
-    if (jsonFlow.hasOwnProperty(key)) {
+    if (jsonFlow.hasOwnProperty(key) && key.indexOf("desk") === -1) {
       var element = jsonFlow[key];
       var nodeElement = nodeFlow[key];
 
@@ -135,17 +135,9 @@ function appendAllInteractionImages(element, node) {
   removeAllInteractionElements(node);
 
   var quantity = 0;
-  var actions = element["$contentActions"];
-  var conditions = element["$conditionOutputs"];
-  var customActions = element["$enteringCustomActions"].concat(
-    element["$leavingCustomActions"]
-  );
+  var interactions = getElementInteractions(element);
 
-  if (
-    actions.some(function(x) {
-      return x.input && !x.input.bypass;
-    })
-  ) {
+  if (interactions.hasInput) {
     appendImage(
       node,
       "https://i.imgur.com/9wdOV0p.png",
@@ -153,11 +145,7 @@ function appendAllInteractionImages(element, node) {
       "Input do usuário"
     );
   }
-  if (
-    actions.some(function(x) {
-      return x.action && x.action.type === "SendMessage";
-    })
-  ) {
+  if (interactions.hasBotMessage) {
     appendImage(
       node,
       "https://i.imgur.com/RvzGKtP.png",
@@ -165,57 +153,26 @@ function appendAllInteractionImages(element, node) {
       "Interação do bot"
     );
   }
-  if (
-    conditions.some(function(x) {
-      return (
-        x.conditions &&
-        x.conditions.some(function(y) {
-          return y.comparison === "matches";
-        })
-      );
-    })
-  ) {
+  if (interactions.hasRegex) {
     appendImage(node, "https://i.imgur.com/HDxGV24.png", quantity++, "Regex");
   }
-  if (
-    customActions.some(function(x) {
-      return (
-        x.type === "ProcessHttp" &&
-        internalWebsites.some(function(y) {
-          return x.settings.uri.includes(y);
-        })
-      );
-    })
-  ) {
+  if (interactions.hasInternalAPI) {
     appendImage(
       node,
-      "https://i.imgur.com/qRBWbZX.png",
+      "https://i.imgur.com/P56IOl8.png",
       quantity++,
       "API interna"
     );
   }
-  if (
-    customActions.some(function(x) {
-      return (
-        x.type === "ProcessHttp" &&
-        !internalWebsites.some(function(y) {
-          return x.settings.uri.includes(y);
-        })
-      );
-    })
-  ) {
+  if (interactions.hasExternalAPI) {
     appendImage(
       node,
-      "https://i.imgur.com/Nn57RAu.png",
+      "https://i.imgur.com/t0fUURZ.png",
       quantity++,
       "API externa"
     );
   }
-  if (
-    customActions.some(function(x) {
-      return x.type === "TrackEvent";
-    })
-  ) {
+  if (interactions.hasEventTracking) {
     appendImage(
       node,
       "https://i.imgur.com/li908ZA.png",
@@ -223,17 +180,19 @@ function appendAllInteractionImages(element, node) {
       "Tracking de evento"
     );
   }
-  if (
-    customActions.some(function(x) {
-      return x.type === "ExecuteScript";
-    })
-  ) {
+  if (interactions.hasJavascript) {
     appendImage(
       node,
       "https://i.imgur.com/r2JMuMt.png",
       quantity++,
       "JavaScript"
     );
+  }
+  if (interactions.hasWebview) {
+    appendImage(node, "https://i.imgur.com/EPMtB2K.png", quantity++, "Webview");
+  }
+  if (interactions.hasNLP) {
+    appendImage(node, "https://i.imgur.com/e9rw9a4.png", quantity++, "NLP");
   }
 }
 
