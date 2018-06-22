@@ -3,14 +3,14 @@ var hasSearch = false;
 var botIdentifier;
 var flow;
 
-(async function(doc, browser) {
+(async function (doc, browser) {
   "use strict";
 
   await start(doc);
 })(document, chrome || browser);
 
 async function start(doc) {
-  setTimeout(async function() {
+  setTimeout(async function () {
     var anyHeaderButton = doc.getElementsByClassName(
       "pointer u-status-on u-status-on--medium"
     )[0];
@@ -27,7 +27,7 @@ async function start(doc) {
       return;
     }
 
-    setInterval(async function() {
+    setInterval(async function () {
       await createBuilderHandler(doc);
     }, 500);
 
@@ -44,7 +44,7 @@ async function start(doc) {
 
     await loadAllInteractionData(doc);
 
-    setInterval(async function() {
+    setInterval(async function () {
       var saveCustomActionButtons = doc.getElementsByClassName(
         "button-primary fr"
       );
@@ -59,7 +59,7 @@ async function start(doc) {
 }
 
 async function createBuilderHandler(doc) {
-  setTimeout(async function() {
+  setTimeout(async function () {
     var builderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
 
     if (!builderButton) {
@@ -67,9 +67,9 @@ async function createBuilderHandler(doc) {
       return;
     }
 
-    builderButton.onmousedown = async function() {
+    builderButton.onmousedown = async function () {
       var li = builderButton.childNodes[0];
-      if (li.className.indexOf("active") === -1){
+      if (li.className.indexOf("active") === -1) {
         hasSearch = false;
         await start(doc);
       }
@@ -80,7 +80,7 @@ async function createBuilderHandler(doc) {
 async function loadSearch(doc, builderFlows) {
   var input = await createSearchDOM(doc);
 
-  input.onkeydown = function() {
+  input.onkeyup = function () {
     var search = input.value.toLowerCase().trim();
     var contador = 0;
 
@@ -117,28 +117,27 @@ async function loadSearch(doc, builderFlows) {
 }
 
 async function createSearchDOM(doc) {
-  return await new Promise(async function(searchInput) {
-    setTimeout(async function() {
+  return await new Promise(async function (searchInput) {
+    setTimeout(async function () {
       var buttonList = doc.getElementsByClassName("icon-button-list")[0];
 
       if (!buttonList) return searchInput(await createSearchDOM(doc));
 
-      var p = doc.createElement("p");
-      p.style.color = "white";
-      p.id = "contador";
-
-      var input = doc.createElement("input");
-      input.style.backgroundColor = "#1E2532";
-      input.placeholder = "Buscar";
-
       var li = doc.createElement("li");
-      var li2 = doc.createElement("li");
+      li.innerHTML = "<tooltip-button>" +
+        "<div class='tooltip-button'>" +
+        "<button><div><i class='icon icon-search'></i></div></button>" +
+        "<div class='text-container' style='width:200px'>" +
+        "<div class='material-wrapper'>" +
+        "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" +
+        "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" +
+        "</div>" +
+        "</div>" +
+        "</div></tooltip-button>";
 
-      li2.appendChild(p);
-      li.appendChild(input);
+      buttonList.append(li);
 
-      buttonList.prepend(li2);
-      buttonList.prepend(li);
+      var input = doc.getElementById("searchField");
 
       return searchInput(input);
     }, 100);
@@ -149,7 +148,7 @@ async function saveOnClickEvent(doc, btns) {
   for (var i = 0; i < btns.length; i++) {
     var btn = btns[i];
 
-    btn.onclick = async function() {
+    btn.onclick = async function () {
       await loadAllInteractionData(doc);
     };
   }
@@ -186,17 +185,17 @@ function appendAllInteractionImages(doc, element, node) {
   );
 
   if (actions.some(x => x.input && !x.input.bypass)) {
-    appendImage(doc, node, "https://i.imgur.com/9wdOV0p.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/9wdOV0p.png", quantity++, "Input do usuário");
   }
   if (actions.some(x => x.action && x.action.type === "SendMessage")) {
-    appendImage(doc, node, "https://i.imgur.com/RvzGKtP.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/RvzGKtP.png", quantity++, "Interação do bot");
   }
   if (
     conditions.some(
       x => x.conditions && x.conditions.some(y => y.comparison === "matches")
     )
   ) {
-    appendImage(doc, node, "https://i.imgur.com/HDxGV24.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/HDxGV24.png", quantity++, "Regex");
   }
   if (
     customActions.some(
@@ -205,7 +204,7 @@ function appendAllInteractionImages(doc, element, node) {
         internalWebsites.some(y => x.settings.uri.includes(y))
     )
   ) {
-    appendImage(doc, node, "https://i.imgur.com/qRBWbZX.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/qRBWbZX.png", quantity++, "API interna");
   }
   if (
     customActions.some(
@@ -214,13 +213,13 @@ function appendAllInteractionImages(doc, element, node) {
         !internalWebsites.some(y => x.settings.uri.includes(y))
     )
   ) {
-    appendImage(doc, node, "https://i.imgur.com/Nn57RAu.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/Nn57RAu.png", quantity++, "API externa");
   }
   if (customActions.some(x => x.type === "TrackEvent")) {
-    appendImage(doc, node, "https://i.imgur.com/li908ZA.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/li908ZA.png", quantity++, "Tracking de evento");
   }
   if (customActions.some(x => x.type === "ExecuteScript")) {
-    appendImage(doc, node, "https://i.imgur.com/r2JMuMt.png", quantity++);
+    appendImage(doc, node, "https://i.imgur.com/r2JMuMt.png", quantity++, "JavaScript");
   }
 }
 
@@ -232,14 +231,16 @@ function removeAllInteractionElements(node) {
   }
 }
 
-function appendImage(doc, node, imageSrc, quantity) {
+function appendImage(doc, node, imageSrc, quantity, title) {
   var imageElement = doc.createElement("img");
   imageElement.src = imageSrc;
   imageElement.width = 15;
   imageElement.style.position = "absolute";
   imageElement.style.bottom = "5px";
   imageElement.style.right = 5 + quantity * 20 + "px";
+  imageElement.style.cursor = "help";
   imageElement.className = "interact";
+  imageElement.title = title;
 
   node.appendChild(imageElement);
 }
@@ -254,14 +255,14 @@ function guid() {
 }
 
 async function getUserFlow(doc, botIdentifier) {
-  return await new Promise(async function(userflow) {
+  return await new Promise(async function (userflow) {
     var auth = await getBotAccessKey(doc, botIdentifier);
     return userflow(await getUserFlowFromBucket(auth));
   });
 }
 
 async function getBotAccessKey(doc, botIdentifier) {
-  return await new Promise(async function(accessKey) {
+  return await new Promise(async function (accessKey) {
     var iframe = doc.createElement("iframe");
     iframe.src =
       "https://portal.blip.ai/#/application/detail/" +
@@ -270,7 +271,7 @@ async function getBotAccessKey(doc, botIdentifier) {
 
     iframe.hidden = "hidden";
 
-    iframe.onload = async function() {
+    iframe.onload = async function () {
       var frameDoc = iframe.contentWindow.document;
       var inputs = frameDoc.getElementsByClassName(
         "ng-pristine ng-valid ng-not-empty"
@@ -284,8 +285,8 @@ async function getBotAccessKey(doc, botIdentifier) {
 }
 
 async function getAccessKeyByHtmlCollection(collection) {
-  return await new Promise(async function(accessKey) {
-    setTimeout(async function() {
+  return await new Promise(async function (accessKey) {
+    setTimeout(async function () {
       for (var i = 0; i < collection.length; i++) {
         if (collection[i].value && collection[i].value.indexOf("Key ") === 0)
           return accessKey(collection[i].value);
@@ -297,7 +298,7 @@ async function getAccessKeyByHtmlCollection(collection) {
 }
 
 async function getUserFlowFromBucket(auth) {
-  return await new Promise(async function(userflow) {
+  return await new Promise(async function (userflow) {
     await fetch("https://msging.net/commands", {
       method: "POST",
       headers: new Headers({
