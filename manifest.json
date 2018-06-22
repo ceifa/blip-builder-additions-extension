@@ -17,6 +17,8 @@
             "*://portal.blip.ai/*"
         ],
         "js": [
+            "js/helper.js",
+            "js/utils.js",
             "js/builder.js"
         ]
     }],

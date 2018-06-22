@@ -1,225 +1,125 @@
-var internalWebsites = ["take.net", "msging.net", "blip.ai"];
-var hasSearch = false;
-var botIdentifier;
-var flow;
+"use strict";
 
-(async function (doc, browser) {
+var doc;
+var botFlows;
+var botIdentifier;
+
+var internalWebsites = ["take.net", "msging.net", "blip.ai"];
+
+(async function(browser) {
   "use strict";
 
-  await start(doc);
-})(document, chrome || browser);
+  doc = document;
 
-async function start(doc) {
-  setTimeout(async function () {
-    var anyHeaderButton = doc.getElementsByClassName(
-      "pointer u-status-on u-status-on--medium"
-    )[0];
-    var regex = /([^\/]*)\/home$/gm;
+  await waitForBuilderDOM();
+  createBuilderSideBarItemHandler();
 
-    if (!anyHeaderButton) {
-      start(doc);
-      return;
+  botIdentifier = getBotIdentifier();
+  botFlows = await getBotFlows(botIdentifier);
+
+  loadAllInteractionImages();
+  loadSearch();
+  createUserInteractionHandler();
+})(chrome || browser);
+
+function createUserInteractionHandler() {
+  setInterval(function() {
+    var userActionButtons = doc.querySelectorAll(
+      ".button-primary.fr, .icon-delete.lh-solid, #container-floating, .ma0.menu-more-items > li, .ma0.flex > li, .editIco.trashIco"
+    );
+
+    for (var i = 0; i < userActionButtons.length; i++) {
+      var btn = userActionButtons[i];
+
+      btn.onclick = async function() {
+        botFlows = await getBotFlows(botIdentifier);
+        loadAllInteractionImages();
+      };
     }
-
-    var buiderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
-    if (!buiderButton) {
-      start(doc);
-      return;
-    }
-
-    setInterval(async function () {
-      await createBuilderHandler(doc);
-    }, 500);
-
-    var match = regex.exec(anyHeaderButton.getAttribute("href"));
-    botIdentifier = match[1];
-
-    var builderFlows = doc.getElementsByTagName("builder-node");
-    flow = await getUserFlow(doc, botIdentifier);
-
-    if (Object.keys(flow).length !== Array.from(builderFlows).length) {
-      start(doc);
-      return;
-    }
-
-    await loadAllInteractionData(doc);
-
-    setInterval(async function () {
-      var saveCustomActionButtons = doc.getElementsByClassName(
-        "button-primary fr"
-      );
-      var removeCustomActionButtons = doc.getElementsByClassName(
-        "icon-delete lh-solid"
-      );
-
-      saveOnClickEvent(doc, saveCustomActionButtons);
-      saveOnClickEvent(doc, removeCustomActionButtons);
-    }, 100);
-  }, 300);
-}
-
-async function createBuilderHandler(doc) {
-  setTimeout(async function () {
-    var builderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
-
-    if (!builderButton) {
-      await createBuilderHandler(doc);
-      return;
-    }
-
-    builderButton.onmousedown = async function () {
-      var li = builderButton.childNodes[0];
-      if (li.className.indexOf("active") === -1) {
-        hasSearch = false;
-        await start(doc);
-      }
-    };
   }, 350);
 }
 
-async function loadSearch(doc, builderFlows) {
-  var input = await createSearchDOM(doc);
+function loadSearch() {
+  var input = createSearchDOM();
 
-  input.onkeyup = function () {
+  input.onkeyup = function() {
     var search = input.value.toLowerCase().trim();
-    var contador = 0;
-
-    for (const key in flow) {
-      if (flow.hasOwnProperty(key)) {
-        const element = flow[key];
-        const nodeElement = builderFlows[key];
-
-        var customActions = element["$enteringCustomActions"].concat(
-          element["$leavingCustomActions"]
-        );
-
-        var actionsJoined = customActions.map(x => x.type).join();
-
-        if (
-          search &&
-          (actionsJoined.toLowerCase().indexOf(search) !== -1 ||
-            element["$title"].toLowerCase().indexOf(search) !== -1)
-        ) {
-          nodeElement.style.backgroundColor = "rgb(246, 255, 133)";
-          nodeElement.style.backgroundImage = "none";
-          contador++;
-        } else if (key === "onboarding" || key === "fallback") {
-          nodeElement.style.backgroundColor = "";
-        } else {
-          nodeElement.style.backgroundColor = "white";
-        }
-      }
-    }
-
-    var p = doc.getElementById("contador");
-    p.innerText = contador;
+    executeSearch(search, botFlows.nodes, botFlows.flow);
   };
 }
 
-async function createSearchDOM(doc) {
-  return await new Promise(async function (searchInput) {
-    setTimeout(async function () {
-      var buttonList = doc.getElementsByClassName("icon-button-list")[0];
+function executeSearch(search, nodeFlow, jsonFlow) {
+  var contador = 0;
 
-      if (!buttonList) return searchInput(await createSearchDOM(doc));
+  for (var key in jsonFlow) {
+    if (jsonFlow.hasOwnProperty(key)) {
+      var element = jsonFlow[key];
+      var nodeElement = nodeFlow[key];
 
-      var li = doc.createElement("li");
-      li.innerHTML = "<tooltip-button>" +
-        "<div class='tooltip-button'>" +
-        "<button><div><i class='icon icon-search'></i></div></button>" +
-        "<div class='text-container' style='width:200px'>" +
-        "<div class='material-wrapper'>" +
-        "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" +
-        "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" +
-        "</div>" +
-        "</div>" +
-        "</div></tooltip-button>";
+      var customActions = element["$enteringCustomActions"].concat(
+        element["$leavingCustomActions"]
+      );
 
-      buttonList.append(li);
+      var actionsJoined = customActions
+        .map(function(x) {
+          return x.type;
+        })
+        .join();
 
-      var input = doc.getElementById("searchField");
-
-      return searchInput(input);
-    }, 100);
-  });
-}
-
-async function saveOnClickEvent(doc, btns) {
-  for (var i = 0; i < btns.length; i++) {
-    var btn = btns[i];
-
-    btn.onclick = async function () {
-      await loadAllInteractionData(doc);
-    };
-  }
-}
-
-async function loadAllInteractionData(doc) {
-  var builderFlows = doc.getElementsByTagName("builder-node");
-
-  flow = flow || (await getUserFlow(doc, botIdentifier));
-
-  if (!hasSearch) {
-    await loadSearch(doc, builderFlows);
-    hasSearch = true;
-  }
-
-  for (const key in flow) {
-    if (flow.hasOwnProperty(key)) {
-      const element = flow[key];
-      const nodeElement = builderFlows[key];
-
-      appendAllInteractionImages(doc, element, nodeElement);
+      if (
+        search &&
+        (actionsJoined.toLowerCase().indexOf(search) !== -1 ||
+          element["$title"].toLowerCase().indexOf(search) !== -1)
+      ) {
+        nodeElement.style.backgroundColor = "rgb(246, 255, 133)";
+        nodeElement.style.backgroundImage = "none";
+        contador++;
+      } else if (key === "onboarding" || key === "fallback") {
+        nodeElement.style.backgroundColor = "";
+      } else {
+        nodeElement.style.backgroundColor = "white";
+      }
     }
   }
+
+  var p = doc.getElementById("contador");
+  p.innerText = contador;
 }
 
-function appendAllInteractionImages(doc, element, node) {
-  removeAllInteractionElements(node);
+function createSearchDOM() {
+  var buttonList = doc.getElementsByClassName("icon-button-list")[0];
 
-  var quantity = 0;
-  var actions = element["$contentActions"];
-  var conditions = element["$conditionOutputs"];
-  var customActions = element["$enteringCustomActions"].concat(
-    element["$leavingCustomActions"]
-  );
+  var li = doc.createElement("li");
+  li.innerHTML =
+    "<tooltip-button>" +
+    "<div class='tooltip-button'>" +
+    "<button><div><i class='icon icon-search'></i></div></button>" +
+    "<div class='text-container' style='width:200px'>" +
+    "<div class='material-wrapper'>" +
+    "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" +
+    "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" +
+    "</div>" +
+    "</div>" +
+    "</div></tooltip-button>";
 
-  if (actions.some(x => x.input && !x.input.bypass)) {
-    appendImage(doc, node, "https://i.imgur.com/9wdOV0p.png", quantity++, "Input do usuário");
-  }
-  if (actions.some(x => x.action && x.action.type === "SendMessage")) {
-    appendImage(doc, node, "https://i.imgur.com/RvzGKtP.png", quantity++, "Interação do bot");
-  }
-  if (
-    conditions.some(
-      x => x.conditions && x.conditions.some(y => y.comparison === "matches")
-    )
-  ) {
-    appendImage(doc, node, "https://i.imgur.com/HDxGV24.png", quantity++, "Regex");
-  }
-  if (
-    customActions.some(
-      x =>
-        x.type === "ProcessHttp" &&
-        internalWebsites.some(y => x.settings.uri.includes(y))
-    )
-  ) {
-    appendImage(doc, node, "https://i.imgur.com/qRBWbZX.png", quantity++, "API interna");
-  }
-  if (
-    customActions.some(
-      x =>
-        x.type === "ProcessHttp" &&
-        !internalWebsites.some(y => x.settings.uri.includes(y))
-    )
-  ) {
-    appendImage(doc, node, "https://i.imgur.com/Nn57RAu.png", quantity++, "API externa");
-  }
-  if (customActions.some(x => x.type === "TrackEvent")) {
-    appendImage(doc, node, "https://i.imgur.com/li908ZA.png", quantity++, "Tracking de evento");
-  }
-  if (customActions.some(x => x.type === "ExecuteScript")) {
-    appendImage(doc, node, "https://i.imgur.com/r2JMuMt.png", quantity++, "JavaScript");
+  buttonList.append(li);
+
+  var input = doc.getElementById("searchField");
+
+  return input;
+}
+
+function loadAllInteractionImages() {
+  var jsonFlow = botFlows.flow;
+  var nodeFlow = botFlows.nodes;
+
+  for (var key in jsonFlow) {
+    if (jsonFlow.hasOwnProperty(key)) {
+      var element = jsonFlow[key];
+      var nodeElement = nodeFlow[key];
+
+      appendAllInteractionImages(element, nodeElement);
+    }
   }
 }
 
@@ -231,7 +131,113 @@ function removeAllInteractionElements(node) {
   }
 }
 
-function appendImage(doc, node, imageSrc, quantity, title) {
+function appendAllInteractionImages(element, node) {
+  removeAllInteractionElements(node);
+
+  var quantity = 0;
+  var actions = element["$contentActions"];
+  var conditions = element["$conditionOutputs"];
+  var customActions = element["$enteringCustomActions"].concat(
+    element["$leavingCustomActions"]
+  );
+
+  if (
+    actions.some(function(x) {
+      return x.input && !x.input.bypass;
+    })
+  ) {
+    appendImage(
+      node,
+      "https://i.imgur.com/9wdOV0p.png",
+      quantity++,
+      "Input do usuário"
+    );
+  }
+  if (
+    actions.some(function(x) {
+      return x.action && x.action.type === "SendMessage";
+    })
+  ) {
+    appendImage(
+      node,
+      "https://i.imgur.com/RvzGKtP.png",
+      quantity++,
+      "Interação do bot"
+    );
+  }
+  if (
+    conditions.some(function(x) {
+      return (
+        x.conditions &&
+        x.conditions.some(function(y) {
+          return y.comparison === "matches";
+        })
+      );
+    })
+  ) {
+    appendImage(node, "https://i.imgur.com/HDxGV24.png", quantity++, "Regex");
+  }
+  if (
+    customActions.some(function(x) {
+      return (
+        x.type === "ProcessHttp" &&
+        internalWebsites.some(function(y) {
+          return x.settings.uri.includes(y);
+        })
+      );
+    })
+  ) {
+    appendImage(
+      node,
+      "https://i.imgur.com/qRBWbZX.png",
+      quantity++,
+      "API interna"
+    );
+  }
+  if (
+    customActions.some(function(x) {
+      return (
+        x.type === "ProcessHttp" &&
+        !internalWebsites.some(function(y) {
+          return x.settings.uri.includes(y);
+        })
+      );
+    })
+  ) {
+    appendImage(
+      node,
+      "https://i.imgur.com/Nn57RAu.png",
+      quantity++,
+      "API externa"
+    );
+  }
+  if (
+    customActions.some(function(x) {
+      return x.type === "TrackEvent";
+    })
+  ) {
+    appendImage(
+      node,
+      "https://i.imgur.com/li908ZA.png",
+      quantity++,
+      "Tracking de evento"
+    );
+  }
+  if (
+    customActions.some(function(x) {
+      return x.type === "ExecuteScript";
+    })
+  ) {
+    appendImage(
+      node,
+      "https://i.imgur.com/r2JMuMt.png",
+      quantity++,
+      "JavaScript"
+    );
+  }
+}
+
+function appendImage(node, imageSrc, quantity, title) {
   var imageElement = doc.createElement("img");
   imageElement.src = imageSrc;
   imageElement.width = 15;
@@ -245,82 +251,59 @@ function appendImage(doc, node, imageSrc, quantity, title) {
   node.appendChild(imageElement);
 }
 
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
+function whileTrueWithSleep(func) {
+  for (
+    var _len = arguments.length,
+      params = Array(_len > 1 ? _len - 1 : 0),
+      _key = 1;
+    _key < _len;
+    _key++
+  ) {
+    params[_key - 1] = arguments[_key];
   }
-  return `${s4()}${s4()}-${s4()}-${s4()}-${s4()}-${s4()}${s4()}${s4()}`;
-}
 
-async function getUserFlow(doc, botIdentifier) {
-  return await new Promise(async function (userflow) {
-    var auth = await getBotAccessKey(doc, botIdentifier);
-    return userflow(await getUserFlowFromBucket(auth));
-  });
-}
-
-async function getBotAccessKey(doc, botIdentifier) {
-  return await new Promise(async function (accessKey) {
-    var iframe = doc.createElement("iframe");
-    iframe.src =
-      "https://portal.blip.ai/#/application/detail/" +
-      botIdentifier +
-      "/configurations/apikey";
-
-    iframe.hidden = "hidden";
-
-    iframe.onload = async function () {
-      var frameDoc = iframe.contentWindow.document;
-      var inputs = frameDoc.getElementsByClassName(
-        "ng-pristine ng-valid ng-not-empty"
-      );
-      var auth = await getAccessKeyByHtmlCollection(inputs);
-      return accessKey(auth);
-    };
-
-    doc.getElementsByTagName("body")[0].appendChild(iframe);
-  });
-}
-
-async function getAccessKeyByHtmlCollection(collection) {
-  return await new Promise(async function (accessKey) {
-    setTimeout(async function () {
-      for (var i = 0; i < collection.length; i++) {
-        if (collection[i].value && collection[i].value.indexOf("Key ") === 0)
-          return accessKey(collection[i].value);
-      }
-
-      return accessKey(getAccessKeyByHtmlCollection(collection));
+  return new Promise(function(result) {
+    setTimeout(function() {
+      return result(func.apply(undefined, params));
     }, 100);
   });
 }
 
-async function getUserFlowFromBucket(auth) {
-  return await new Promise(async function (userflow) {
-    await fetch("https://msging.net/commands", {
-      method: "POST",
-      headers: new Headers({
-        "Content-Type": "application/json",
-        Authorization: auth
-      }),
-      body: JSON.stringify({
-        id: guid(),
-        method: "get",
-        uri: "/buckets/blip_portal:builder_working_flow"
-      })
-    })
-      .then(x => {
-        console.log(x);
-        return x.json();
-      })
-      .then(x => {
-        userflow(x.resource);
-      })
-      .catch(er => {
-        console.log(er);
-        userflow();
-      });
+function waitForBuilderDOM() {
+  return new Promise(function(ready) {
+    var anyHeaderButton = getAnyHeaderButton();
+
+    if (!anyHeaderButton) return ready(whileTrueWithSleep(waitForBuilderDOM));
+
+    var buiderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
+    if (!buiderButton) return ready(whileTrueWithSleep(waitForBuilderDOM));
+
+    var buttonList = doc.getElementsByClassName("icon-button-list")[0];
+    if (!buttonList) return ready(whileTrueWithSleep(waitForBuilderDOM));
+
+    ready();
   });
+}
+
+function createBuilderSideBarItemHandler() {
+  var builderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
+
+  if (!builderButton) {
+    return;
+  }
+
+  builderButton.onmousedown = async function() {
+    var builderButtonLiNode = builderButton.childNodes[0];
+
+    if (builderButtonLiNode.className.indexOf("active") === -1) {
+      await waitForBuilderDOM(doc);
+      var botIdentifier = getBotIdentifier();
+      botFlows = await getBotFlows(botIdentifier);
+
+      loadAllInteractionImages();
+      loadSearch();
+    }
+  };
+
+  setTimeout(createBuilderSideBarItemHandler, 2000);
 }
