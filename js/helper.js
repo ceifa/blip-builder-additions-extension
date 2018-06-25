@@ -99,9 +99,7 @@ function getBotIdentifier() {
 }
 
 function getAnyHeaderButton() {
-  return doc.getElementsByClassName(
-    "pointer u-status-on u-status-on--medium"
-  )[0];
+  return doc.querySelector("[href*='application/detail/']");
 }
 
 function getElementInteractions(element) {
