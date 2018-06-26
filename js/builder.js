@@ -13,12 +13,13 @@ var internalWebsites = ["take.net", "msging.net", "blip.ai"];
 
   await waitForBuilderDOM();
   createBuilderSideBarItemHandler();
+  
+  loadSearch();
 
   botIdentifier = getBotIdentifier();
   botFlows = await getBotFlows(botIdentifier);
 
   loadAllInteractionImages();
-  loadSearch();
   createUserInteractionHandler();
 })(chrome || browser);
 
