@@ -1,41 +1,50 @@
 "use strict";
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 var doc;
 var botFlows;
 var botIdentifier;
+var botAuthentication;
 
 var internalWebsites = ["take.net", "msging.net", "blip.ai"];
 
-(async function(browser) {
-  "use strict";
+((browser) => {
+  var _ref = _asyncToGenerator(function* (browser) {
+    "use strict";
 
-  doc = document;
+    doc = document;
 
-  await waitForBuilderDOM();
-  createBuilderSideBarItemHandler();
-  
-  loadSearch();
+    yield waitForBuilderDOM();
+    createBuilderSideBarItemHandler();
 
-  botIdentifier = getBotIdentifier();
-  botFlows = await getBotFlows(botIdentifier);
+    loadSearch();
 
-  loadAllInteractionImages();
-  createUserInteractionHandler();
-})(chrome || browser);
+    botIdentifier = getBotIdentifier();
+    botFlows = yield getBotFlows(botIdentifier);
+
+    loadAllInteractionImages();
+    createUserInteractionHandler();
+  });
+
+  return function (_x) {
+    return _ref.apply(this, arguments);
+  };
+})()(chrome || browser);
 
 function createUserInteractionHandler() {
-  setInterval(function() {
-    var userActionButtons = doc.querySelectorAll(
-      ".button-primary.fr, .icon-delete.lh-solid, #container-floating, .ma0.menu-more-items > li, .ma0.flex > li, .editIco.trashIco"
-    );
+  setInterval(function () {
+    var userActionButtons = doc.querySelectorAll(".button-primary.fr, .icon-delete, #container-floating, .ma0.menu-more-items > li, .ma0.flex > li, .editIco.trashIco, .card-content.tc");
 
     for (var i = 0; i < userActionButtons.length; i++) {
       var btn = userActionButtons[i];
 
-      btn.onclick = async function() {
-        botFlows = await getBotFlows(botIdentifier);
-        loadAllInteractionImages();
-      };
+      btn.onclick = _asyncToGenerator(function* () {
+        setTimeout(_asyncToGenerator(function* () {
+          botFlows = yield getBotFlows(botIdentifier);
+          loadAllInteractionImages();
+        }), 200);
+      });
     }
   }, 350);
 }
@@ -43,7 +52,7 @@ function createUserInteractionHandler() {
 function loadSearch() {
   var input = createSearchDOM();
 
-  input.onkeyup = function() {
+  input.onkeyup = function () {
     var search = input.value.toLowerCase().trim();
     executeSearch(search, botFlows.nodes, botFlows.flow);
   };
@@ -57,21 +66,13 @@ function executeSearch(search, nodeFlow, jsonFlow) {
       var element = jsonFlow[key];
       var nodeElement = nodeFlow[key];
 
-      var customActions = element["$enteringCustomActions"].concat(
-        element["$leavingCustomActions"]
-      );
+      var customActions = element["$enteringCustomActions"].concat(element["$leavingCustomActions"]);
 
-      var actionsJoined = customActions
-        .map(function(x) {
-          return x.type;
-        })
-        .join();
+      var actionsJoined = customActions.map(function (x) {
+        return x.type;
+      }).join();
 
-      if (
-        search &&
-        (actionsJoined.toLowerCase().indexOf(search) !== -1 ||
-          element["$title"].toLowerCase().indexOf(search) !== -1)
-      ) {
+      if (search && (actionsJoined.toLowerCase().indexOf(search) !== -1 || element["$title"].toLowerCase().indexOf(search) !== -1)) {
         nodeElement.style.backgroundColor = "rgb(246, 255, 133)";
         nodeElement.style.backgroundImage = "none";
         contador++;
@@ -91,17 +92,7 @@ function createSearchDOM() {
   var buttonList = doc.getElementsByClassName("icon-button-list")[0];
 
   var li = doc.createElement("li");
-  li.innerHTML =
-    "<tooltip-button>" +
-    "<div class='tooltip-button'>" +
-    "<button><div><i class='icon icon-search'></i></div></button>" +
-    "<div class='text-container' style='width:200px'>" +
-    "<div class='material-wrapper'>" +
-    "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" +
-    "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" +
-    "</div>" +
-    "</div>" +
-    "</div></tooltip-button>";
+  li.innerHTML = "<tooltip-button>" + "<div class='tooltip-button'>" + "<button><div><i class='icon icon-search'></i></div></button>" + "<div class='text-container' style='width:200px'>" + "<div class='material-wrapper'>" + "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" + "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" + "</div>" + "</div>" + "</div></tooltip-button>";
 
   buttonList.append(li);
 
@@ -139,55 +130,25 @@ function appendAllInteractionImages(element, node) {
   var interactions = getElementInteractions(element);
 
   if (interactions.hasInput) {
-    appendImage(
-      node,
-      "https://i.imgur.com/9wdOV0p.png",
-      quantity++,
-      "Input do usuário"
-    );
+    appendImage(node, "https://i.imgur.com/9wdOV0p.png", quantity++, "Input do usuário");
   }
   if (interactions.hasBotMessage) {
-    appendImage(
-      node,
-      "https://i.imgur.com/RvzGKtP.png",
-      quantity++,
-      "Interação do bot"
-    );
+    appendImage(node, "https://i.imgur.com/RvzGKtP.png", quantity++, "Interação do bot");
   }
   if (interactions.hasRegex) {
     appendImage(node, "https://i.imgur.com/HDxGV24.png", quantity++, "Regex");
   }
   if (interactions.hasInternalAPI) {
-    appendImage(
-      node,
-      "https://i.imgur.com/P56IOl8.png",
-      quantity++,
-      "API interna"
-    );
+    appendImage(node, "https://i.imgur.com/P56IOl8.png", quantity++, "API interna");
   }
   if (interactions.hasExternalAPI) {
-    appendImage(
-      node,
-      "https://i.imgur.com/t0fUURZ.png",
-      quantity++,
-      "API externa"
-    );
+    appendImage(node, "https://i.imgur.com/t0fUURZ.png", quantity++, "API externa");
   }
   if (interactions.hasEventTracking) {
-    appendImage(
-      node,
-      "https://i.imgur.com/li908ZA.png",
-      quantity++,
-      "Tracking de evento"
-    );
+    appendImage(node, "https://i.imgur.com/li908ZA.png", quantity++, "Tracking de evento");
   }
   if (interactions.hasJavascript) {
-    appendImage(
-      node,
-      "https://i.imgur.com/r2JMuMt.png",
-      quantity++,
-      "JavaScript"
-    );
+    appendImage(node, "https://i.imgur.com/r2JMuMt.png", quantity++, "JavaScript");
   }
   if (interactions.hasWebview) {
     appendImage(node, "https://i.imgur.com/EPMtB2K.png", quantity++, "Webview");
@@ -212,25 +173,19 @@ function appendImage(node, imageSrc, quantity, title) {
 }
 
 function whileTrueWithSleep(func) {
-  for (
-    var _len = arguments.length,
-      params = Array(_len > 1 ? _len - 1 : 0),
-      _key = 1;
-    _key < _len;
-    _key++
-  ) {
+  for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     params[_key - 1] = arguments[_key];
   }
 
-  return new Promise(function(result) {
-    setTimeout(function() {
+  return new Promise(function (result) {
+    setTimeout(function () {
       return result(func.apply(undefined, params));
     }, 100);
   });
 }
 
 function waitForBuilderDOM() {
-  return new Promise(function(ready) {
+  return new Promise(function (ready) {
     var anyHeaderButton = getAnyHeaderButton();
 
     if (!anyHeaderButton) return ready(whileTrueWithSleep(waitForBuilderDOM));
@@ -252,18 +207,18 @@ function createBuilderSideBarItemHandler() {
     return;
   }
 
-  builderButton.onmousedown = async function() {
+  builderButton.onmousedown = _asyncToGenerator(function* () {
     var builderButtonLiNode = builderButton.childNodes[0];
 
     if (builderButtonLiNode.className.indexOf("active") === -1) {
-      await waitForBuilderDOM(doc);
+      yield waitForBuilderDOM(doc);
       var botIdentifier = getBotIdentifier();
-      botFlows = await getBotFlows(botIdentifier);
+      botFlows = yield getBotFlows(botIdentifier);
 
       loadAllInteractionImages();
       loadSearch();
     }
-  };
+  });
 
   setTimeout(createBuilderSideBarItemHandler, 2000);
 }
