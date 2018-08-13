@@ -1,224 +1,154 @@
-"use strict";
+var initialized = false;
+var intervals = [];
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+(() => {
+    addNavbarHandle();
+})();
 
-var doc;
-var botFlows;
-var botIdentifier;
-var botAuthentication;
+function init() {
+    console.log("Initializing...");
 
-var internalWebsites = ["take.net", "msging.net", "blip.ai"];
+    addSearch();
+    addActionHandle();
+}
 
-((browser) => {
-  var _ref = _asyncToGenerator(function* (browser) {
-    "use strict";
+function waitBuilder() {
+    const navbar = document.getElementsByTagName("sidenav-menu-item");
+    const tools = document.getElementsByClassName("icon-button-list");
 
-    doc = document;
-
-    yield waitForBuilderDOM();
-    createBuilderSideBarItemHandler();
-
-    loadSearch();
-
-    botIdentifier = getBotIdentifier();
-    botFlows = yield getBotFlows(botIdentifier);
-
-    loadAllInteractionImages();
-    createUserInteractionHandler();
-  });
-
-  return function (_x) {
-    return _ref.apply(this, arguments);
-  };
-})()(chrome || browser);
-
-function createUserInteractionHandler() {
-  setInterval(function () {
-    var userActionButtons = doc.querySelectorAll(".button-primary.fr, .icon-delete, #container-floating, .ma0.menu-more-items > li, .ma0.flex > li, .editIco.trashIco, .card-content.tc");
-
-    for (var i = 0; i < userActionButtons.length; i++) {
-      var btn = userActionButtons[i];
-
-      btn.onclick = _asyncToGenerator(function* () {
-        setTimeout(_asyncToGenerator(function* () {
-          botFlows = yield getBotFlows(botIdentifier);
-          loadAllInteractionImages();
-        }), 200);
-      });
+    if (navbar && navbar[0] && navbar[0].children[0].className.includes("active") && tools.length > 0){
+        return true;
     }
-  }, 350);
+
+    return false;
 }
 
-function loadSearch() {
-  var input = createSearchDOM();
-
-  input.onkeyup = function () {
-    var search = input.value.toLowerCase().trim();
-    executeSearch(search, botFlows.nodes, botFlows.flow);
-  };
+function addNavbarHandle() {
+    intervals.push(setInterval(() => {
+        if (waitBuilder()) {
+            if (!initialized) {
+                intervals.forEach(i => clearInterval(i));
+                initialized = true;
+                init();
+            }
+        }
+        else{
+            initialized = false;
+        }
+    }), 500);
 }
 
-function executeSearch(search, nodeFlow, jsonFlow) {
-  var contador = 0;
+function addActionHandle() {
+    intervals.push(setInterval(() => {
+        if (!initialized)
+            return;
 
-  for (var key in jsonFlow) {
-    if (jsonFlow.hasOwnProperty(key)) {
-      var element = jsonFlow[key];
-      var nodeElement = nodeFlow[key];
+        const addActions = document.querySelectorAll(".ma0.ph4.pt3 li");
+    
+        if (addActions.length > 0){
+            for (let i = 0; i < addActions.length; i++) {
+                addActions[i].onclick = (ev) => {
+                    const headerButtons = document.getElementsByClassName("sidebar-helper-header__actions")[0].children;
+                    let delay = 0;
+    
+                    if (headerButtons.length > 1){
+                        headerButtons[0].click();
+                        delay = 10;
+                    }
 
-      var customActions = element["$enteringCustomActions"].concat(element["$leavingCustomActions"]);
+                    const name = ev.target.innerHTML;
 
-      var actionsJoined = customActions.map(function (x) {
-        return x.type;
-      }).join();
+                    const tags = document.getElementsByClassName("blip-tag__label");
 
-      if (search && (actionsJoined.toLowerCase().indexOf(search) !== -1 || element["$title"].toLowerCase().indexOf(search) !== -1)) {
-        nodeElement.style.backgroundColor = "rgb(246, 255, 133)";
-        nodeElement.style.backgroundImage = "none";
-        contador++;
-      } else if (key === "onboarding" || key === "fallback") {
-        nodeElement.style.backgroundColor = "";
-      } else {
-        nodeElement.style.backgroundColor = "white";
-      }
+                    for (let k = 0; k < tags.length; k++){
+                        if (tags[k].innerText === name){
+                            return;
+                        }
+                    }
+
+                    setTimeout(() => {        
+                        let input = document.getElementsByClassName("blip-select__input")[0];
+                        input.value = name;
+                        input.dispatchEvent(new Event("input"))
+            
+                        setTimeout(() => {
+                            let options = document.getElementsByClassName("blip-select__options")[0];
+                            let correctOption = document.getElementsByClassName("blip-select__option")[0];
+            
+                            options.style.display = "none"
+                            correctOption.click()
+                            
+                            document.getElementsByClassName("blip-tag-select-color")[0].style.display = "none";
+
+                            setTimeout(() => {
+                                let colors = document.getElementsByClassName("blip-tag-color-option");
+                                
+                                console.log(name)
+                                switch (name) {
+                                    case 'Event tracking':
+                                        colors[1].click();
+                                        break;
+                                    case 'Execute script':
+                                        colors[3].click();
+                                        break;
+                                    case 'Manage distribution list':
+                                        colors[5].click();
+                                        break;
+                                    case 'Redirect to service':
+                                        colors[6].click();
+                                        break;
+                                    case 'Set contact':
+                                        colors[8].click();
+                                        break;
+                                    case 'Process HTTP':
+                                        colors[11].click();
+                                        break;
+                                }
+                            }, 10)
+                        }, 10)
+                    }, delay)
+                }
+            }
+        }
+    }, 250));
+}
+
+function addSearch() {
+    const buttonList = document.getElementsByClassName("icon-button-list")[0];
+    
+    let li = document.createElement("li");
+    li.innerHTML = "<tooltip-button>" +
+                        "<div class='tooltip-button'>" +
+                            "<button><div><i class='icon icon-search'></i></div></button>" +
+                            "<div class='text-container' style='width:200px'>" +
+                                "<div class='material-wrapper'>" +
+                                    "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" +
+                                    "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" +
+                                "</div>" +
+                            "</div>" +
+                        "</div>" +
+                    "</tooltip-button>";
+    
+    buttonList.append(li);
+
+    let searchInput = document.getElementById("searchField");
+
+    searchInput.onkeyup = (ev) => {
+        let input = ev.target.value.toLowerCase();
+        let blocks = document.getElementsByClassName("builder-node-title");
+
+        for (let i = 0; i < blocks.length; i++){
+            let node = blocks[i].parentElement;
+
+            const blockName = blocks[i].innerText.toLowerCase();
+            const tags = Array.from(blocks[i].nextElementSibling.getElementsByClassName("blip-tag__label")).map(element => element.innerText).join().toLowerCase();
+
+            if (input && (blockName.includes(input) || tags.includes(input))){
+                node.style.boxShadow = "0 0 0 4px #ff4a4a";
+            }
+            else{
+                node.style.boxShadow = "none";
+            }
+        }
     }
-  }
-
-  var p = doc.getElementById("contador");
-  p.innerText = contador;
-}
-
-function createSearchDOM() {
-  var buttonList = doc.getElementsByClassName("icon-button-list")[0];
-
-  var li = doc.createElement("li");
-  li.innerHTML = "<tooltip-button>" + "<div class='tooltip-button'>" + "<button><div><i class='icon icon-search'></i></div></button>" + "<div class='text-container' style='width:200px'>" + "<div class='material-wrapper'>" + "<input placeholder='Buscar' id='searchField' maxlength='30' style='background:rgba(155,155,155,0); border: none; outline: none !important; width:110px; position:absolute;top: 7px;' />" + "<span class='input-right text-gray' id='contador' style='position:absolute; top:5px; right:15px;'></span>" + "</div>" + "</div>" + "</div></tooltip-button>";
-
-  buttonList.append(li);
-
-  var input = doc.getElementById("searchField");
-
-  return input;
-}
-
-function loadAllInteractionImages() {
-  var jsonFlow = botFlows.flow;
-  var nodeFlow = botFlows.nodes;
-
-  for (var key in jsonFlow) {
-    if (jsonFlow.hasOwnProperty(key) && key.indexOf("desk") === -1) {
-      var element = jsonFlow[key];
-      var nodeElement = nodeFlow[key];
-
-      appendAllInteractionImages(element, nodeElement);
-    }
-  }
-}
-
-function removeAllInteractionElements(node) {
-  var elements = node.getElementsByClassName("interact");
-
-  while (elements.length !== 0) {
-    node.removeChild(elements[0]);
-  }
-}
-
-function appendAllInteractionImages(element, node) {
-  removeAllInteractionElements(node);
-
-  var quantity = 0;
-  var interactions = getElementInteractions(element);
-
-  if (interactions.hasInput) {
-    appendImage(node, "https://i.imgur.com/9wdOV0p.png", quantity++, "Input do usuário");
-  }
-  if (interactions.hasBotMessage) {
-    appendImage(node, "https://i.imgur.com/RvzGKtP.png", quantity++, "Interação do bot");
-  }
-  if (interactions.hasRegex) {
-    appendImage(node, "https://i.imgur.com/HDxGV24.png", quantity++, "Regex");
-  }
-  if (interactions.hasInternalAPI) {
-    appendImage(node, "https://i.imgur.com/P56IOl8.png", quantity++, "API interna");
-  }
-  if (interactions.hasExternalAPI) {
-    appendImage(node, "https://i.imgur.com/t0fUURZ.png", quantity++, "API externa");
-  }
-  if (interactions.hasEventTracking) {
-    appendImage(node, "https://i.imgur.com/li908ZA.png", quantity++, "Tracking de evento");
-  }
-  if (interactions.hasJavascript) {
-    appendImage(node, "https://i.imgur.com/r2JMuMt.png", quantity++, "JavaScript");
-  }
-  if (interactions.hasWebview) {
-    appendImage(node, "https://i.imgur.com/EPMtB2K.png", quantity++, "Webview");
-  }
-  if (interactions.hasNLP) {
-    appendImage(node, "https://i.imgur.com/e9rw9a4.png", quantity++, "NLP");
-  }
-}
-
-function appendImage(node, imageSrc, quantity, title) {
-  var imageElement = doc.createElement("img");
-  imageElement.src = imageSrc;
-  imageElement.width = 15;
-  imageElement.style.position = "absolute";
-  imageElement.style.bottom = "5px";
-  imageElement.style.right = 5 + quantity * 20 + "px";
-  imageElement.style.cursor = "help";
-  imageElement.className = "interact";
-  imageElement.title = title;
-
-  node.appendChild(imageElement);
-}
-
-function whileTrueWithSleep(func) {
-  for (var _len = arguments.length, params = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    params[_key - 1] = arguments[_key];
-  }
-
-  return new Promise(function (result) {
-    setTimeout(function () {
-      return result(func.apply(undefined, params));
-    }, 100);
-  });
-}
-
-function waitForBuilderDOM() {
-  return new Promise(function (ready) {
-    var anyHeaderButton = getAnyHeaderButton();
-
-    if (!anyHeaderButton) return ready(whileTrueWithSleep(waitForBuilderDOM));
-
-    var buiderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
-    if (!buiderButton) return ready(whileTrueWithSleep(waitForBuilderDOM));
-
-    var buttonList = doc.getElementsByClassName("icon-button-list")[0];
-    if (!buttonList) return ready(whileTrueWithSleep(waitForBuilderDOM));
-
-    ready();
-  });
-}
-
-function createBuilderSideBarItemHandler() {
-  var builderButton = doc.getElementsByTagName("sidenav-menu-item")[0];
-
-  if (!builderButton) {
-    return;
-  }
-
-  builderButton.onmousedown = _asyncToGenerator(function* () {
-    var builderButtonLiNode = builderButton.childNodes[0];
-
-    if (builderButtonLiNode.className.indexOf("active") === -1) {
-      yield waitForBuilderDOM(doc);
-      var botIdentifier = getBotIdentifier();
-      botFlows = yield getBotFlows(botIdentifier);
-
-      loadAllInteractionImages();
-      loadSearch();
-    }
-  });
-
-  setTimeout(createBuilderSideBarItemHandler, 2000);
 }
