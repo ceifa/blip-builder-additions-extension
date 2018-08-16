@@ -33,7 +33,7 @@ const change = () => {
     
     chrome.storage.sync.set({ settings });
 
-    chrome.tabs.query({active: true, currentWindow: true, url: '*://portal.blip.ai/*'}, function(tabs) {
+    chrome.tabs.query({active: true, url: '*://portal.blip.ai/*'}, function(tabs) {
         chrome.tabs.sendMessage(tabs[0].id, {type:"settingsChange"}, function(response){
             // so fancy
         });

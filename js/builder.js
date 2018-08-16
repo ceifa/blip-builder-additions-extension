@@ -3,14 +3,16 @@ var initialized = false;
 var intervals = [];
 
 (() => {
-    addNavbarHandle();
+    init();
 })();
 
 function init() {
     console.log("Initializing...");
 
-    addSearch();
-    addActionHandle();
+    addNavbarHandle(() => {
+        addSearch();
+        addActionHandle();
+    });
 }
 
 function waitBuilder() {
@@ -24,12 +26,13 @@ function waitBuilder() {
     return false;
 }
 
-function addNavbarHandle() {
+function addNavbarHandle(action) {
     intervals.push(setInterval(() => {
         if (waitBuilder()) {
             if (!initialized) {
                 intervals.forEach(i => clearInterval(i));
                 initialized = true;
+                action();
                 init();
             }
         }
@@ -79,12 +82,10 @@ function addActionHandle() {
                             options.style.display = "none"
                             correctOption.click()
                             
-                            document.getElementsByClassName("blip-tag-select-color")[0].style.display = "none";
-
                             setTimeout(() => {
+                                document.getElementsByClassName("blip-tag-select-color")[0].style.display = "none";
                                 let colors = document.getElementsByClassName("blip-tag-color-option");
                                 
-                                console.log(name)
                                 switch (name) {
                                     case 'Event tracking':
                                         colors[1].click();
@@ -105,7 +106,7 @@ function addActionHandle() {
                                         colors[11].click();
                                         break;
                                 }
-                            }, 10)
+                            }, 30)
                         }, 10)
                     }, delay)
                 }
