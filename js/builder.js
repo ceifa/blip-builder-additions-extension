@@ -1,3 +1,4 @@
+var searchInput;
 var initialized = false;
 var intervals = [];
 
@@ -131,24 +132,77 @@ function addSearch() {
     
     buttonList.append(li);
 
-    let searchInput = document.getElementById("searchField");
+    searchInput = document.getElementById("searchField");
 
     searchInput.onkeyup = (ev) => {
         let input = ev.target.value.toLowerCase();
+        executeSearch(input);
+    }
+}
+
+function executeSearch(filter){
+    chrome.storage.sync.get([ 'settings' ], (result) => {
+        let settings;
+        
+        if (!result || !result.settings)
+            settings = {
+                outline_enabled: true,
+                outline: "#ff4a4a",
+                box_enabled: false,
+                box: "#f6ff85"
+            }
+        else
+            settings = JSON.parse(result.settings)
+
         let blocks = document.getElementsByClassName("builder-node-title");
+        let found = 0;
 
         for (let i = 0; i < blocks.length; i++){
             let node = blocks[i].parentElement;
-
+    
             const blockName = blocks[i].innerText.toLowerCase();
             const tags = Array.from(blocks[i].nextElementSibling.getElementsByClassName("blip-tag__label")).map(element => element.innerText).join().toLowerCase();
+    
+            if (filter && (blockName.includes(filter) || tags.includes(filter))){
+                if (settings.outline_enabled){
+                    node.style.boxShadow = `0 0 0 4px ${settings.outline}`;
+                }
+                else {
+                    node.style.boxShadow = "none";
+                }
+                if (settings.box_enabled){
+                    node.style.backgroundColor = settings.box;
+                    node.style.backgroundImage = "none";
+                }
+                else {
+                    if (node.id === "onboarding" || node.id === "fallback")
+                        node.style.backgroundColor = "";
+                    else
+                        node.style.backgroundColor = "white";
+                }
 
-            if (input && (blockName.includes(input) || tags.includes(input))){
-                node.style.boxShadow = "0 0 0 4px #ff4a4a";
+                found++;
             }
             else{
+                if (node.id === "onboarding" || node.id === "fallback")
+                    node.style.backgroundColor = "";
+                else
+                    node.style.backgroundColor = "white";
+
                 node.style.boxShadow = "none";
             }
         }
-    }
+
+        document.getElementById('contador').innerText = found;
+    });
 }
+
+chrome.runtime.onMessage.addListener(
+    function(message, sender, sendResponse) {
+        switch(message.type) {
+            case "settingsChange":
+                executeSearch(searchInput && searchInput.value && searchInput.value.toLowerCase());
+                break;
+        }
+    }
+);

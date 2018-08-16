@@ -1,0 +1,11 @@
+body{
+    width: 200px;
+}
+
+.section:not(:last-child) {
+    padding-bottom: 10px;
+}
+
+input[type=color] {
+    float: right;
+}
