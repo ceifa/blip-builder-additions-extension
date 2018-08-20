@@ -88,25 +88,31 @@ function addActionHandle() {
                                 
                                 switch (name) {
                                     case 'Event tracking':
+                                    case 'Registro de eventos':
                                         colors[1].click();
                                         break;
                                     case 'Execute script':
+                                    case 'Executar script':
                                         colors[3].click();
                                         break;
                                     case 'Manage distribution list':
+                                    case 'Gerenciar lista de distribuição':
                                         colors[5].click();
                                         break;
                                     case 'Redirect to service':
+                                    case 'Redirecionar a um serviço':
                                         colors[6].click();
                                         break;
                                     case 'Set contact':
+                                    case 'Definir contato':
                                         colors[8].click();
                                         break;
                                     case 'Process HTTP':
+                                    case 'Requisição HTTP':
                                         colors[11].click();
                                         break;
                                 }
-                            }, 30)
+                            }, 10)
                         }, 10)
                     }, delay)
                 }
