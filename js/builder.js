@@ -12,6 +12,7 @@ function init() {
     addNavbarHandle(() => {
         addSearch();
         addActionHandle();
+        addRemoveActionHandle();
     });
 }
 
@@ -40,6 +41,40 @@ function addNavbarHandle(action) {
             initialized = false;
         }
     }), 500);
+}
+
+function addRemoveActionHandle() {
+    intervals.push(setInterval(() => {
+        if (!initialized)
+            return;
+
+        const deleteButtons = document.querySelectorAll('#action-list .icon-delete');
+
+        if (deleteButtons.length > 0) {
+            for (let i = 0; i < deleteButtons.length; i++){
+                deleteButtons[i].onclick = (ev) => {
+                    let name = ev.target.parentElement.previousElementSibling.firstElementChild.innerText.trim();
+                    let actions = document.querySelectorAll("#action-list .w-80 span:not(.invalid-action)");
+                    
+                    let hasMoreActions = false;
+                    for (let k = 0; k < actions.length; k++){
+                        if (actions[k].innerText.trim() === name)
+                            hasMoreActions = true;
+                    }
+
+                    if (!hasMoreActions){
+                        let tags = document.querySelectorAll('.sidebar-content-header .blip-tag__label');
+
+                        for (let k = 0; k < tags.length; k++){
+                            if (tags[k].innerText === name) {
+                                tags[k].nextElementSibling.click();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }, 250))
 }
 
 function addActionHandle() {
