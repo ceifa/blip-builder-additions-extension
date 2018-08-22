@@ -74,7 +74,7 @@ function addRemoveActionHandle() {
                 }
             }
         }
-    }, 250))
+    }, 200))
 }
 
 function addActionHandle() {
@@ -82,7 +82,7 @@ function addActionHandle() {
         if (!initialized)
             return;
 
-        const addActions = document.querySelectorAll(".ma0.ph4.pt3 li");
+        const addActions = document.querySelectorAll("ul.ma0.ph4.pt3 li");
     
         if (addActions.length > 0){
             for (let i = 0; i < addActions.length; i++) {
@@ -153,7 +153,7 @@ function addActionHandle() {
                 }
             }
         }
-    }, 250));
+    }, 200));
 }
 
 function addSearch() {
