@@ -97,7 +97,7 @@ function addActionHandle() {
 
                     const name = ev.target.innerHTML;
 
-                    const tags = document.getElementsByClassName("blip-tag__label");
+                    const tags = document.querySelectorAll(".sidebar-content-header .blip-tag__label");
 
                     for (let k = 0; k < tags.length; k++){
                         if (tags[k].innerText === name){
@@ -118,7 +118,13 @@ function addActionHandle() {
                             correctOption.click()
                             
                             setTimeout(() => {
-                                document.getElementsByClassName("blip-tag-select-color")[0].style.display = "none";
+                                let selector = document.getElementsByClassName("blip-tag-select-color")[0];
+                                if (!selector){
+                                    console.log("Can't find color selector");
+                                    return;
+                                }
+                                                              
+                                selector.style.display = "none";
                                 let colors = document.getElementsByClassName("blip-tag-color-option");
                                 
                                 switch (name) {
