@@ -18,7 +18,10 @@
             "*://portal.blip.ai/*"
         ],
         "js": [
-            "js/builder.js"
+            "js/hook.js",
+            "js/features/search.js",
+            "js/features/autotag.js",
+            "js/core.js"
         ]
     }],
     "permissions": [

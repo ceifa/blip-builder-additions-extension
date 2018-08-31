@@ -1,11 +1,61 @@
 body{
-    width: 200px;
+    width: 220px;
+}
+
+.title{
+    margin-top: 10px;
 }
 
 .section:not(:last-child) {
     padding-bottom: 10px;
 }
 
+.label{
+    position: absolute;
+    margin-top: 2px;
+    margin-left: 5px;
+}
+
+.section label {
+	font-weight: 500;
+}
+
 input[type=color] {
     float: right;
+    background-color: white;
+    border-radius: .25rem;
+}
+
+input[type=checkbox] {
+	display: none;
+}
+
+input[type=checkbox] + label {
+	background-color: #fafafa;
+	border: 1px solid #cacece;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);
+	padding: 9px;
+	border-radius: 3px;
+	display: inline-block;
+	position: relative;
+}
+
+input[type=checkbox] + label:active, input[type=checkbox]:checked + label:active {
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type=checkbox]:checked + label {
+	background-color: #e9ecee;
+	border: 1px solid #adb8c0;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05), inset 15px 10px -12px rgba(255,255,255,0.1);
+	color: #99a1a7;
+}
+
+input[type=checkbox]:checked + label:after {
+	content: '\2714';
+	font-size: 14px;
+	position: absolute;
+	top: 0px;
+	left: 3px;
+	color: #99a1a7;
 }

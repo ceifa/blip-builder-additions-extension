@@ -1,24 +1,44 @@
 <head>
     <link href="../css/popup.css" type="text/css" rel="stylesheet">
 </head>
+
 <body>
-    <h3>
-        Search
-    </h3>
-    <hr>
-    <div>
-        <form id="settings">
-            <div class="section">
-                <input type="checkbox" name="outline_enabled" checked />
-                <label for="outline">Outline Color</label>
-                <input type="color" id="outline" name="outline" value="#ff4a4a" />
-            </div>
-            <div class="section">
-                <input type="checkbox" name="box_enabled"/>
-                <label for="box">Background Color</label>
-                <input type="color" id="box" name="box" />
-            </div>
-        </form>
+    <div class="container">
+        <h3>
+            Features
+        </h3>
+        <hr>
+        <div>
+            <form id="features">
+                <div class="section">
+                    <input type="checkbox" id="autotag_enabled" name="autotag_enabled" checked /><label for="autotag_enabled"></label>
+                    <label class="label" for="autotag_enabled">Auto-Tag</label>
+                </div>
+                <div class="section">
+                    <input type="checkbox" id="search_enabled" name="search_enabled" checked /><label for="search_enabled"></label>
+                    <label class="label" for="search_enabled">Search</label>
+                </div>
+            </form>
+        </div>
+        <h3>
+            Search
+        </h3>
+        <hr>
+        <div>
+            <form id="search_settings">
+                <div class="section">
+                    <input type="checkbox" id="outline_enabled" name="outline_enabled" checked /><label for="outline_enabled"></label>
+                    <label class="label" for="outline_enabled">Outline Color</label>
+                    <input type="color" id="outline" name="outline" value="#ff4a4a" />
+                </div>
+                <div class="section">
+                    <input type="checkbox" id="box_enabled" name="box_enabled" /><label for="box_enabled"></label>
+                    <label class="label" for="box_enabled">Background Color</label>
+                    <input type="color" id="box" name="box" />
+                </div>
+            </form>
+        </div>
     </div>
-    <script src="../js/popup.js"></script>
+    <script src="../js/popup/utils.js"></script>
+    <script src="../js/popup/popup.js"></script>
 </body>
