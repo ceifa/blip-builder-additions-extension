@@ -76,7 +76,7 @@ function refreshFeature(key) {
 function loadSettings() {
     return new Promise((callback) => {
         chrome.storage.sync.get([ "settings" ], (result) => {
-            if (result){
+            if (result && result.settings){
                 settings = JSON.parse(result.settings);
             }
             else {

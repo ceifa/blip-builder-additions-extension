@@ -160,7 +160,7 @@ function addActionTag(tab, name){
                         colors[11].click();
                         break;
                 }
-            }, 10);
+            }, 5);
         }, 10);
     }, 5);
 }

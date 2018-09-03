@@ -1,40 +1,54 @@
 <head>
-    <link href="../css/popup.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/popup.css">
+    <link rel="stylesheet" href="../css/blip-toolkit.css">
+    <script src="../js/popup/blip-toolkit.js"></script>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container bp-ff-nunito">
         <h3>
             Features
         </h3>
-        <hr>
+        <div class="bp-divider-h bp-divider--medium divider"></div>
         <div>
             <form id="features">
                 <div class="section">
-                    <input type="checkbox" id="autotag_enabled" name="autotag_enabled" checked /><label for="autotag_enabled"></label>
-                    <label class="label" for="autotag_enabled">Auto-Tag</label>
+                    <label class="mb2">
+                        <input class="bp-input" id="autotag_enabled" type="checkbox" name="autotag_enabled" checked>
+                        <div class="bp-input--checkbox">&check;</div>
+                        <label class="label" for="autotag_enabled">Auto-Tag</label>
+                    </label>
                 </div>
                 <div class="section">
-                    <input type="checkbox" id="search_enabled" name="search_enabled" checked /><label for="search_enabled"></label>
-                    <label class="label" for="search_enabled">Search</label>
+                    <label class="mb2">
+                        <input class="bp-input" id="search_enabled" type="checkbox" name="search_enabled" checked>
+                        <div class="bp-input--checkbox">&check;</div>
+                        <label class="label" for="search_enabled">Search</label>
+                    </label>
                 </div>
             </form>
         </div>
         <h3>
             Search
         </h3>
-        <hr>
+        <div class="bp-divider-h bp-divider--medium divider"></div>
         <div>
             <form id="search_settings">
                 <div class="section">
-                    <input type="checkbox" id="outline_enabled" name="outline_enabled" checked /><label for="outline_enabled"></label>
-                    <label class="label" for="outline_enabled">Outline Color</label>
-                    <input type="color" id="outline" name="outline" value="#ff4a4a" />
+                    <label class="mb2">
+                        <input class="bp-input" id="outline_enabled" type="checkbox" name="outline_enabled" checked>
+                        <div class="bp-input--checkbox">&check;</div>
+                        <label class="label" for="outline_enabled">Outline Color</label>
+                        <input type="color" id="outline" name="outline" value="#ff4a4a" />
+                    </label>
                 </div>
                 <div class="section">
-                    <input type="checkbox" id="box_enabled" name="box_enabled" /><label for="box_enabled"></label>
-                    <label class="label" for="box_enabled">Background Color</label>
-                    <input type="color" id="box" name="box" />
+                    <label class="mb2">
+                        <input class="bp-input" id="box_enabled" type="checkbox" name="box_enabled" checked>
+                        <div class="bp-input--checkbox">&check;</div>
+                        <label class="label" for="box_enabled">Background Color</label>
+                        <input type="color" id="box" name="box" value="#ff4a4a" />
+                    </label>
                 </div>
             </form>
         </div>
