@@ -6,6 +6,16 @@ function initAutoTag() {
 
 function stopAutoTag() {
     builderObserver.disconnect();
+
+    const tab = document.getElementById("node-content-tab");
+
+    if (tab){
+        const customs = tab.querySelectorAll("li, .icon-delete");
+
+        for (let i = 0; i < customs.length; i++) {
+            customs[i].onclick = null;
+        }
+    }
 }
 
 function createBuilderObserver() {
@@ -46,41 +56,45 @@ function addActionTagHandler(actionList){
     const actions = actionList.getElementsByTagName("li");
 
     for (let i = 0; i < actions.length; i++) {
-        actions[i].onclick = (ev) => {
-            const name = ev.target.textContent;
-            const tab = document.getElementById("node-content-tab");
-            const tags = tab.getElementsByClassName("blip-tag__label");
-
-            for (let k = 0; k < tags.length; k++){
-                if (tags[k].textContent === name){
-                    return;
+        if (!actions[i].onclick){
+            actions[i].onclick = (ev) => {
+                const name = ev.target.textContent;
+                const tab = document.getElementById("node-content-tab");
+                const tags = tab.getElementsByClassName("blip-tag__label");
+    
+                for (let k = 0; k < tags.length; k++){
+                    if (tags[k].textContent === name){
+                        return;
+                    }
                 }
+    
+                addActionTag(tab, name);
             }
-
-            addActionTag(tab, name);
         }
     }
 }
 
 function removeActionTagHandler(actionList){
-    let icons = actionList.getElementsByClassName("icon-delete");
+    const icons = actionList.getElementsByClassName("icon-delete");
 
     for (let i = 0; i < icons.length; i++) {
-        icons[i].onclick = (ev) => {
-            let name = ev.target.parentElement.previousElementSibling.firstElementChild.textContent.trim();
-            let actions = actionList.querySelectorAll(".w-80 span:not(.invalid-action)");
-            
-            let hasMoreActions;
-            for (let k = 0; k < actions.length; k++){
-                hasMoreActions = hasMoreActions || actions[k].textContent.trim() === name;
-            }
+        if (!icons[i].onclick){
+            icons[i].onclick = (ev) => {
+                let name = ev.target.parentElement.previousElementSibling.firstElementChild.textContent.trim();
+                let actions = actionList.querySelectorAll(".w-80 span:not(.invalid-action)");
+                
+                let hasMoreActions;
+                for (let k = 0; k < actions.length; k++){
+                    hasMoreActions = hasMoreActions || actions[k].textContent.trim() === name;
+                }
 
-            if (!hasMoreActions){
-                let tags = document.querySelectorAll('.sidebar-content-header .blip-tag__label');
+                if (!hasMoreActions){
+                    let tags = document.querySelectorAll('.sidebar-content-header .blip-tag__label');
 
-                for (let k = 0; k < tags.length; k++){
-                    if (tags[k].innerText === name) {
-                        tags[k].nextElementSibling.click();
+                    for (let k = 0; k < tags.length; k++){
+                        if (tags[k].innerText === name) {
+                            tags[k].nextElementSibling.click();
+                        }
                     }
                 }
             }
@@ -149,8 +163,4 @@ function addActionTag(tab, name){
             }, 10);
         }, 10);
     }, 5);
-}
-
-function removeActionTag(actionElement){
-    
 }
