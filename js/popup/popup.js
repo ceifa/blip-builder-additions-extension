@@ -1,13 +1,13 @@
 const change = (ev) => {
-    let settings = formToJson();
+    let settings = JSON.parse(formToJson());
     
     chrome.storage.sync.set({ settings });
+
+    const form = closestElement(ev.target, 'form');
 
     chrome.tabs.query({url: '*://portal.blip.ai/*'}, (tabs) => {
         if (tabs.length < 1)
             return;
-
-        let form = closestElement(ev.target, 'form');
 
         for (let tab of tabs){
             chrome.tabs.sendMessage(tab.id, {type: "form-change", form: form.id, input: ev.target.name, settings});

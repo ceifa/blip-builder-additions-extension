@@ -77,7 +77,7 @@ function loadSettings() {
     return new Promise((callback) => {
         chrome.storage.sync.get([ "settings" ], (result) => {
             if (result && result.settings){
-                settings = JSON.parse(result.settings);
+                settings = result.settings;
             }
             else {
                 settings = {
@@ -98,9 +98,9 @@ function loadSettings() {
 chrome.runtime.onMessage.addListener(
     function(message) {
         if (message.type === "form-change"){
-            settings = JSON.parse(message.settings);
+            settings = message.settings;
 
-            if (message.form === "features"){
+            if (message.form === "features_settings"){
                 refreshFeature(message.input);
             }
         }

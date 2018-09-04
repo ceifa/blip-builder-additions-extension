@@ -12,16 +12,14 @@ const formToJson = () => {
 }
 
 const jsonToForm = (json) => {
-    let settings = JSON.parse(json);
-
-    for (let config in settings){
+    for (let config in json){
         let element = document.getElementsByName(config)[0];
 
         if (element){
             if (element.type === 'checkbox')
-                element.checked = settings[config];
+                element.checked = json[config];
             else
-                element.value = settings[config];
+                element.value = json[config];
         }
     }
 }
