@@ -132,35 +132,40 @@ function addActionTag(tab, name){
                     return;
 
                 colorSelector.style.display = "none";
-                let colors = colorSelector.getElementsByClassName("blip-tag-color-option");   
 
-                switch (name) {
-                    case 'Event tracking':
-                    case 'Registro de eventos':
-                        colors[1].click();
-                        break;
-                    case 'Execute script':
-                    case 'Executar script':
-                        colors[3].click();
-                        break;
-                    case 'Manage distribution list':
-                    case 'Gerenciar lista de distribuição':
-                        colors[5].click();
-                        break;
-                    case 'Redirect to service':
-                    case 'Redirecionar a um serviço':
-                        colors[6].click();
-                        break;
-                    case 'Set contact':
-                    case 'Definir contato':
-                        colors[8].click();
-                        break;
-                    case 'Process HTTP':
-                    case 'Requisição HTTP':
-                        colors[11].click();
-                        break;
+                let action = possibleActions.find(a => name === a.name || a.alias.includes(name));
+                let config = action.name.toLowerCase().replace(' ', '-') + '-color';
+
+                let colors = colorSelector.getElementsByClassName("blip-tag-color-option");
+
+                for (let i = 0; i < colors.length; i++) {
+                    let currentColor = colors[i].getAttribute('data-color');
+
+                    if (currentColor === settings[config]){
+                        colors[i].click();
+                    }
                 }
             }, 5);
         }, 10);
     }, 5);
 }
+
+const possibleActions = [{
+        name: 'Event tracking',
+        alias: [ 'Registro de eventos' ]
+    },{
+        name: 'Execute script',
+        alias: [ 'Executar script' ]
+    },{
+        name: 'Manage distribution list',
+        alias: [ 'Gerenciar lista de distribuição' ]
+    },{
+        name: 'Redirect to service',
+        alias: [ 'Redirecionar a um serviço' ]
+    },{
+        name: 'Set contact',
+        alias: [ 'Definir contato' ]
+    },{
+        name: 'Process HTTP',
+        alias: [ 'Requisição HTTP' ]
+    }]

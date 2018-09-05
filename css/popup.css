@@ -23,3 +23,41 @@ input[type="color"] {
   background-color: white;
   border-radius: 0.25rem;
 }
+
+.blip-tag-select-color {
+  background: #ddd;
+  padding: 5px;
+  width: 130px;
+  box-sizing: unset;
+  right: 10;
+  margin-top: 12.4px !important;
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: right top;
+}
+
+.blip-tag-select-color.visible {
+  transition: opacity 0.5s;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tag-section {
+  height: 18px;
+  margin-bottom: 10px;
+}
+
+.color-picker-action {
+  float: right;
+  background-color: black;
+  border-radius: 10px;
+  width: 18px;
+  height: 100%;
+  margin-right: 10px;
+}
+
+.blip-tag-select-color:before {
+  border-bottom-color: #ddd;
+  left: unset;
+  right: 8.7px;
+}

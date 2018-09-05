@@ -20,6 +20,8 @@ const jsonToForm = (json) => {
                 element.checked = json[config];
             else
                 element.value = json[config];
+
+            element.dispatchEvent(new Event("change"));
         }
     }
 }

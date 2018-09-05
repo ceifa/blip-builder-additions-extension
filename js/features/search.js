@@ -62,12 +62,12 @@ function executeSearch(filter){
 }
 
 function colorizeBlock(block, match){
-    if (match && settings.outline_enabled)
+    if (match && settings['outline-enabled'])
         block.style.boxShadow = `0 0 0 4px ${settings.outline}`;
     else
         block.style.boxShadow = "none";
 
-    if (match && settings.box_enabled){
+    if (match && settings['box-enabled']){
         block.style.backgroundColor = settings.box;
         block.style.backgroundImage = "none";
     }
@@ -80,7 +80,7 @@ function colorizeBlock(block, match){
 }
 
 hook.add("form-change", (form) => {
-    if (form === "search_settings") {
+    if (form === "search-settings") {
         executeSearch(searchInput && searchInput.value && searchInput.value.toLowerCase());
     }
 });

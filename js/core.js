@@ -50,7 +50,7 @@ function init() {
 
 function startFeatures() {
     for (let key in features){
-        if (settings[key + "_enabled"]){
+        if (settings[key + "-enabled"]){
             features[key].init();
         }
     }
@@ -63,7 +63,7 @@ function stopFeatures() {
 }
 
 function refreshFeature(key) {
-    let feature = key.replace("_enabled", "");
+    let feature = key.replace("-enabled", "");
 
     if (settings[key]){
         features[feature].init();
@@ -80,14 +80,7 @@ function loadSettings() {
                 settings = result.settings;
             }
             else {
-                settings = {
-                    autotag_enabled: true,
-                    search_enabled: true,
-                    box: "#f6ff85",
-                    box_enabled: false,
-                    outline: "#ff4a4a",
-                    outline_enabled: true
-                }
+                settings = defaultSettings;
             }
     
             callback();
@@ -95,16 +88,14 @@ function loadSettings() {
     });
 }
 
-chrome.runtime.onMessage.addListener(
-    function(message) {
-        if (message.type === "form-change"){
-            settings = message.settings;
+chrome.runtime.onMessage.addListener(function(message) {
+    if (message.type === "form-change"){
+        settings = message.settings;
 
-            if (message.form === "features_settings"){
-                refreshFeature(message.input);
-            }
+        if (message.form === "features-settings"){
+            refreshFeature(message.input);
         }
 
         hook.call(message.type, message.form, message.input);
     }
-);
+});

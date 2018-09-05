@@ -18,6 +18,7 @@
             "*://portal.blip.ai/*"
         ],
         "js": [
+            "js/shared/shared.js",
             "js/hook.js",
             "js/features/search.js",
             "js/features/autotag.js",
