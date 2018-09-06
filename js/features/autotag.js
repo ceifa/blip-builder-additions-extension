@@ -146,7 +146,7 @@ function addActionTag(tab, name){
                         colors[i].click();
                     }
                 }
-            }, 5);
+            }, 10);
         }, 10);
     }, 5);
 }
