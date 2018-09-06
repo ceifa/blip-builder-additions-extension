@@ -1,71 +1,40 @@
-let actualTagColorSettings;
-
-const change = (ev) => {
-    let settings = JSON.parse(formToJson());
-    
-    chrome.storage.sync.set({ settings });
-
-    const form = closestElement(ev.target, 'form');
-
-    chrome.tabs.query({url: '*://portal.blip.ai/*'}, (tabs) => {
-        if (tabs.length < 1)
-            return;
-
-        for (let tab of tabs){
-            chrome.tabs.sendMessage(tab.id, {type: "form-change", form: form.id, input: ev.target.name, settings});
-        }
-    });
-}
-
-const formInputs = document.querySelectorAll('input, select, textarea')
-
-for (let i = 0; i < formInputs.length; i++) {
-    formInputs[i].addEventListener("input", change, false);
-}
-
-document.body.onload = () => {
-    loadData();
-}
-
-let autoTagForm = document.getElementById('autotag-settings');
-let autoTagInputs = autoTagForm.getElementsByTagName('input');
-
-for (let i = 0; i < autoTagInputs.length; i++){
-    autoTagInputs[i].addEventListener("change", (ev) => {
-        let viewId = ev.target.name.replace('-color', '-view');
-        let view = document.getElementById(viewId);
-        view.style.backgroundColor = ev.target.value;
-    }, false);
-}
-
 (() => {
+    loadData();
+    loadAutoTagInputHandler();
     loadColorInputPickers();
     loadColorPickupHandler();
+
+    document.body.onclick = () => {
+        let visibles = document.getElementsByClassName('visible');
+        Array.from(visibles).forEach(el => el.classList.remove('visible'));
+    }
 })()
+
+function loadAutoTagInputHandler() {
+    let autoTagForm = document.getElementById('autotag-settings');
+    let autoTagInputs = autoTagForm.getElementsByTagName('input');
+
+    for (let i = 0; i < autoTagInputs.length; i++){
+        autoTagInputs[i].addEventListener("change", (ev) => {
+            let viewId = ev.target.name.replace('-color', '-view');
+            let view = document.getElementById(viewId);
+            view.style.backgroundColor = ev.target.value;
+        }, false);
+    }
+}
 
 function loadColorPickupHandler(){
     let colorOptions = document.getElementsByClassName('blip-tag-color-option');
 
     for (let i = 0; i < colorOptions.length; i++) {
         colorOptions[i].onclick = (ev) => {
-            if (actualTagColorSettings) {
-                let input = document.getElementById(actualTagColorSettings + '-color');
+            if (metadata.actualActionClicked) {
+                let input = document.getElementById(metadata.actualActionClicked + '-color');
                 input.value = ev.target.getAttribute('data-color');
                 input.dispatchEvent(new Event("change"));
                 input.dispatchEvent(new Event("input"));
             }
-
-            ev.stopPropagation();
         }
-    }
-    
-    document.getElementById('tag-color-selector').onclick = (ev) => {
-        ev.stopPropagation();
-    }
-
-    document.body.onclick = () => {
-        let selector = document.getElementById('tag-color-selector');
-        selector.classList.remove('visible');
     }
 }
 
@@ -79,14 +48,9 @@ function loadColorInputPickers() {
             let selector = document.getElementById('tag-color-selector');
             selector.style.top = heightPos;
             
-            if (selector.classList.contains('visible')) {
-                selector.classList.remove('visible');
-            }
-            else {
-                selector.classList.add('visible');
-            }
+            manageVisible(selector);
 
-            actualTagColorSettings = picker.id.replace('-view', '');
+            metadata.actualActionClicked = picker.id.replace('-view', '');
             ev.stopPropagation();
         }
         
@@ -130,6 +94,31 @@ function addBots(botIdentifierList){
         btn.classList = "bp-btn bp-btn--text-only bp-btn--bot bot-btn";
         btn.textContent = identifier;
 
+        btn.onclick = (ev) => {
+            let heightPos = btn.offsetTop - 40;
+
+            let options = document.getElementById('bot-options-list');
+            options.style.top = heightPos;
+            
+            manageVisible(options);
+
+            metadata.botIdentifier = ev.target.textContent;
+            ev.stopPropagation();
+        }
+
         bots.append(btn);
     }
+}
+
+function manageVisible(el){
+    if (el.classList.contains('visible')) {
+        el.classList.remove('visible');
+    }
+    else {
+        el.classList.add('visible');
+    }
+}
+
+function repairTagsTabValidation(tab){
+    return tab.url.includes(metadata.botIdentifier);
 }

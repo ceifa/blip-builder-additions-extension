@@ -36,10 +36,10 @@ input[type="color"] {
   transform-origin: right top;
 }
 
-.blip-tag-select-color.visible {
-  transition: opacity 0.5s;
-  opacity: 1;
-  transform: scale(1);
+.visible {
+  transition: opacity 0.5s !important;
+  opacity: 1 !important;
+  transform: scale(1) !important;
 }
 
 .tag-section {
@@ -60,4 +60,29 @@ input[type="color"] {
   border-bottom-color: #ddd;
   left: unset;
   right: 8.7px;
+}
+
+.dropdown-option:hover {
+  background-color: #ddd;
+}
+
+.dropdown-option {
+  padding: 5px 0px 5px 10px;
+  cursor: pointer;
+}
+
+.dropdown-list-ul {
+  list-style-type: none;
+  padding: 0px;
+  margin: 8px 0px;
+}
+
+#bot-options-list {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.75);
+  width: 180px;
+  opacity: 0;
+  transform: scale(0);
+  transform-origin: center bottom;
 }

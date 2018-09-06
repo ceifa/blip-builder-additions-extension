@@ -12,3 +12,23 @@ const defaultSettings = {
     'set-contact-color': '#FF1E90',
     'process-http-color': '#7762E3'
 };
+
+const possibleActions = [{
+        name: 'Event tracking',
+        alias: [ 'Registro de eventos', 'TrackEvent' ]
+    },{
+        name: 'Execute script',
+        alias: [ 'Executar script', 'ExecuteScript' ]
+    },{
+        name: 'Manage distribution list',
+        alias: [ 'Gerenciar lista de distribuição', 'ManageList' ]
+    },{
+        name: 'Redirect to service',
+        alias: [ 'Redirecionar a um serviço', 'Redirect' ]
+    },{
+        name: 'Set contact',
+        alias: [ 'Definir contato', 'MergeContact' ]
+    },{
+        name: 'Process HTTP',
+        alias: [ 'Requisição HTTP', 'ProcessHttp' ]
+    }];

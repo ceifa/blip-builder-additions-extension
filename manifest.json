@@ -1,6 +1,6 @@
 {
     "name": "Builder Addictions",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "manifest_version": 2,
     "description": "Extensão para facilitar a visualização das funcionalidades do Blip Builder.",
     "icons": {
@@ -22,12 +22,18 @@
             "js/hook.js",
             "js/features/search.js",
             "js/features/autotag.js",
+            "js/features/repairtag.js",
             "js/core.js"
         ]
     }],
+    "background": {
+        "scripts": ["js/background.js"],
+        "persistent": false
+    },
     "permissions": [
         "*://portal.blip.ai/*",
         "storage",
-        "tabs"
+        "tabs",
+        "downloads"
     ]
 }

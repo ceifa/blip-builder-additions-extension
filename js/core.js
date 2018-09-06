@@ -89,13 +89,18 @@ function loadSettings() {
 }
 
 chrome.runtime.onMessage.addListener(function(message) {
-    if (message.type === "form-change"){
+    if (message.type === "form-change") {
         settings = message.settings;
 
-        if (message.form === "features-settings"){
+        if (message.form === "features-settings") {
             refreshFeature(message.input);
         }
 
         hook.call(message.type, message.form, message.input);
+    }
+    else if (message.type === "btn-clicked") {
+        metadata = message.metadata;
+
+        hook.call(message.type, message.btn);
     }
 });

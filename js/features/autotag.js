@@ -5,7 +5,8 @@ function initAutoTag() {
 }
 
 function stopAutoTag() {
-    builderObserver.disconnect();
+    if (builderObserver)
+        builderObserver.disconnect();
 
     const tab = document.getElementById("node-content-tab");
 
@@ -149,23 +150,3 @@ function addActionTag(tab, name){
         }, 10);
     }, 5);
 }
-
-const possibleActions = [{
-        name: 'Event tracking',
-        alias: [ 'Registro de eventos' ]
-    },{
-        name: 'Execute script',
-        alias: [ 'Executar script' ]
-    },{
-        name: 'Manage distribution list',
-        alias: [ 'Gerenciar lista de distribuição' ]
-    },{
-        name: 'Redirect to service',
-        alias: [ 'Redirecionar a um serviço' ]
-    },{
-        name: 'Set contact',
-        alias: [ 'Definir contato' ]
-    },{
-        name: 'Process HTTP',
-        alias: [ 'Requisição HTTP' ]
-    }]
