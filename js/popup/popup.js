@@ -8,7 +8,14 @@
         let visibles = document.getElementsByClassName('visible');
         Array.from(visibles).forEach(el => el.classList.remove('visible'));
     }
+
+    document.getElementById('reset-configs').onclick = resetConfigs;
 })()
+
+function resetConfigs() {
+    jsonToForm(defaultSettings);
+    chrome.storage.sync.set({ defaultSettings });
+}
 
 function loadAutoTagInputHandler() {
     let autoTagForm = document.getElementById('autotag-settings');

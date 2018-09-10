@@ -86,3 +86,8 @@ input[type="color"] {
   transform: scale(0);
   transform-origin: center bottom;
 }
+
+#reset-configs {
+  float: right;
+  cursor: pointer;
+}
