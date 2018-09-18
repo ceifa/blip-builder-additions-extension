@@ -6,8 +6,13 @@ hook.add("btn-clicked", (btn) => {
 
 async function repairCurrentBotTags() {
     let authKey = await getBotAuthKey(metadata.botIdentifier);
+    console.log("Getting auth key...");
+
     let botFlow = await getBotFlow(authKey);
+    console.log("Getting bot flow...");
+    
     botFlow = repairTags(botFlow);
+    console.log("Repairing tags...");
 
     chrome.runtime.sendMessage({
         type: 'download-file',
@@ -15,6 +20,7 @@ async function repairCurrentBotTags() {
         content: JSON.stringify(botFlow),
         fileName: `fixed-tags-${metadata.botIdentifier}.json`
     });
+    console.log("Downloading...");
 }
 
 function getBotAuthKey(identifier) {

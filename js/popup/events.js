@@ -7,7 +7,7 @@ const change = (ev) => {
 
     const form = closestElement(ev.target, 'form');
 
-    chrome.tabs.query({url: '*://portal.blip.ai/*'}, (tabs) => {
+    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
         if (tabs.length < 1)
             return;
 
@@ -18,7 +18,7 @@ const change = (ev) => {
 }
 
 const clicked = (ev) => {
-    chrome.tabs.query({url: '*://portal.blip.ai/*'}, (tabs) => {
+    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
         if (tabs.length < 1)
             return;
 
