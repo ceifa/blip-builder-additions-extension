@@ -20,7 +20,7 @@ async function repairCurrentBotTags() {
 function getBotAuthKey(identifier) {
     return new Promise((result) => {
         let iframe = document.createElement('iframe');
-        iframe.src = `https://portal.blip.ai/#/application/detail/${identifier}/configurations/apikey`;
+        iframe.src = `https://${location.host}/#/application/detail/${identifier}/configurations/apikey`;
         iframe.hidden = 'hidden';
     
         iframe.onload = () => {

@@ -14,7 +14,15 @@
 
 function resetConfigs() {
     jsonToForm(defaultSettings);
-    chrome.storage.sync.set({ defaultSettings });
+    chrome.storage.sync.set({ settings: defaultSettings });
+    chrome.tabs.query({url: '*://portal.blip.ai/*'}, (tabs) => {
+        if (tabs.length < 1)
+            return;
+
+        for (let tab of tabs){
+            chrome.tabs.sendMessage(tab.id, {type: "form-change", defaultSettings});
+        }
+    });
 }
 
 function loadAutoTagInputHandler() {
@@ -70,7 +78,7 @@ function loadData(){
         jsonToForm(settings);
     });
 
-    chrome.tabs.query({url: '*://portal.blip.ai/*'}, (tabs) => {
+    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
         if (tabs.length < 1)
             return;
 
