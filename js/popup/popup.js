@@ -3,14 +3,32 @@
     loadAutoTagInputHandler();
     loadColorInputPickers();
     loadColorPickupHandler();
+    loadSettings();
 
     document.body.onclick = () => {
         let visibles = document.getElementsByClassName('visible');
         Array.from(visibles).forEach(el => el.classList.remove('visible'));
     }
-
-    document.getElementById('reset-configs').onclick = resetConfigs;
 })()
+
+function loadSettings() {
+    let settingsIcons = document.getElementsByClassName('settings-icon');
+
+    for (let i = 0; i < settingsIcons.length; i++) {
+        settingsIcons[i].onclick = (ev) => {
+            let featureSettings = document.getElementsByClassName('feature-settings');
+            
+            for (let i = 0; i < featureSettings.length; i++) {
+                featureSettings[i].style.display = 'none';
+            }
+
+            let config = ev.target.parentElement.getAttribute('config');
+            let correctSettings = document.getElementById(config + '-settings-section');
+
+            correctSettings.style.display = 'block';
+        }
+    }
+}
 
 function resetConfigs() {
     jsonToForm(defaultSettings);

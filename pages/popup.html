@@ -13,23 +13,25 @@
         <div class="bp-divider-h bp-divider--medium divider"></div>
         <div>
             <form id="features-settings">
-                <div class="section">
+                <div class="section" config="autotag">
                     <label class="mb2">
                         <input class="bp-input" id="autotag-enabled" type="checkbox" name="autotag-enabled" checked>
                         <div class="bp-input--checkbox">&check;</div>
                         <label class="label" for="autotag-enabled">Auto-Tag</label>
                     </label>
+                    <img src="../img/gear.png" class="settings-icon">
                 </div>
-                <div class="section">
+                <div class="section" config="search">
                     <label class="mb2">
                         <input class="bp-input" id="search-enabled" type="checkbox" name="search-enabled" checked>
                         <div class="bp-input--checkbox">&check;</div>
                         <label class="label" for="search-enabled">Search</label>
                     </label>
+                    <img src="../img/gear.png" class="settings-icon">
                 </div>
             </form>
         </div>
-        <div id="autotag-settings-section" class="autotag-settings">
+        <div id="autotag-settings-section" class="autotag-settings feature-settings">
             <h3>
                 Auto-Tag
             </h3>
@@ -65,6 +67,11 @@
                         <span>Process HTTP</span>
                         <span class="color-picker-action" id="process-http-view"></span>
                         <input type="hidden" name="process-http-color" id="process-http-color" />
+                    </div>
+                    <div class="tag-section">
+                        <span>Set Variable</span>
+                        <span class="color-picker-action" id="set-variable-view"></span>
+                        <input type="hidden" name="set-variable-color" id="set-variable-color" />
                     </div>
                 </form>
             </div>

@@ -113,8 +113,10 @@ function addActionTag(tab, name){
 
     const tagMenu = header.getElementsByTagName("blip-tags")[0];
 
+    let action = possibleActions.find(a => name === a.name || a.alias.includes(name));
+
     let input = tagMenu.getElementsByTagName("input")[0];
-    input.value = name;
+    input.value = action.name;
 
     setTimeout(() => {
         input.dispatchEvent(new Event("input"));
@@ -134,7 +136,6 @@ function addActionTag(tab, name){
 
                 colorSelector.style.display = "none";
 
-                let action = possibleActions.find(a => name === a.name || a.alias.includes(name));
                 let config = action.name.toLowerCase().replace(' ', '-') + '-color';
 
                 let colors = colorSelector.getElementsByClassName("blip-tag-color-option");

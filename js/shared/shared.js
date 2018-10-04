@@ -10,7 +10,8 @@ const defaultSettings = {
     'manage-distribution-list-color': '#1EDEFF',
     'redirect-to-service-color': '#1EA1FF',
     'set-contact-color': '#FF1E90',
-    'process-http-color': '#7762E3'
+    'process-http-color': '#7762E3',
+    'set-variable-color': '#FF4A1E'
 };
 
 const possibleActions = [{
@@ -31,4 +32,7 @@ const possibleActions = [{
     },{
         name: 'Process HTTP',
         alias: [ 'Requisição HTTP', 'ProcessHttp' ]
+    },{
+        name: 'Set variable',
+        alias: [ 'Definir variável', 'SetVariable' ]
     }];
