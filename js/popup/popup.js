@@ -1,9 +1,28 @@
-(() => {
-    loadData();
-    loadAutoTagInputHandler();
-    loadColorInputPickers();
-    loadColorPickupHandler();
-})()
+function loadData(){
+    chrome.storage.sync.get([ 'settings' ], (result) => {
+        let settings = !result || Object.keys(result).length === 0 ? defaultSettings : result.settings;            
+        jsonToForm(settings);
+    });
+
+    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
+        if (tabs.length < 1)
+            return;
+
+        let identifiers = new Set();
+
+        for (let tab of tabs){
+            const getIdentifierRgx = /application\/detail\/(.*?)\//g;
+            let rgxResult = getIdentifierRgx.exec(tab.url);
+            
+            if (rgxResult && rgxResult.length == 2){
+                identifiers.add(rgxResult[1]);
+            }
+        }
+
+        if (identifiers.size > 0)
+            addBots(identifiers);
+    });
+};
 
 function hideVisibles() {
     let visibles = document.getElementsByClassName('visible');
@@ -36,77 +55,32 @@ function resetConfigs() {
     });
 }
 
-function loadAutoTagInputHandler() {
-    let autoTagForm = document.getElementById('autotag-settings');
-    let autoTagInputs = autoTagForm.getElementsByTagName('input');
+function autoTagChanged(ev){
+    let viewId = ev.target.name.replace('-color', '-view');
+    let view = document.getElementById(viewId);
+    view.style.backgroundColor = ev.target.value;
+}
 
-    for (let i = 0; i < autoTagInputs.length; i++){
-        autoTagInputs[i].addEventListener("change", (ev) => {
-            let viewId = ev.target.name.replace('-color', '-view');
-            let view = document.getElementById(viewId);
-            view.style.backgroundColor = ev.target.value;
-        }, false);
+function colorClicked(ev) {
+    if (metadata.actualActionClicked) {
+        let input = document.getElementById(metadata.actualActionClicked + '-color');
+        input.value = ev.target.getAttribute('data-color');
+        input.dispatchEvent(new Event("change"));
+        input.dispatchEvent(new Event("input"));
     }
 }
 
-function loadColorPickupHandler(){
-    let colorOptions = document.getElementsByClassName('blip-tag-color-option');
+function colorPickupClicked(ev) {
+    let picker = ev.target;
+    let heightPos = picker.offsetTop + 20;
 
-    for (let i = 0; i < colorOptions.length; i++) {
-        colorOptions[i].onclick = (ev) => {
-            if (metadata.actualActionClicked) {
-                let input = document.getElementById(metadata.actualActionClicked + '-color');
-                input.value = ev.target.getAttribute('data-color');
-                input.dispatchEvent(new Event("change"));
-                input.dispatchEvent(new Event("input"));
-            }
-        }
-    }
-}
-
-function loadColorInputPickers() {
-    let pickers = document.getElementsByClassName('color-picker-action');
-    for (let i = 0; i < pickers.length; i++) {
-        pickers[i].onclick = (ev) => {
-            let picker = ev.target;
-            let heightPos = picker.offsetTop + 20;
+    let selector = document.getElementById('tag-color-selector');
+    selector.style.top = heightPos;
     
-            let selector = document.getElementById('tag-color-selector');
-            selector.style.top = heightPos;
-            
-            manageVisible(selector);
+    manageVisible(selector);
 
-            metadata.actualActionClicked = picker.id.replace('-view', '');
-            ev.stopPropagation();
-        }
-        
-    }
-}
-
-function loadData(){
-    chrome.storage.sync.get([ 'settings' ], (result) => {
-        let settings = !result || Object.keys(result).length === 0 ? defaultSettings : result.settings;            
-        jsonToForm(settings);
-    });
-
-    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
-        if (tabs.length < 1)
-            return;
-
-        let identifiers = new Set();
-
-        for (let tab of tabs){
-            const getIdentifierRgx = /application\/detail\/(.*?)\//g;
-            let rgxResult = getIdentifierRgx.exec(tab.url);
-            
-            if (rgxResult.length == 2){
-                identifiers.add(rgxResult[1]);
-            }
-        }
-
-        if (identifiers.size > 0)
-            addBots(identifiers);
-    });
+    metadata.actualActionClicked = picker.id.replace('-view', '');
+    ev.stopPropagation();
 }
 
 function addBots(botIdentifierList){
@@ -143,6 +117,18 @@ function manageVisible(el){
     else {
         el.classList.add('visible');
     }
+}
+
+function repairTags(ev) {
+    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
+        if (tabs.length < 1)
+            return;
+
+        for (let tab of tabs){
+            if (repairTagsTabValidation(tab))
+                chrome.tabs.sendMessage(tab.id, {type: "btn-clicked", btn: ev.target.id, metadata});
+        }
+    });
 }
 
 function repairTagsTabValidation(tab){

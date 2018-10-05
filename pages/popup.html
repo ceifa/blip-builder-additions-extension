@@ -40,38 +40,38 @@
                 <form id="autotag-settings">
                     <div class="tag-section">
                         <span>Execute script</span>
-                        <span class="color-picker-action" id="execute-script-view"></span>
-                        <input type="hidden" name="execute-script-color" id="execute-script-color" />
+                        <span class="color-picker-action event-handler" id="execute-script-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="execute-script-color" id="execute-script-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Event tracking</span>
-                        <span class="color-picker-action" id="event-tracking-view"></span>
-                        <input type="hidden" name="event-tracking-color" id="event-tracking-color" />
+                        <span class="color-picker-action event-handler" id="event-tracking-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="event-tracking-color" id="event-tracking-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Manage distribution list</span>
-                        <span class="color-picker-action" id="manage-distribution-list-view"></span>
-                        <input type="hidden" name="manage-distribution-list-color" id="manage-distribution-list-color" />
+                        <span class="color-picker-action event-handler" id="manage-distribution-list-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="manage-distribution-list-color" id="manage-distribution-list-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Redirect to service</span>
-                        <span class="color-picker-action" id="redirect-to-service-view"></span>
-                        <input type="hidden" name="redirect-to-service-color" id="redirect-to-service-color" />
+                        <span class="color-picker-action event-handler" id="redirect-to-service-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="redirect-to-service-color" id="redirect-to-service-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Set contact</span>
-                        <span class="color-picker-action" id="set-contact-view"></span>
-                        <input type="hidden" name="set-contact-color" id="set-contact-color" />
+                        <span class="color-picker-action event-handler" id="set-contact-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="set-contact-color" id="set-contact-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Process HTTP</span>
-                        <span class="color-picker-action" id="process-http-view"></span>
-                        <input type="hidden" name="process-http-color" id="process-http-color" />
+                        <span class="color-picker-action event-handler" id="process-http-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="process-http-color" id="process-http-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Set Variable</span>
-                        <span class="color-picker-action" id="set-variable-view"></span>
-                        <input type="hidden" name="set-variable-color" id="set-variable-color" />
+                        <span class="color-picker-action event-handler" id="set-variable-view" event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="set-variable-color" id="set-variable-color" class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                 </form>
             </div>
@@ -115,22 +115,22 @@
     </div>
     <div id="bot-options-list">
         <ul class="dropdown-list-ul bp-ff-nunito bp-fs-6">
-            <li class="dropdown-option click-handler" propagation-condition="repairTagsTabValidation" id="repair-tags">Repair Tags</li>
+            <li class="dropdown-option event-handler" event-onclick="repairTags" id="repair-tags">Repair Tags</li>
         </ul>
     </div>
     <ul tabindex="0" class="blip-tag-select-color" id="tag-color-selector">
-        <li style="background: #0CC7CB" data-color="#0CC7CB" class="blip-tag-color-option"></li>
-        <li style="background: #FF4A1E" data-color="#FF4A1E" class="blip-tag-color-option"></li>
-        <li style="background: #FF6F1E" data-color="#FF6F1E" class="blip-tag-color-option"></li>
-        <li style="background: #FF961E" data-color="#FF961E" class="blip-tag-color-option"></li>
-        <li style="background: #1EDEFF" data-color="#1EDEFF" class="blip-tag-color-option"></li>
-        <li style="background: #1EA1FF" data-color="#1EA1FF" class="blip-tag-color-option"></li>
-        <li style="background: #61D36F" data-color="#61D36F" class="blip-tag-color-option"></li>
-        <li style="background: #37C5AB" data-color="#37C5AB" class="blip-tag-color-option"></li>
-        <li style="background: #7762E3" data-color="#7762E3" class="blip-tag-color-option"></li>
-        <li style="background: #EA4D9C" data-color="#EA4D9C" class="blip-tag-color-option"></li>
-        <li style="background: #FC91AE" data-color="#FC91AE" class="blip-tag-color-option"></li>
-        <li style="background: #FF1E90" data-color="#FF1E90" class="blip-tag-color-option"></li>
+        <li style="background: #0CC7CB" data-color="#0CC7CB" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #FF4A1E" data-color="#FF4A1E" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #FF6F1E" data-color="#FF6F1E" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #FF961E" data-color="#FF961E" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #1EDEFF" data-color="#1EDEFF" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #1EA1FF" data-color="#1EA1FF" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #61D36F" data-color="#61D36F" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #37C5AB" data-color="#37C5AB" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #7762E3" data-color="#7762E3" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #EA4D9C" data-color="#EA4D9C" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #FC91AE" data-color="#FC91AE" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
+        <li style="background: #FF1E90" data-color="#FF1E90" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
     </ul>
     <script src="../js/shared/shared.js"></script>
     <script src="../js/popup/utils.js"></script>
