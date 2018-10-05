@@ -39,7 +39,7 @@ input[type="color"] {
   margin-top: 12.4px !important;
   opacity: 0;
   transform: scale(0);
-  transform-origin: right top;
+  transform-origin: right bottom;
 }
 
 .visible {
@@ -70,9 +70,12 @@ input[type="color"] {
 }
 
 .blip-tag-select-color:before {
-  border-bottom-color: #ddd;
+  border-bottom: none;
+  border-top: 16px solid #ddd;
   left: unset;
   right: 8.7px;
+  top: unset;
+  bottom: -16px;
 }
 
 .dropdown-option:hover {

@@ -72,7 +72,7 @@ function colorClicked(ev) {
 
 function colorPickupClicked(ev) {
     let picker = ev.target;
-    let heightPos = picker.offsetTop + 20;
+    let heightPos = picker.offsetTop - 125;
 
     let selector = document.getElementById('tag-color-selector');
     selector.style.top = heightPos;
