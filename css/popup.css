@@ -115,3 +115,22 @@ input[type="color"] {
 .feature-settings.feature-visible {
   display: block;
 }
+
+.add-button {
+  width: 100%;
+  height: unset;
+  line-height: 2rem;
+  margin-bottom: 5px;
+}
+
+.bp-input-wrapper {
+  height: unset;
+  width: 43%;
+  float: left;
+  margin: 0px 0px 8px 3px;
+  padding: .25rem;
+}
+
+.bp-label {
+  height: 0.8rem;
+}

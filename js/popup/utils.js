@@ -2,9 +2,21 @@ const formToJson = () => {
     let obj = {};
     let elements = document.querySelectorAll('input, select, textarea');
 
-    for(let i = 0; i < elements.length; ++i) {
-        if(elements[i].name) {
-            obj[elements[i].name] = elements[i].type === 'checkbox' ? elements[i].checked :  elements[i].value;
+    for(let element of elements) {
+        if(element.name) {
+            let value = element.type === 'checkbox' ? element.checked :  element.value;
+
+            if (obj[element.name]){
+                if (obj[element.name].constructor === Array){
+                    obj[element.name] = [value, ...obj[element.name]];
+                }
+                else{
+                    obj[element.name] = [value];
+                }
+            }
+            else {
+                obj[element.name] = value;
+            }
         }
     }
 
@@ -13,17 +25,30 @@ const formToJson = () => {
 
 const jsonToForm = (json) => {
     for (let config in json){
-        let element = document.getElementsByName(config)[0];
+        let elements = document.getElementsByName(config);
 
-        if (element){
-            if (element.type === 'checkbox')
-                element.checked = json[config];
-            else
-                element.value = json[config];
-
-            element.dispatchEvent(new Event("change"));
+        if (elements && elements.length > 0){
+            if (json[config].constructor === Array){
+                for (let i = 0; i < elements.length; i++) {
+                    if (json[config][i]){
+                        setElementValue(json[config][i]);
+                    }
+                }
+            }
+            else {
+                setElementValue(elements[0], json[config])
+            }
         }
     }
+}
+
+const setElementValue = (element, value) => {
+    if (element.type === 'checkbox')
+        element.checked = value;
+    else
+        element.value = value;
+
+    element.dispatchEvent(new Event("change"));
 }
 
 const closestElement = (el, selector) => {

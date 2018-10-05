@@ -29,6 +29,16 @@ function hideVisibles() {
     Array.from(visibles).forEach(el => el.classList.remove('visible'));
 }
 
+function addExtrasInputs() {
+    let elementClone = document.getElementById('key-value-inputs').cloneNode(true);
+    Array.from(elementClone.getElementsByTagName('input')).forEach(el => el.value = '');
+
+    const form = document.getElementById('autotrackextras-settings');
+
+    form.appendChild(elementClone);
+    reloadEvents();
+}
+
 function displaySettings(ev) {
     let featureSettings = document.getElementsByClassName('feature-settings');
 

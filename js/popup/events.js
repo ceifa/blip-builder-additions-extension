@@ -17,7 +17,7 @@ const inputChanged = (ev) => {
     });
 }
 
-document.body.onload = () => {
+const reloadEvents = () => {
     let eventHandlerNodes = document.getElementsByClassName('event-handler');
     const attributeKey = 'event-';
 
@@ -35,8 +35,11 @@ document.body.onload = () => {
     let formInputs = document.querySelectorAll('input, select, textarea');
 
     for (let input of formInputs) {
-        input.onclick = inputChanged;
+        input.onchange = inputChanged;
     }
+}
 
+document.body.onload = () => {
+    reloadEvents();
     loadData();
 };

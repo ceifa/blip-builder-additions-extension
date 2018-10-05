@@ -29,6 +29,15 @@
                     </label>
                     <img src="../img/gear.png" class="settings-icon event-handler" event-onclick="displaySettings">
                 </div>
+                <div class="section" config="autotrackextras">
+                    <label class="mb2">
+                        <input class="bp-input" id="autotrackextras-enabled" type="checkbox" name="autotrackextras-enabled"
+                            checked>
+                        <div class="bp-input--checkbox">&check;</div>
+                        <label class="label" for="autotrackextras-enabled">Auto-Track Extras</label>
+                    </label>
+                    <img src="../img/gear.png" class="settings-icon event-handler" event-onclick="displaySettings">
+                </div>
             </form>
         </div>
         <div id="autotag-settings-section" class="autotag-settings feature-settings">
@@ -41,37 +50,45 @@
                     <div class="tag-section">
                         <span>Execute script</span>
                         <span class="color-picker-action event-handler" id="execute-script-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="execute-script-color" id="execute-script-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <input type="hidden" name="execute-script-color" id="execute-script-color" class="event-handler"
+                            event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Event tracking</span>
                         <span class="color-picker-action event-handler" id="event-tracking-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="event-tracking-color" id="event-tracking-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <input type="hidden" name="event-tracking-color" id="event-tracking-color" class="event-handler"
+                            event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Manage distribution list</span>
-                        <span class="color-picker-action event-handler" id="manage-distribution-list-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="manage-distribution-list-color" id="manage-distribution-list-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <span class="color-picker-action event-handler" id="manage-distribution-list-view"
+                            event-onclick="colorPickupClicked"></span>
+                        <input type="hidden" name="manage-distribution-list-color" id="manage-distribution-list-color"
+                            class="event-handler" event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Redirect to service</span>
                         <span class="color-picker-action event-handler" id="redirect-to-service-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="redirect-to-service-color" id="redirect-to-service-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <input type="hidden" name="redirect-to-service-color" id="redirect-to-service-color" class="event-handler"
+                            event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Set contact</span>
                         <span class="color-picker-action event-handler" id="set-contact-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="set-contact-color" id="set-contact-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <input type="hidden" name="set-contact-color" id="set-contact-color" class="event-handler"
+                            event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Process HTTP</span>
                         <span class="color-picker-action event-handler" id="process-http-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="process-http-color" id="process-http-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <input type="hidden" name="process-http-color" id="process-http-color" class="event-handler"
+                            event-onchange="autoTagChanged" />
                     </div>
                     <div class="tag-section">
                         <span>Set Variable</span>
                         <span class="color-picker-action event-handler" id="set-variable-view" event-onclick="colorPickupClicked"></span>
-                        <input type="hidden" name="set-variable-color" id="set-variable-color" class="event-handler" event-onchange="autoTagChanged" />
+                        <input type="hidden" name="set-variable-color" id="set-variable-color" class="event-handler"
+                            event-onchange="autoTagChanged" />
                     </div>
                 </form>
             </div>
@@ -100,6 +117,21 @@
                         </label>
                     </div>
                 </form>
+            </div>
+        </div>
+        <div id="autotrackextras-settings-section" class="feature-settings">
+            <h3>
+                Auto-Track Extras
+            </h3>
+            <div class="bp-divider-h bp-divider--medium divider"></div>
+            <div>
+                <form id="autotrackextras-settings">
+
+                </form>
+                <div class="ph4 flex justify-center">
+                    <button event-onclick="addExtrasInputs" class="bp-btn bp-btn--bot bp-btn--dashed flex justify-center items-center h3-1 w-100 b add-button event-handler">+
+                        Add extra information</button>
+                </div>
             </div>
         </div>
         <div id="bots-section" style="display: none">
@@ -132,6 +164,22 @@
         <li style="background: #FC91AE" data-color="#FC91AE" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
         <li style="background: #FF1E90" data-color="#FF1E90" class="blip-tag-color-option event-handler" event-onclick="colorClicked"></li>
     </ul>
+    <div style="display: none">
+        <div id="key-value-inputs" class="flex flex-row justify-between">
+            <div class="bp-input-wrapper">
+                <label class="bp-label tl bp-c-rooftop">Key</label>
+                <div class="w-100 relative flex flex-row justify-between">
+                    <input name="extras-key" class="w-100 bp-input bp-c-city ng-pristine ng-empty ng-valid-minlength ng-valid-maxlength ng-invalid ng-invalid-required ng-touched">
+                </div>
+            </div>
+            <div class="bp-input-wrapper">
+                <label class="bp-label tl bp-c-rooftop">Value</label>
+                <div class="w-100 relative flex flex-row justify-between">
+                    <input name="extras-value" class="w-100 bp-input bp-c-city ng-pristine ng-untouched ng-empty ng-valid-minlength ng-valid-maxlength ng-invalid ng-invalid-required">
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="../js/shared/shared.js"></script>
     <script src="../js/popup/utils.js"></script>
     <script src="../js/popup/events.js"></script>
