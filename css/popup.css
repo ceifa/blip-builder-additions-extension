@@ -108,3 +108,7 @@ input[type="color"] {
 .feature-settings {
   display: none;
 }
+
+.feature-settings.feature-visible {
+  display: block;
+}

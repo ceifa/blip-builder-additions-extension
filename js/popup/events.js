@@ -48,4 +48,20 @@ const clicked = (ev) => {
     for (let i = 0; i < clickHandlers.length; i++) {
         clickHandlers[i].addEventListener("click", clicked, false);
     }
-})()
+})();
+
+document.body.onload = () => {
+    let eventHandlerNodes = document.getElementsByClassName('event-handler');
+    const attributeKey = 'event-';
+
+    for (let node of eventHandlerNodes) {
+        let attributes = node.attributes;
+
+        for (let attribute of attributes) {
+            if (attribute.name.indexOf(attributeKey) === 0){
+                let event = attribute.name.replace(attributeKey, '');
+                node[event] = window[attribute.value];
+            }
+        }
+    }
+};

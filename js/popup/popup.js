@@ -3,31 +3,24 @@
     loadAutoTagInputHandler();
     loadColorInputPickers();
     loadColorPickupHandler();
-    loadSettings();
-
-    document.body.onclick = () => {
-        let visibles = document.getElementsByClassName('visible');
-        Array.from(visibles).forEach(el => el.classList.remove('visible'));
-    }
 })()
 
-function loadSettings() {
-    let settingsIcons = document.getElementsByClassName('settings-icon');
+function hideVisibles() {
+    let visibles = document.getElementsByClassName('visible');
+    Array.from(visibles).forEach(el => el.classList.remove('visible'));
+}
 
-    for (let i = 0; i < settingsIcons.length; i++) {
-        settingsIcons[i].onclick = (ev) => {
-            let featureSettings = document.getElementsByClassName('feature-settings');
-            
-            for (let i = 0; i < featureSettings.length; i++) {
-                featureSettings[i].style.display = 'none';
-            }
+function displaySettings(ev) {
+    let featureSettings = document.getElementsByClassName('feature-settings');
 
-            let config = ev.target.parentElement.getAttribute('config');
-            let correctSettings = document.getElementById(config + '-settings-section');
-
-            correctSettings.style.display = 'block';
-        }
+    for (let el of featureSettings) {
+        el.classList.remove('feature-visible');
     }
+
+    let config = ev.target.parentElement.getAttribute('config');
+    let correctSettings = document.getElementById(config + '-settings-section');
+
+    correctSettings.classList.add('feature-visible');
 }
 
 function resetConfigs() {

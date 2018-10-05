@@ -4,9 +4,9 @@
     <script src="../js/popup/blip-toolkit.js"></script>
 </head>
 
-<body>
+<body class="event-handler" event-onclick="hideVisibles">
     <div class="container bp-ff-nunito">
-        <span id="reset-configs" class="bp-c-blip-dark">Reset Configs</span>
+        <span id="reset-configs" class="bp-c-blip-dark event-handler" event-onclick="resetConfigs">Reset Configs</span>
         <h3>
             Features
         </h3>
@@ -19,7 +19,7 @@
                         <div class="bp-input--checkbox">&check;</div>
                         <label class="label" for="autotag-enabled">Auto-Tag</label>
                     </label>
-                    <img src="../img/gear.png" class="settings-icon">
+                    <img src="../img/gear.png" class="settings-icon event-handler" event-onclick="displaySettings">
                 </div>
                 <div class="section" config="search">
                     <label class="mb2">
@@ -27,7 +27,7 @@
                         <div class="bp-input--checkbox">&check;</div>
                         <label class="label" for="search-enabled">Search</label>
                     </label>
-                    <img src="../img/gear.png" class="settings-icon">
+                    <img src="../img/gear.png" class="settings-icon event-handler" event-onclick="displaySettings">
                 </div>
             </form>
         </div>
