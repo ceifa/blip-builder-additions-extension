@@ -2,6 +2,7 @@ function loadData(){
     chrome.storage.sync.get([ 'settings' ], (result) => {
         let settings = !result || Object.keys(result).length === 0 ? defaultSettings : result.settings;            
         jsonToForm(settings);
+        //loadExtras(settings);
     });
 
     chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
@@ -30,13 +31,36 @@ function hideVisibles() {
 }
 
 function addExtrasInputs() {
-    let elementClone = document.getElementById('key-value-inputs').cloneNode(true);
-    Array.from(elementClone.getElementsByTagName('input')).forEach(el => el.value = '');
+    let currentExtraInputs = document.querySelectorAll("input[name|='extras']");
+    let hasError = false;
 
-    const form = document.getElementById('autotrackextras-settings');
+    const defaultBorderColor = '#c9dfe4';
 
-    form.appendChild(elementClone);
-    reloadEvents();
+    for (let input of currentExtraInputs) {
+        let box = closestElement(input, '.bp-input-wrapper');
+
+        if (!input.value && !input.hasAttribute('template')){
+            box.style.borderColor = 'red';
+            hasError = true;
+        }
+        else {
+            box.style.borderColor = defaultBorderColor;
+        }
+    }
+
+    if (!hasError){
+        let elementClone = document.getElementById('key-value-inputs').cloneNode(true);
+        Array.from(elementClone.getElementsByTagName('input')).forEach(el => { el.value = ''; el.removeAttribute('template'); });
+    
+        const form = document.getElementById('autotrackextras-settings');
+    
+        form.appendChild(elementClone);
+        reloadEvents();
+    }
+}
+
+function trackExtrasChanged(ev) {
+    console.log("change");
 }
 
 function displaySettings(ev) {
@@ -76,7 +100,6 @@ function colorClicked(ev) {
         let input = document.getElementById(metadata.actualActionClicked + '-color');
         input.value = ev.target.getAttribute('data-color');
         input.dispatchEvent(new Event("change"));
-        input.dispatchEvent(new Event("input"));
     }
 }
 

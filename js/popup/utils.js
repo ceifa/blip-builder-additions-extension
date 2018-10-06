@@ -5,18 +5,7 @@ const formToJson = () => {
     for(let element of elements) {
         if(element.name) {
             let value = element.type === 'checkbox' ? element.checked :  element.value;
-
-            if (obj[element.name]){
-                if (obj[element.name].constructor === Array){
-                    obj[element.name] = [value, ...obj[element.name]];
-                }
-                else{
-                    obj[element.name] = [value];
-                }
-            }
-            else {
-                obj[element.name] = value;
-            }
+            obj[element.name] = value;
         }
     }
 
@@ -28,16 +17,7 @@ const jsonToForm = (json) => {
         let elements = document.getElementsByName(config);
 
         if (elements && elements.length > 0){
-            if (json[config].constructor === Array){
-                for (let i = 0; i < elements.length; i++) {
-                    if (json[config][i]){
-                        setElementValue(json[config][i]);
-                    }
-                }
-            }
-            else {
-                setElementValue(elements[0], json[config])
-            }
+            setElementValue(elements[0], json[config])
         }
     }
 }

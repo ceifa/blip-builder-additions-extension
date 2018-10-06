@@ -7,6 +7,9 @@ const inputChanged = (ev) => {
 
     const form = closestElement(ev.target, 'form');
 
+    if (!form)
+        return;
+
     chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
         if (tabs.length < 1)
             return;
@@ -35,7 +38,7 @@ const reloadEvents = () => {
     let formInputs = document.querySelectorAll('input, select, textarea');
 
     for (let input of formInputs) {
-        input.onchange = inputChanged;
+        input.addEventListener("change", inputChanged);
     }
 }
 
