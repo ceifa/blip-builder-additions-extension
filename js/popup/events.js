@@ -27,6 +27,9 @@ const reloadEvents = () => {
     for (let node of eventHandlerNodes) {
         let attributes = node.attributes;
 
+        if (attributes.hasOwnProperty("template"))
+            continue;
+
         for (let attribute of attributes) {
             if (attribute.name.indexOf(attributeKey) === 0){
                 let event = attribute.name.replace(attributeKey, '');

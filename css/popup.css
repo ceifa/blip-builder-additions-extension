@@ -29,7 +29,7 @@ html {
 }
 
 body {
-  width: 220px;
+  width: 250px;
   height: 0%;
 }
 
@@ -150,7 +150,7 @@ input[type="color"] {
 
 .bp-input-wrapper {
   height: unset;
-  width: 43%;
+  width: 44%;
   float: left;
   margin: 0px 0px 8px 3px;
   padding: .25rem;

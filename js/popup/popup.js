@@ -2,7 +2,6 @@ function loadData(){
     chrome.storage.sync.get([ 'settings' ], (result) => {
         let settings = !result || Object.keys(result).length === 0 ? defaultSettings : result.settings;            
         jsonToForm(settings);
-        //loadExtras(settings);
     });
 
     chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
@@ -23,6 +22,8 @@ function loadData(){
         if (identifiers.size > 0)
             addBots(identifiers);
     });
+
+    loadExtras();
 };
 
 function hideVisibles() {
@@ -59,8 +60,39 @@ function addExtrasInputs() {
     }
 }
 
-function trackExtrasChanged(ev) {
-    console.log("change");
+function trackExtrasBlur() {
+    let extraKeyInputs = document.getElementsByName('extras-key');    
+    let extraValueInputs = document.getElementsByName('extras-value');
+    
+    let extras = [];
+    for (let i = 0; i < extraKeyInputs.length; i++) {
+        extras.push({key: extraKeyInputs[i].value, value: extraValueInputs[i].value})
+    }
+
+    chrome.storage.sync.set({ extras });
+}
+
+function loadExtras() {
+    chrome.storage.sync.get([ 'extras' ], (result) => {
+        if (!result || !result.extras || result.extras.length === 0)
+            return;
+
+        for (let extra of result.extras) {
+            if (!extra.key || !extra.value)
+                continue;
+                
+            let elementClone = document.getElementById('key-value-inputs').cloneNode(true);
+            let inputs = elementClone.getElementsByTagName('input');
+
+            inputs[0].value = extra.key;
+            inputs[1].value = extra.value;
+
+            const form = document.getElementById('autotrackextras-settings');
+            form.appendChild(elementClone);
+        }
+    });
+    
+    reloadEvents();
 }
 
 function displaySettings(ev) {
