@@ -5,8 +5,10 @@ function initAutoTag() {
 }
 
 function stopAutoTag() {
-    if (builderObserver)
+    if (builderObserver){
         builderObserver.disconnect();
+        builderObserver = null;
+    }
 
     const tab = document.getElementById("node-content-tab");
 
@@ -20,13 +22,16 @@ function stopAutoTag() {
 }
 
 function createBuilderObserver() {
+    if (builderObserver)
+        return;
+
     builderObserver = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            if (mutation.addedNodes && mutation.addedNodes.length > 0){
-                 for (var i = 0; i < mutation.addedNodes.length; i++){
-                     if (mutation.addedNodes[i])
-                        hook.call("new-element", mutation.addedNodes[i]);
-                 }
+            if (mutation.addedNodes){
+                for (let addedNode of mutation.addedNodes) {
+                    if (addedNode)
+                        hook.call("new-element", addedNode);
+                }
             }
 
             hook.call("mutation-element", mutation.target);
@@ -42,13 +47,17 @@ function createBuilderObserver() {
 }
 
 hook.add("new-element", (el) => {
-    if (el.tagName && el.tagName.toLowerCase() === "ul" && el.className.includes("ph4")) {
+    let started = startedFeatures.some(s => s === "autotag");
+
+    if (started && el.tagName && el.tagName.toLowerCase() === "ul" && el.className.includes("ph4")) {
         addActionTagHandler(el);
     }
 });
 
 hook.add("mutation-element", (el) => {
-    if (el.id === "action-list") {
+    let started = startedFeatures.some(s => s === "autotag");
+
+    if (started && el.id === "action-list") {
         removeActionTagHandler(el);
     }
 });
@@ -58,7 +67,7 @@ function addActionTagHandler(actionList){
 
     for (let i = 0; i < actions.length; i++) {
         if (!actions[i].onclick){
-            actions[i].onclick = (ev) => {
+            actions[i].addEventListener("click", (ev) => {
                 const name = ev.target.textContent;
                 const tab = document.getElementById("node-content-tab");
                 const tags = tab.getElementsByClassName("blip-tag__label");
@@ -70,7 +79,7 @@ function addActionTagHandler(actionList){
                 }
     
                 addActionTag(tab, name);
-            }
+            });
         }
     }
 }

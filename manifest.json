@@ -23,6 +23,7 @@
             "js/features/search.js",
             "js/features/autotag.js",
             "js/features/repairtag.js",
+            "js/features/autotrackextras.js",
             "js/core.js"
         ]
     }],

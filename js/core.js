@@ -6,8 +6,14 @@ const features = {
     autotag: {
         init: initAutoTag,
         stop: stopAutoTag
+    },
+    autotrackextras: {
+        init: initAutoTrackExtras,
+        stop: stopAutoTrackExtras
     }
 }
+
+let startedFeatures = [];
 
 let initialized;
 let settings;
@@ -52,6 +58,7 @@ function startFeatures() {
     for (let key in features){
         if (settings[key + "-enabled"]){
             features[key].init();
+            startedFeatures.push(key);
         }
     }
 }
@@ -59,6 +66,7 @@ function startFeatures() {
 function stopFeatures() {
     for (let key in features){
         features[key].stop();
+        startedFeatures = startedFeatures.filter(s => s !== key);
     }
 }
 
@@ -67,9 +75,11 @@ function refreshFeature(key) {
 
     if (settings[key]){
         features[feature].init();
+        startedFeatures.push(key);
     }
     else {
         features[feature].stop();
+        startedFeatures = startedFeatures.filter(s => s !== key);
     }
 }
 
