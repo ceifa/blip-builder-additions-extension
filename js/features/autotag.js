@@ -1,10 +1,13 @@
 let builderObserver;
+let autotag_started;
 
 function initAutoTag() {
+    autotag_started = true;
     createBuilderObserver();
 }
 
 function stopAutoTag() {
+    autotag_started = false;
     if (builderObserver){
         builderObserver.disconnect();
         builderObserver = null;
@@ -47,17 +50,13 @@ function createBuilderObserver() {
 }
 
 hook.add("new-element", (el) => {
-    let started = startedFeatures.some(s => s === "autotag");
-
-    if (started && el.tagName && el.tagName.toLowerCase() === "ul" && el.className.includes("ph4")) {
+    if (autotag_started && el.tagName && el.tagName.toLowerCase() === "ul" && el.className.includes("ph4")) {
         addActionTagHandler(el);
     }
 });
 
 hook.add("mutation-element", (el) => {
-    let started = startedFeatures.some(s => s === "autotag");
-
-    if (started && el.id === "action-list") {
+    if (el.id === "action-list") {
         removeActionTagHandler(el);
     }
 });

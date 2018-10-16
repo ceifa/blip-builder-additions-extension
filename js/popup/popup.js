@@ -91,8 +91,6 @@ function loadExtras() {
             form.appendChild(elementClone);
         }
     });
-    
-    reloadEvents();
 }
 
 function displaySettings(ev) {

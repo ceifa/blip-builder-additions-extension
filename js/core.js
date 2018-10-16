@@ -12,15 +12,12 @@ const features = {
         stop: stopAutoTrackExtras
     }
 }
-
-let startedFeatures = [];
-
 let initialized;
 let settings;
 let builderHandler;
 
 (() => {
-    loadSettings().then(() => {
+    loadSettings().then(_ => {
         createBuilderHandler();
     });
 })();
@@ -58,7 +55,6 @@ function startFeatures() {
     for (let key in features){
         if (settings[key + "-enabled"]){
             features[key].init();
-            startedFeatures.push(key);
         }
     }
 }
@@ -66,7 +62,6 @@ function startFeatures() {
 function stopFeatures() {
     for (let key in features){
         features[key].stop();
-        startedFeatures = startedFeatures.filter(s => s !== key);
     }
 }
 
@@ -75,11 +70,9 @@ function refreshFeature(key) {
 
     if (settings[key]){
         features[feature].init();
-        startedFeatures.push(key);
     }
     else {
         features[feature].stop();
-        startedFeatures = startedFeatures.filter(s => s !== key);
     }
 }
 

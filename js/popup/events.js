@@ -41,11 +41,11 @@ const reloadEvents = () => {
     let formInputs = document.querySelectorAll('input, select, textarea');
 
     for (let input of formInputs) {
-        input.addEventListener("change", inputChanged);
+        input.addEventListener("input", inputChanged);
     }
 }
 
 document.body.onload = () => {
-    reloadEvents();
     loadData();
+    reloadEvents();
 };
