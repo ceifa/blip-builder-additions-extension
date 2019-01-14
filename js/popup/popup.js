@@ -4,25 +4,6 @@ function loadData(){
         jsonToForm(settings);
     });
 
-    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
-        if (tabs.length < 1)
-            return;
-
-        let identifiers = new Set();
-
-        for (let tab of tabs){
-            const getIdentifierRgx = /application\/detail\/(.*?)\//g;
-            let rgxResult = getIdentifierRgx.exec(tab.url);
-            
-            if (rgxResult && rgxResult.length == 2){
-                identifiers.add(rgxResult[1]);
-            }
-        }
-
-        if (identifiers.size > 0)
-            addBots(identifiers);
-    });
-
     loadExtras();
 };
 
@@ -146,33 +127,6 @@ function colorPickupClicked(ev) {
     ev.stopPropagation();
 }
 
-function addBots(botIdentifierList){
-    let section = document.getElementById('bots-section');
-    section.style.display = "";
-
-    let bots = document.getElementById('bots');
-
-    for (const identifier of botIdentifierList) {
-        let btn = document.createElement('button');
-        btn.classList = "bp-btn bp-btn--text-only bp-btn--bot bot-btn";
-        btn.textContent = identifier;
-
-        btn.onclick = (ev) => {
-            let heightPos = btn.offsetTop - 40;
-
-            let options = document.getElementById('bot-options-list');
-            options.style.top = heightPos;
-            
-            manageVisible(options);
-
-            metadata.botIdentifier = ev.target.textContent;
-            ev.stopPropagation();
-        }
-
-        bots.append(btn);
-    }
-}
-
 function manageVisible(el){
     if (el.classList.contains('visible')) {
         el.classList.remove('visible');
@@ -180,20 +134,4 @@ function manageVisible(el){
     else {
         el.classList.add('visible');
     }
-}
-
-function repairTags(ev) {
-    chrome.tabs.query({url: '*://*.blip.ai/*'}, (tabs) => {
-        if (tabs.length < 1)
-            return;
-
-        for (let tab of tabs){
-            if (repairTagsTabValidation(tab))
-                chrome.tabs.sendMessage(tab.id, {type: "btn-clicked", btn: ev.target.id, metadata});
-        }
-    });
-}
-
-function repairTagsTabValidation(tab){
-    return tab.url.includes(metadata.botIdentifier);
 }

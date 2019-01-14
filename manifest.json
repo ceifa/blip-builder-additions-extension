@@ -22,19 +22,13 @@
             "js/hook.js",
             "js/features/search.js",
             "js/features/autotag.js",
-            "js/features/repairtag.js",
             "js/features/autotrackextras.js",
             "js/core.js"
         ]
     }],
-    "background": {
-        "scripts": ["js/background.js"],
-        "persistent": false
-    },
     "permissions": [
         "*://*.blip.ai/*",
         "storage",
-        "tabs",
-        "downloads"
+        "tabs"
     ]
 }
