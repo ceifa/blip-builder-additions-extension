@@ -1,0 +1,7 @@
+function initChatbase() {
+
+}
+
+function stopChatbase() {
+    
+}

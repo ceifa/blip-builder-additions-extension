@@ -10,6 +10,10 @@ const features = {
     autotrackextras: {
         init: initAutoTrackExtras,
         stop: stopAutoTrackExtras
+    },
+    chatbase: {
+        init: initChatbase,
+        stop: stopChatbase
     }
 }
 let initialized;

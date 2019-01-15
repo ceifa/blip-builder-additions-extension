@@ -23,6 +23,7 @@
             "js/features/search.js",
             "js/features/autotag.js",
             "js/features/autotrackextras.js",
+            "js/features/chatbase.js",
             "js/core.js"
         ]
     }],
