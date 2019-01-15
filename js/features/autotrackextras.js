@@ -2,15 +2,10 @@ let autotrack_started;
 
 function initAutoTrackExtras() {
     autotrack_started = true;
-    createBuilderObserver();
 }
 
 function stopAutoTrackExtras() {
     autotrack_started = false;
-    if (builderObserver){
-        builderObserver.disconnect();
-        builderObserver = null;
-    }
 }
 
 
