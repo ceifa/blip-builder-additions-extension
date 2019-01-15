@@ -15,6 +15,7 @@ const features = {
 let initialized;
 let settings;
 let builderHandler;
+let builderObserver;
 
 (() => {
     loadSettings().then(_ => {
@@ -43,11 +44,13 @@ function init() {
         if (!initialized){
             initialized = true;
             startFeatures();
+            createBuilderObserver();
         }
     }
     else if (initialized){
         initialized = false;
         stopFeatures();
+        stopBuilderObserver();
     }
 }
 
@@ -73,6 +76,35 @@ function refreshFeature(key) {
     }
     else {
         features[feature].stop();
+    }
+}
+
+function createBuilderObserver() {
+    builderObserver = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes){
+                for (let addedNode of mutation.addedNodes) {
+                    if (addedNode)
+                        hook.call("new-element", addedNode);
+                }
+            }
+
+            hook.call("mutation-element", mutation.target);
+        });
+    });
+    
+    var config = {
+        childList: true,
+        subtree: true
+    };
+    
+    builderObserver.observe(document.getElementById("main-content-area"), config);
+}
+
+function stopBuilderObserver() {
+    if (builderObserver){
+        builderObserver.disconnect();
+        builderObserver = null;
     }
 }
 
