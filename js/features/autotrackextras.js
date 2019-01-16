@@ -1,4 +1,5 @@
 let autotrack_started;
+let _autoTrackingTimeout;
 
 function initAutoTrackExtras() {
     autotrack_started = true;
@@ -11,7 +12,12 @@ function stopAutoTrackExtras() {
 
 hook.add("new-element", (el) => {
     if (autotrack_started && el.tagName && el.tagName.toLowerCase() === "ul" && el.className.includes("ph4")) {
-        addEventTrackHandler(el);
+        if (!_autoTrackingTimeout) {
+            _autoTrackingTimeout = setTimeout(() => {
+                _autoTrackingTimeout = null;
+                addEventTrackHandler(el);
+            }, 15);
+        }
     }
 });
 
