@@ -26,9 +26,9 @@ hook.add("mutation-element", (el) => {
 
 function addChatbaseMessageOptions(message) {
     const leftBubble = message.querySelector(".bubble.left");
-    const isTypingOrHasIconOrAreEditing = Array.from(leftBubble.children).some(c => c.className.includes("typing") || c.className.includes("chatbaseIco") || c.tagName.toLowerCase() === "form");
+    const isTypingOrHasIconOrAreEditing = leftBubble && Array.from(leftBubble.children).some(c => c.className.includes("typing") || c.className.includes("chatbaseIco") || c.tagName.toLowerCase() === "form");
 
-    if (leftBubble && !isTypingOrHasIconOrAreEditing) {
+    if (!isTypingOrHasIconOrAreEditing) {
         const chatbaseOption = document.createElement("div");
         chatbaseOption.style = "right: 51px; background-color: gold;";
         chatbaseOption.className = "editIco chatbaseIco";
