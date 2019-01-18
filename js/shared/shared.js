@@ -1,6 +1,8 @@
 const defaultSettings = {
     'autotag-enabled': true,
-    'search-enabled': true,
+    'search-enabled': false,
+    'autotrackextras-enabled': false,
+    'chatbase-enabled': false,
     'box': "#f6ff85",
     'box-enabled': false,
     'outline': "#ff4a4a",
