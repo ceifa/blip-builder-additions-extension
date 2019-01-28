@@ -1,5 +1,4 @@
 let autotag_started;
-let _addActionTagTimeout;
 
 function initAutoTag() {
     autotag_started = true;
@@ -21,12 +20,7 @@ function stopAutoTag() {
 
 hook.add("new-element", el => {
     if (autotag_started && el.tagName && el.tagName.toLowerCase() === "ul" && el.className.includes("ph4")) {
-        if (!_addActionTagTimeout) {
-            _addActionTagTimeout = setTimeout(() => {
-                _addActionTagTimeout = null;
-                addActionTagHandler(el);
-            }, 15);
-        }
+        addActionTagHandler(el);
     }
 });
 
@@ -40,19 +34,22 @@ function addActionTagHandler(actionList) {
     const actions = actionList.getElementsByTagName("li");
 
     for (const action of actions) {
-        action.addEventListener("click", function (ev) {
-            const name = ev.target.textContent;
-            const tab = document.getElementById("node-content-tab");
-            const tags = tab.getElementsByClassName("blip-tag__label");
+        if (!action.hasAddActionTagListener) {
+            action.addEventListener("click", function (ev) {
+                const name = ev.target.textContent;
+                const tab = document.getElementById("node-content-tab");
+                const tags = tab.getElementsByClassName("blip-tag__label");
 
-            for (let k = 0; k < tags.length; k++) {
-                if (tags[k].textContent === name) {
-                    return;
+                for (let k = 0; k < tags.length; k++) {
+                    if (tags[k].textContent === name) {
+                        return;
+                    }
                 }
-            }
 
-            addActionTag(tab, name);
-        }, true);
+                addActionTag(tab, name);
+            }, true);
+            action.hasAddActionTagListener = true;
+        }
     }
 }
 
@@ -60,19 +57,22 @@ function removeActionTagHandler(actionList) {
     const icons = actionList.getElementsByClassName("icon-delete");
 
     for (const icon of icons) {
-        if (!icon.onclick) {
-            icon.onclick = function (ev) {
+        if (!icon.hasRemoveActionTagListener) {
+            icon.addEventListener("click", function (ev) {
                 const tags = document.querySelectorAll(".sidebar-content-header .blip-tag__label");
-                const actions = Array.from(actionList.querySelectorAll(".w-80 span:not(.invalid-action)")).map(a => a.innerText.trim());
+                const actions = Array.from(document.querySelectorAll("span[ng-if^='action.type']"))
+                    .map(a => a.getAttribute("ng-if").match("'(.*)'")[1]);
 
                 for (const tag of tags) {
-                    const isActionTag = possibleActions.find(a => tag.innerText === a.name || a.alias.includes(tag.innerText));
-
-                    if (isActionTag && !actions.some(a => a === tag.innerText)) {
+                    const actionTag = possibleActions.find(p => tag.innerText === p.name || p.alias.includes(tag.innerText));
+                    const hasAction = actionTag && actions.some(a => a === actionTag.name || actionTag.alias.includes(a));
+                    
+                    if (!hasAction) {
                         tag.nextElementSibling.click();
                     }
                 }
-            }
+            });
+            icon.hasRemoveActionTagListener = true;
         }
     }
 }
@@ -121,7 +121,7 @@ function addActionTag(tab, name) {
                         colors[i].click();
                     }
                 }
-            }, 15);
-        }, 15);
-    }, 5);
+            }, 20);
+        }, 20);
+    }, 10);
 }
