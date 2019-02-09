@@ -1,0 +1,99 @@
+html {
+    height: 0%;
+
+    body {
+        width: 250px;
+        height: 0%;
+
+        h3 {
+            margin: 0;
+        }
+
+        .flex-center {
+            display: flex;
+            align-items: center;
+        }
+
+        .divider {
+            margin-bottom: 10px;
+        }
+
+        .inner-size--medium {
+            height: 26px;
+        }
+
+        .right-margin--small {
+            margin-right: 5px;
+        }
+
+        .invisible {
+            display: none;
+        }
+
+        .clickable {
+            cursor: pointer;
+        }
+
+        .transited-visible {
+            transition: opacity 0.5s !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
+        }
+
+        #reset-configs {
+            float: right;
+            cursor: pointer;
+        }
+
+        #features {
+            &:not(:last-child) {
+                padding-bottom: 10px;
+            }
+
+            .icon-config {
+                height: 65%;
+                width: auto;
+                margin-left: auto;
+            }
+        }
+
+        #settings {
+            [feature='autotag'] {
+                .tag-section {
+                    height: 18px;
+                    margin-bottom: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                .color-picker-action {
+                    width: 18px;
+                    border-radius: 50%;
+                    height: 100%;
+                    background-color: black;
+                }
+
+                #tag-color-selector {
+                    background: #ddd;
+                    padding: 5px;
+                    width: 132px;
+                    box-sizing: unset;
+                    right: 10;
+                    margin-top: 12.4px !important;
+                    opacity: 0;
+                    transform: scale(0);
+                    transform-origin: right bottom;
+
+                    &:before {
+                        border-bottom: none;
+                        border-top: 16px solid #ddd;
+                        left: unset;
+                        right: 4px;
+                        top: unset;
+                        bottom: -16px;
+                    }
+                }
+            }
+        }
+    }
+}
