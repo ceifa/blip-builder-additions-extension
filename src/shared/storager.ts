@@ -18,7 +18,7 @@ export default (browser => {
 
     let _storage: any = null;
 
-    const ensureHasStorage = () => new Promise(resolve => {
+    const ensureHasStorage = (): Promise<void> => new Promise(resolve => {
         if (!_storage) {
             try {
                 _storage = browser.storage.sync.get('settings', (result: any) => {
@@ -39,7 +39,7 @@ export default (browser => {
         }
     });
 
-    const syncStorage = async () => {
+    const syncStorage = async (): Promise<void> => {
         await ensureHasStorage();
         browser.storage.sync.set({
             settings: _storage
@@ -47,7 +47,7 @@ export default (browser => {
     }
 
     return class Storager {
-        static get = async (key: string) => {
+        static get = async (key: string): Promise<any> => {
             await ensureHasStorage();
 
             let current = _storage;
@@ -63,7 +63,7 @@ export default (browser => {
             return current;
         }
 
-        static set = async (key: string, value: any) => {
+        static set = async (key: string, value: any): Promise<void> => {
             await ensureHasStorage();
 
             let storage = _storage;
@@ -85,12 +85,12 @@ export default (browser => {
             await syncStorage();
         }
 
-        static clear = async () => {
+        static clear = async (): Promise<void> => {
             _storage = defaultSettings;
             await syncStorage();
         }
 
-        static refresh = async () => {
+        static refresh = async (): Promise<void> => {
             _storage = null;
             await ensureHasStorage();
         }

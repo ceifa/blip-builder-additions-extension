@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     mode: 'production',
-    entry: ['./src/popup/js/popup.ts'],
+    entry: ['./src/popup/js/Popup.ts'],
     module: {
         rules: [
             {

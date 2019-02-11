@@ -1,9 +1,9 @@
-import storager from "../../shared/storager";
+import storager from "../../shared/Storager";
 
 export default (() => {
     let currentFeatureSettings: string = null;
 
-    const addSettingsManipulationHandlers = () => {
+    const addSettingsManipulationHandlers = (): void => {
         const featureElements = document.getElementById('features').querySelectorAll(`[feature]`);
 
         featureElements.forEach(f => {
@@ -35,7 +35,7 @@ export default (() => {
         });
     }
 
-    const addInputEventListeners = () => {
+    const addInputEventListeners = (): void => {
         const inputs = document.querySelectorAll('input[config]');
         inputs.forEach(i => {
             i.addEventListener('change', async ev => {
@@ -46,7 +46,7 @@ export default (() => {
         });
     }
 
-    const fixSettingsValues = async () => {
+    const fixSettingsValues = async (): Promise<void> => {
         const inputs = document.querySelectorAll('input[config]');
         inputs.forEach(async (i: HTMLInputElement) => {
             const value = await storager.get(i.getAttribute('config'));
@@ -83,7 +83,7 @@ export default (() => {
             });
         }
 
-        openColorChooseDialog = (ev: Event) => {
+        openColorChooseDialog = (ev: Event): void => {
             const target = ev.target as Element;
 
             const top = target.getBoundingClientRect().top;
@@ -99,14 +99,14 @@ export default (() => {
             ev.stopPropagation();
         }
 
-        hideTransitedVisibles = () => {
+        hideTransitedVisibles = (): void => {
             const elementsToHide = document.getElementsByClassName('transited-visible');
             for (const element of Array.from(elementsToHide)) {
                 element.classList.remove('transited-visible');
             }
         }
 
-        changeInputTagColor = (ev: Event) => {
+        changeInputTagColor = (ev: Event): void => {
             const target = ev.target as Element;
 
             const color = target.getAttribute('color');
@@ -114,14 +114,14 @@ export default (() => {
             this.colorChooserAttachedInput.dispatchEvent(new Event('change'));
         }
 
-        changeDisplayTagColor = (ev: Event) => {
+        changeDisplayTagColor = (ev: Event): void => {
             const target = ev.target as HTMLInputElement;
 
             const displayElement = target.previousElementSibling as HTMLDivElement;
             displayElement.style.backgroundColor = target.value;
         }
 
-        resetConfig = async () => {
+        resetConfig = async (): Promise<void> => {
             await storager.clear();
             await fixSettingsValues();
         }
