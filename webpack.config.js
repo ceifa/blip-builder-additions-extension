@@ -2,25 +2,16 @@ const path = require('path');
 
 module.exports = {
     mode: 'production',
-    entry: ['@babel/polyfill', './src/popup/js/startup.js'],
+    entry: ['./src/popup/js/popup.ts'],
     module: {
-        rules: [{
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            '@babel/env'
-                        ],
-                        plugins: [
-                            '@babel/plugin-proposal-class-properties'
-                        ]
-                    }
-                },
-                include: /src/
+        rules: [
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
             },
             {
-                test: /\.(s|)css$/,
+                test: /\.s?css$/,
                 use: ['style-loader', 'css-loader']
             },
             {
@@ -32,8 +23,11 @@ module.exports = {
             }
         ]
     },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js']
+    },
     output: {
-        filename: 'main.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'src', 'popup', 'dist')
     }
 };

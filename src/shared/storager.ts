@@ -16,13 +16,13 @@ export default (browser => {
         }
     };
 
-    let _storage = null;
+    let _storage: any = null;
 
     const ensureHasStorage = async () => {
         return new Promise(resolve => {
             if (!_storage) {
                 try {
-                    _storage = browser.storage.sync.get('settings', result => {
+                    _storage = browser.storage.sync.get('settings', (result: any) => {
                         _storage = result && result['settings'];
 
                         if (!_storage) {
@@ -49,7 +49,7 @@ export default (browser => {
     }
 
     return class Storager {
-        static get = async key => {
+        static get = async (key: string) => {
             await ensureHasStorage();
 
             let current = _storage;
@@ -65,10 +65,10 @@ export default (browser => {
             return current;
         }
 
-        static set = async (key, value) => {
+        static set = async (key: string, value: any) => {
             await ensureHasStorage();
 
-            let storage = _storage;
+            let storage: any = _storage;
             const keys = key.split('.');
 
             for (var i = 0; i < keys.length; i++) {
