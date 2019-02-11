@@ -6,7 +6,7 @@
         "target": "es6",
         "allowJs": false,
         "lib": [
-            "es6",
+            "es2018",
             "dom"
         ]
     }

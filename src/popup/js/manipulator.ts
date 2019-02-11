@@ -1,7 +1,7 @@
 import storager from "../../shared/storager";
 
 export default (() => {
-    let currentFeatureSettings: any = null;
+    let currentFeatureSettings: string = null;
 
     const addSettingsManipulationHandlers = () => {
         const featureElements = document.getElementById('features').querySelectorAll(`[feature]`);
@@ -39,8 +39,8 @@ export default (() => {
         const inputs = document.querySelectorAll('input[config]');
         inputs.forEach(i => {
             i.addEventListener('change', async ev => {
-                const target = event.target as HTMLElement;
-                const value = target.getAttribute('type') === 'checkbox' ? target.getAttribute('checked') : target.getAttribute('value');
+                const target = ev.target as HTMLInputElement;
+                const value = target.type === 'checkbox' ? target.checked : target.value;
                 await storager.set(target.getAttribute('config'), value);
             });
         });
@@ -48,13 +48,13 @@ export default (() => {
 
     const fixSettingsValues = async () => {
         const inputs = document.querySelectorAll('input[config]');
-        inputs.forEach(async i => {
+        inputs.forEach(async (i: HTMLInputElement) => {
             const value = await storager.get(i.getAttribute('config'));
 
-            if (i.getAttribute('type') === 'checkbox') {
-                i.setAttribute('checked', value);
+            if (i.type === 'checkbox') {
+                i.checked, value;
             } else {
-                i.setAttribute('value', value);
+                i.value, value;
             }
 
             i.dispatchEvent(new Event("change"));
@@ -62,7 +62,7 @@ export default (() => {
     }
 
     return class Manipulator {
-        colorChooserAttachedInput: Element;
+        colorChooserAttachedInput: HTMLInputElement;
 
         // Create DOM events inside class, manipulators outside
         constructor() {
@@ -92,7 +92,7 @@ export default (() => {
             const colorChooser = document.getElementById('tag-color-selector');
             colorChooser.style.top = heightPos.toString();
 
-            this.colorChooserAttachedInput = target.nextElementSibling;
+            this.colorChooserAttachedInput = target.nextElementSibling as HTMLInputElement;
 
             colorChooser.classList.toggle('transited-visible');
 
@@ -110,15 +110,15 @@ export default (() => {
             const target = ev.target as Element;
 
             const color = target.getAttribute('color');
-            this.colorChooserAttachedInput.setAttribute('value', color);
+            this.colorChooserAttachedInput.value = color;
             this.colorChooserAttachedInput.dispatchEvent(new Event('change'));
         }
 
         changeDisplayTagColor = (ev: Event) => {
-            const target = ev.target as Element;
+            const target = ev.target as HTMLInputElement;
 
             const displayElement = target.previousElementSibling as HTMLDivElement;
-            displayElement.style.backgroundColor = target.getAttribute('value');
+            displayElement.style.backgroundColor = target.value;
         }
 
         resetConfig = async () => {

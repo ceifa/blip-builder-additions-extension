@@ -18,28 +18,26 @@ export default (browser => {
 
     let _storage: any = null;
 
-    const ensureHasStorage = async () => {
-        return new Promise(resolve => {
-            if (!_storage) {
-                try {
-                    _storage = browser.storage.sync.get('settings', (result: any) => {
-                        _storage = result && result['settings'];
+    const ensureHasStorage = () => new Promise(resolve => {
+        if (!_storage) {
+            try {
+                _storage = browser.storage.sync.get('settings', (result: any) => {
+                    _storage = result && result['settings'];
 
-                        if (!_storage) {
-                            _storage = defaultSettings;
-                        }
+                    if (!_storage) {
+                        _storage = defaultSettings;
+                    }
 
-                        resolve();
-                    });
-                } catch {
-                    _storage = defaultSettings;
                     resolve();
-                }
-            } else {
+                });
+            } catch {
+                _storage = defaultSettings;
                 resolve();
             }
-        });
-    }
+        } else {
+            resolve();
+        }
+    });
 
     const syncStorage = async () => {
         await ensureHasStorage();
@@ -68,7 +66,7 @@ export default (browser => {
         static set = async (key: string, value: any) => {
             await ensureHasStorage();
 
-            let storage: any = _storage;
+            let storage = _storage;
             const keys = key.split('.');
 
             for (var i = 0; i < keys.length; i++) {
