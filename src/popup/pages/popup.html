@@ -12,7 +12,7 @@
             <div class="bp-divider-h bp-divider--medium divider"></div>
             <div class="inner-size--medium flex-center" feature="autotag">
                 <label class="mb2 flex-center">
-                    <input class="bp-input" type="checkbox" id="autotag" config="autotag.enabled">
+                    <input class="bp-input" type="checkbox" id="autotag" config="autotag.enabled" default="true">
                     <div class="bp-input--checkbox">&check;</div>
                     <label class="label settings-label" for="autotag">Auto-Tag</label>
                 </label>
@@ -20,7 +20,7 @@
             </div>
             <div class="inner-size--medium flex-center" feature="whatsappmarkdown">
                 <label class="mb2 flex-center">
-                    <input class="bp-input" type="checkbox" id="whatsappmarkdown" config="whatsappmarkdown.enabled">
+                    <input class="bp-input" type="checkbox" id="whatsappmarkdown" config="whatsappmarkdown.enabled" default="false">
                     <div class="bp-input--checkbox">&check;</div>
                     <label class="label settings-label" for="whatsappmarkdown">Whatsapp Markdown</label>
                 </label>
@@ -35,42 +35,42 @@
                 <div class="tag-section">
                     <span>Execute script</span>
                     <span class="color-picker-action right-margin--small" id="execute-script-view" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.executescript" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.executescript" default="#FF961E" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Event tracking</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.eventtrack" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.eventtrack" default="#61D36F" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Manage distribution list</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.distributionlist" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.distributionlist" default="#1EDEFF" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Redirect to service</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.redirectservice" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.redirectservice" default="#1EA1FF" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Set contact</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.setcontact" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.setcontact" default="#FF1E90" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Process HTTP</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.processhttp" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.processhttp" default="#7762E3" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Set variable</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.setvariable" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.setvariable" default="#FF4A1E" event-change="changeDisplayTagColor" />
                 </div>
                 <div class="tag-section">
                     <span>Process command</span>
                     <span class="color-picker-action right-margin--small" event-click="openColorChooseDialog"></span>
-                    <input type="hidden" config="autotag.processcommand" event-change="changeDisplayTagColor" />
+                    <input type="hidden" config="autotag.processcommand" default="#FC91AE" event-change="changeDisplayTagColor" />
                 </div>
                 <ul class="blip-tag-select-color" id="tag-color-selector">
                     <li style="background: #0CC7CB" color="#0CC7CB" class="blip-tag-color-option" event-click="changeInputTagColor"></li>

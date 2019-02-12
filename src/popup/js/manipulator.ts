@@ -49,12 +49,15 @@ export default (() => {
     const fixSettingsValues = async (): Promise<void> => {
         const inputs = document.querySelectorAll('input[config]');
         inputs.forEach(async (i: HTMLInputElement) => {
-            const value = await storager.get(i.getAttribute('config'));
+            let value = await storager.get(i.getAttribute('config'));
+            if (value === null) {
+                value = i.getAttribute('default');
+            }
 
             if (i.type === 'checkbox') {
-                i.checked, value;
+                i.checked = value.toString() === 'true';
             } else {
-                i.value, value;
+                i.value = value;
             }
 
             i.dispatchEvent(new Event("change"));

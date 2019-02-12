@@ -1,12 +1,19 @@
 const path = require('path');
 
 module.exports = {
-    mode: 'production',
+    mode: 'development',
     entry: ['./src/popup/js/Popup.ts'],
+    devtool: "source-map",
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.ts$/,
+                enforce: 'pre',
+                loader: 'tslint-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.ts$/,
                 use: 'ts-loader',
                 exclude: /node_modules/
             },
