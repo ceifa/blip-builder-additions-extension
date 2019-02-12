@@ -1,10 +1,6 @@
 abstract class Feature {
-    settings: any;
+    configuration: any;
     isEnabled: boolean = false;
-
-    constructor(settings: any) {
-        this.settings = settings;
-    };
 
     OnEnableFeature(): void {
         this.isEnabled = true;
@@ -12,6 +8,10 @@ abstract class Feature {
 
     OnDisableFeature(): void {
         this.isEnabled = false;
+    }
+
+    OnReceiveConfiguration(configuration: any): void {
+        this.configuration = configuration;
     }
 
     abstract OnLoadBuilder(builderController: any): void;
