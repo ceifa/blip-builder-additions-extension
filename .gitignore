@@ -2,5 +2,4 @@
 node_modules/
 
 # Compiled binaries
-src/popup/dist
-src/content/dist
+build-dev/

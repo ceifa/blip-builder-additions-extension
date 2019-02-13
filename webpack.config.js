@@ -2,7 +2,10 @@ const path = require('path');
 
 module.exports = {
     mode: 'development',
-    entry: ['./src/popup/js/Popup.ts'],
+    entry: {
+        popup: './src/popup/js/Popup.ts',
+        content: './src/content/Content.ts'
+    },
     devtool: "source-map",
     module: {
         rules: [
@@ -35,6 +38,6 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'src', 'popup', 'dist')
+        path: path.resolve(__dirname, 'build-dev', 'js')
     }
 };

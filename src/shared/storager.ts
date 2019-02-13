@@ -24,17 +24,20 @@ export default ((brow: typeof browser | typeof chrome) => {
     };
 
     return class Storager {
-        public static get = async (key: string): Promise<any> => {
+        public static get = async (key: string | void): Promise<any> => {
             await ensureHasStorage();
 
             let current = storage || {};
-            const keys = key.split(".");
 
-            for (const path of keys) {
-                if (current.hasOwnProperty(path)) {
-                    current = current[path];
-                } else {
-                    return null;
+            if (key) {
+                const keys = key.split(".");
+
+                for (const path of keys) {
+                    if (current.hasOwnProperty(path)) {
+                        current = current[path];
+                    } else {
+                        return null;
+                    }
                 }
             }
 
