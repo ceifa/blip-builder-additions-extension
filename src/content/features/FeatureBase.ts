@@ -1,18 +1,18 @@
 abstract class Feature {
-    configuration: any;
-    isEnabled: boolean = false;
+    public isEnabled: boolean = false;
+    private configuration: any;
 
-    OnEnableFeature(): void {
+    public OnEnableFeature(): void {
         this.isEnabled = true;
     }
 
-    OnDisableFeature(): void {
+    public OnDisableFeature(): void {
         this.isEnabled = false;
     }
 
-    OnReceiveConfiguration(configuration: any): void {
+    public OnReceiveConfiguration(configuration: any): void {
         this.configuration = configuration;
     }
 
-    abstract OnLoadBuilder(builderController: any): void;
+    public abstract OnLoadBuilder(builderController: any): void;
 }
