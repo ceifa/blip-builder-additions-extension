@@ -1,10 +1,10 @@
-export default (browser => {
+export default ((brow: typeof browser | typeof chrome) => {
     let _storage: any = null;
 
     const ensureHasStorage = (): Promise<void> => new Promise(resolve => {
         if (!_storage) {
             try {
-                _storage = browser.storage.sync.get('settings', (result: any) => {
+                _storage = brow.storage.sync.get('settings', (result: any) => {
                     _storage = result && result['settings'];
                     resolve();
                 });
@@ -18,7 +18,7 @@ export default (browser => {
 
     const syncStorage = async (): Promise<void> => {
         await ensureHasStorage();
-        browser.storage.sync.set({
+        brow.storage.sync.set({
             settings: _storage
         });
     }
