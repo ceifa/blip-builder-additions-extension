@@ -4,129 +4,129 @@ export default (() => {
     let currentFeatureSettings: string = null;
 
     const addSettingsManipulationHandlers = (): void => {
-        const featureElements = document.getElementById('features').querySelectorAll(`[feature]`);
+        const featureElements = document.getElementById("features").querySelectorAll(`[feature]`);
 
-        featureElements.forEach(f => {
-            const featureName = f.getAttribute('feature')
-            const iconConfigElement = f.getElementsByClassName('icon-config');
+        featureElements.forEach((f) => {
+            const featureName = f.getAttribute("feature");
+            const iconConfigElement = f.getElementsByClassName("icon-config");
 
             if (iconConfigElement.length === 1) {
-                iconConfigElement[0].addEventListener('mousedown', _ => {
-                    const settingsSection = document.getElementById('settings');
+                iconConfigElement[0].addEventListener("mousedown", (_) => {
+                    const settingsSection = document.getElementById("settings");
 
                     if (currentFeatureSettings === featureName) {
                         currentFeatureSettings = null;
-                        settingsSection.classList.add('invisible');
+                        settingsSection.classList.add("invisible");
                     } else {
                         currentFeatureSettings = featureName;
-                        settingsSection.classList.remove('invisible');
+                        settingsSection.classList.remove("invisible");
 
-                        const settingsFeatureElements = settingsSection.querySelectorAll('[feature]');
-                        settingsFeatureElements.forEach(s => {
-                            if (s.getAttribute('feature') === featureName) {
-                                s.classList.remove('invisible');
+                        const settingsFeatureElements = settingsSection.querySelectorAll("[feature]");
+                        settingsFeatureElements.forEach((s) => {
+                            if (s.getAttribute("feature") === featureName) {
+                                s.classList.remove("invisible");
                             } else {
-                                s.classList.add('invisible');
+                                s.classList.add("invisible");
                             }
                         });
                     }
                 });
             }
         });
-    }
+    };
 
     const addInputEventListeners = (): void => {
-        const inputs = document.querySelectorAll('input[config]');
-        inputs.forEach(i => {
-            i.addEventListener('change', async ev => {
+        const inputs = document.querySelectorAll("input[config]");
+        inputs.forEach((i) => {
+            i.addEventListener("change", async (ev) => {
                 const target = ev.target as HTMLInputElement;
-                const value = target.type === 'checkbox' ? target.checked : target.value;
-                await storager.set(target.getAttribute('config'), value);
+                const value = target.type === "checkbox" ? target.checked : target.value;
+                await storager.set(target.getAttribute("config"), value);
             });
         });
-    }
+    };
 
     const fixSettingsValues = async (): Promise<void> => {
-        const inputs = document.querySelectorAll('input[config]');
+        const inputs = document.querySelectorAll("input[config]");
         inputs.forEach(async (i: HTMLInputElement) => {
-            let value = await storager.get(i.getAttribute('config'));
+            let value = await storager.get(i.getAttribute("config"));
             if (value === null) {
-                value = i.getAttribute('default');
+                value = i.getAttribute("default");
             }
 
-            if (i.type === 'checkbox') {
-                i.checked = value.toString() === 'true';
+            if (i.type === "checkbox") {
+                i.checked = value.toString() === "true";
             } else {
                 i.value = value;
             }
 
             i.dispatchEvent(new Event("change"));
         });
-    }
+    };
 
     return class Manipulator {
-        colorChooserAttachedInput: HTMLInputElement;
+        public colorChooserAttachedInput: HTMLInputElement;
 
         // Create DOM events inside class, manipulators outside
         constructor() {
-            document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener("DOMContentLoaded", () => {
                 addSettingsManipulationHandlers();
-                fixSettingsValues().then(_ => {
+                fixSettingsValues().then((_) => {
                     addInputEventListeners();
                 });
 
                 for (const element of Array.from(document.all)) {
                     for (const attribute of Array.from(element.attributes)) {
-                        if (attribute.name.indexOf('event-') === 0) {
-                            const event = attribute.name.replace('event-', '');
-                            element.addEventListener(event, (<any>this)[attribute.value]);
+                        if (attribute.name.indexOf("event-") === 0) {
+                            const event = attribute.name.replace("event-", "");
+                            element.addEventListener(event, ( this as any)[attribute.value]);
                         }
                     }
                 }
             });
         }
 
-        openColorChooseDialog = (ev: Event): void => {
+        public openColorChooseDialog = (ev: Event): void => {
             const target = ev.target as Element;
 
             const top = target.getBoundingClientRect().top;
             const heightPos = top - 130;
 
-            const colorChooser = document.getElementById('tag-color-selector');
+            const colorChooser = document.getElementById("tag-color-selector");
             colorChooser.style.top = heightPos.toString();
 
             this.colorChooserAttachedInput = target.nextElementSibling as HTMLInputElement;
 
-            colorChooser.classList.toggle('transited-visible');
+            colorChooser.classList.toggle("transited-visible");
 
             ev.stopPropagation();
         }
 
-        hideTransitedVisibles = (): void => {
-            const elementsToHide = document.getElementsByClassName('transited-visible');
+        public hideTransitedVisibles = (): void => {
+            const elementsToHide = document.getElementsByClassName("transited-visible");
             for (const element of Array.from(elementsToHide)) {
-                element.classList.remove('transited-visible');
+                element.classList.remove("transited-visible");
             }
         }
 
-        changeInputTagColor = (ev: Event): void => {
+        public changeInputTagColor = (ev: Event): void => {
             const target = ev.target as Element;
 
-            const color = target.getAttribute('color');
+            const color = target.getAttribute("color");
             this.colorChooserAttachedInput.value = color;
-            this.colorChooserAttachedInput.dispatchEvent(new Event('change'));
+            this.colorChooserAttachedInput.dispatchEvent(new Event("change"));
         }
 
-        changeDisplayTagColor = (ev: Event): void => {
+        public changeDisplayTagColor = (ev: Event): void => {
             const target = ev.target as HTMLInputElement;
 
             const displayElement = target.previousElementSibling as HTMLDivElement;
             displayElement.style.backgroundColor = target.value;
         }
 
-        resetConfig = async (): Promise<void> => {
+        public resetConfig = async (): Promise<void> => {
             await storager.clear();
             await fixSettingsValues();
         }
-    }
+    };
 })();
