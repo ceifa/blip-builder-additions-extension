@@ -1,4 +1,5 @@
 import Storager from "../shared/Storager";
+import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
 import { FeatureBase } from "./features/FeatureBase";
 
@@ -9,24 +10,39 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     },
 ];
 
-features.forEach(async (f) => {
-    const configuration = await Storager.get(f.name);
-    f.processor.OnReceiveConfiguration(configuration);
+const getWindowVariable = async (name: string) => new Promise((resolve) => {
+    window.addEventListener("message", (ev: Event) => {
+        resolve();
+    });
 
-    if (configuration.enabled) {
-        f.processor.OnEnableFeature();
-    }
+    window.postMessage({
+        name,
+        type: "window-variable",
+    }, "*");
 });
 
-setInterval(() => {
-    const canvas = document.getElementById("canvas");
+(async (brow: typeof chrome | typeof browser) => {
+    features.forEach(async (f) => {
+        const configuration = await Storager.get(f.name);
+        f.processor.OnReceiveConfiguration(configuration);
 
-    if (canvas) {
-        // @ts-ignore
-        const builderController = window.angular.element(canvas).controller();
-
-        if (builderController && !builderController.isLoading) {
-            features.forEach((f) => f.processor.OnLoadBuilder(builderController));
+        if (configuration.enabled) {
+            f.processor.OnEnableFeature();
         }
-    }
-}, 500);
+    });
+
+    await Utils.injectPageScript(brow, "js/inject.js");
+
+    // setInterval(async () => {
+    //     const canvas: Element = document.getElementById("canvas");
+    //     const angular: any = await getWindowVariable("angular");
+
+    //     if (canvas) {
+    //         const builderController = angular.element(canvas).controller();
+
+    //         if (builderController && !builderController.isLoading) {
+    //             features.forEach((f) => f.processor.OnLoadBuilder(builderController));
+    //         }
+    //     }
+    // }, 500);
+})(chrome || browser);

@@ -16,4 +16,19 @@ export default class Utils {
             return result;
         };
     }
+
+    public static injectPageScript = async (brow: any, file: string) => {
+        const src = brow.extension.getURL(file);
+
+        const element = document.createElement("script");
+        element.src = src;
+
+        document.head.appendChild(element);
+
+        return new Promise((resolve) => {
+            element.addEventListener("load", () => {
+                resolve();
+            });
+        });
+    }
 }

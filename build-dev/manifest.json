@@ -11,17 +11,21 @@
     },
     "browser_action": {
         "default_icon": "./manifest/images/icon.png",
-        "default_popup": "./build-dev/pages/popup.html"
+        "default_popup": "./pages/popup.html"
     },
     "content_scripts": [
         {
+            "run_at": "document_end",
             "matches": [
                 "*://*.blip.ai/*"
             ],
             "js": [
-                "./build-dev/js/content.js"
+                "./js/content.js"
             ]
         }
+    ],
+    "web_accessible_resources": [
+        "/js/inject.js"
     ],
     "permissions": [
         "*://*.blip.ai/*",
