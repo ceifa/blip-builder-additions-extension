@@ -113,17 +113,6 @@ exports.features = [
         processor: new AutoTag_1.default(),
     },
 ];
-const getWindowVariable = (name) => __awaiter(this, void 0, void 0, function* () {
-    return new Promise((resolve) => {
-        window.addEventListener("message", (ev) => {
-            resolve();
-        });
-        window.postMessage({
-            name,
-            type: "window-variable",
-        }, "*");
-    });
-});
 ((brow) => __awaiter(this, void 0, void 0, function* () {
     exports.features.forEach((f) => __awaiter(this, void 0, void 0, function* () {
         const configuration = yield Storager_1.default.get(f.name);
@@ -132,17 +121,12 @@ const getWindowVariable = (name) => __awaiter(this, void 0, void 0, function* ()
             f.processor.OnEnableFeature();
         }
     }));
-    yield Utils_1.default.injectPageScript(brow, "js/inject.js");
-    // setInterval(async () => {
-    //     const canvas: Element = document.getElementById("canvas");
-    //     const angular: any = await getWindowVariable("angular");
-    //     if (canvas) {
-    //         const builderController = angular.element(canvas).controller();
-    //         if (builderController && !builderController.isLoading) {
-    //             features.forEach((f) => f.processor.OnLoadBuilder(builderController));
-    //         }
-    //     }
-    // }, 500);
+    setInterval(() => __awaiter(this, void 0, void 0, function* () {
+        const isLoading = yield Utils_1.default.getBuilderControllerVariable("isLoading");
+        if (isLoading === false) {
+            exports.features.forEach((f) => f.processor.OnLoadBuilder());
+        }
+    }), 500);
 }))(chrome || browser);
 
 
@@ -158,11 +142,10 @@ const getWindowVariable = (name) => __awaiter(this, void 0, void 0, function* ()
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Utils_1 = __webpack_require__(/*! ../../shared/Utils */ "./src/shared/Utils.ts");
 const FeatureBase_1 = __webpack_require__(/*! ./FeatureBase */ "./src/content/features/FeatureBase.ts");
 class AutoTag extends FeatureBase_1.FeatureBase {
-    OnLoadBuilder(builderController) {
-        Utils_1.default.interceptFunction(builderController.SidebarContentService, "showSidebar", this.AddEventListeners);
+    OnLoadBuilder() {
+        console.log("load");
     }
     AddEventListeners() {
         throw new Error();
@@ -313,6 +296,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 class Utils {
+    static getRandomId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+    static getBuilderControllerVariable(path) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.getBuilderControllerVariableInjected) {
+                yield Utils.injectPageScript("js/inject.js");
+                this.getBuilderControllerVariableInjected = true;
+            }
+            return new Promise((resolve) => {
+                const identifier = this.getRandomId();
+                const listener = (ev) => {
+                    if (ev.data && ev.data.type === "controller-variable-result" && ev.data.id === identifier) {
+                        window.removeEventListener("message", listener);
+                        return resolve(ev.data.value);
+                    }
+                };
+                window.addEventListener("message", listener);
+                window.postMessage({
+                    id: identifier,
+                    route: path,
+                    type: "controller-variable",
+                }, "*");
+            });
+        });
+    }
 }
 Utils.interceptFunction = (source, targetName, options) => {
     const fnToWrap = source[targetName];
@@ -327,7 +336,8 @@ Utils.interceptFunction = (source, targetName, options) => {
         return result;
     };
 };
-Utils.injectPageScript = (brow, file) => __awaiter(this, void 0, void 0, function* () {
+Utils.injectPageScript = (file) => __awaiter(this, void 0, void 0, function* () {
+    const brow = chrome || browser;
     const src = brow.extension.getURL(file);
     const element = document.createElement("script");
     element.src = src;
@@ -338,6 +348,7 @@ Utils.injectPageScript = (brow, file) => __awaiter(this, void 0, void 0, functio
         });
     });
 });
+Utils.getBuilderControllerVariableInjected = false;
 exports.default = Utils;
 
 

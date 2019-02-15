@@ -14,5 +14,5 @@ export abstract class FeatureBase {
         this.configuration = configuration;
     }
 
-    public abstract OnLoadBuilder(builderController: any): void;
+    public abstract OnLoadBuilder(): void;
 }
