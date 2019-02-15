@@ -3,6 +3,7 @@ import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
 import { FeatureBase } from "./features/FeatureBase";
 
+export let isBuilderLoaded = false;
 export const features: Array<{ name: string, processor: FeatureBase }> = [
     {
         name: "autotag",
@@ -15,16 +16,19 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
         const configuration = await Storager.get(f.name);
         f.processor.OnReceiveConfiguration(configuration);
 
-        if (configuration.enabled) {
+        if (configuration && configuration.enabled) {
             f.processor.OnEnableFeature();
         }
     });
 
     setInterval(async () => {
         const isLoading: any = await Utils.getBuilderControllerVariable("isLoading");
+        const isLoaded = isLoading === false;
 
-        if (isLoading === false) {
+        if (isLoaded && isLoaded !== isBuilderLoaded) {
             features.forEach((f) => f.processor.OnLoadBuilder());
         }
-    }, 500);
+
+        isBuilderLoaded = isLoaded;
+    }, 800);
 })(chrome || browser);

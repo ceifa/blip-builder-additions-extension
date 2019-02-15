@@ -107,6 +107,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Storager_1 = __webpack_require__(/*! ../shared/Storager */ "./src/shared/Storager.ts");
 const Utils_1 = __webpack_require__(/*! ../shared/Utils */ "./src/shared/Utils.ts");
 const AutoTag_1 = __webpack_require__(/*! ./features/AutoTag */ "./src/content/features/AutoTag.ts");
+exports.isBuilderLoaded = false;
 exports.features = [
     {
         name: "autotag",
@@ -117,16 +118,18 @@ exports.features = [
     exports.features.forEach((f) => __awaiter(this, void 0, void 0, function* () {
         const configuration = yield Storager_1.default.get(f.name);
         f.processor.OnReceiveConfiguration(configuration);
-        if (configuration.enabled) {
+        if (configuration && configuration.enabled) {
             f.processor.OnEnableFeature();
         }
     }));
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
         const isLoading = yield Utils_1.default.getBuilderControllerVariable("isLoading");
-        if (isLoading === false) {
+        const isLoaded = isLoading === false;
+        if (isLoaded && isLoaded !== exports.isBuilderLoaded) {
             exports.features.forEach((f) => f.processor.OnLoadBuilder());
         }
-    }), 500);
+        exports.isBuilderLoaded = isLoaded;
+    }), 800);
 }))(chrome || browser);
 
 
@@ -141,14 +144,49 @@ exports.features = [
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const Utils_1 = __webpack_require__(/*! ../../shared/Utils */ "./src/shared/Utils.ts");
 const FeatureBase_1 = __webpack_require__(/*! ./FeatureBase */ "./src/content/features/FeatureBase.ts");
 class AutoTag extends FeatureBase_1.FeatureBase {
     OnLoadBuilder() {
-        console.log("load");
+        if (this.isEnabled) {
+            this.StartAsync();
+        }
+    }
+    StartAsync() {
+        return __awaiter(this, void 0, void 0, function* () {
+            Utils_1.default.interceptFunction("SidebarContentService", "showSidebar", () => {
+                this.AddEventListeners();
+            });
+        });
     }
     AddEventListeners() {
-        throw new Error();
+        const elements = document.querySelectorAll("li[ng-click^='$ctrl.onAddAction'], i[ng-click^='$ctrl.onDeleteAction']");
+        const listener = (ev) => __awaiter(this, void 0, void 0, function* () {
+            yield this.FixWrongTags();
+        });
+        elements.forEach((e) => {
+            e.removeEventListener("click", listener);
+            e.addEventListener("click", listener);
+        });
+    }
+    FixWrongTags() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const enteringCustomActions = yield Utils_1.default.getBuilderControllerVariable("editingState.$enteringCustomActions");
+            const leavingCustomAction = yield Utils_1.default.getBuilderControllerVariable("editingState.$leavingCustomActions");
+            const actions = [...enteringCustomActions, ...leavingCustomAction];
+            const tags = yield Utils_1.default.getBuilderControllerVariable("editingState.$tags");
+            console.log(tags);
+            console.log(actions);
+        });
     }
 }
 exports.default = AutoTag;
@@ -323,18 +361,17 @@ class Utils {
         });
     }
 }
-Utils.interceptFunction = (source, targetName, options) => {
-    const fnToWrap = source[targetName];
-    source[targetName] = function () {
-        if (options.hasOwnProperty("before")) {
-            options.before.apply(this, arguments);
+Utils.interceptFunction = (path, func, action) => {
+    window.addEventListener("message", (ev) => {
+        if (ev.data && ev.data.type === "intercept-function-result" && ev.data.id === path + func) {
+            action();
         }
-        const result = fnToWrap.apply(this, arguments);
-        if (options.hasOwnProperty("after")) {
-            options.after.apply(this, arguments);
-        }
-        return result;
-    };
+    });
+    window.postMessage({
+        function: func,
+        route: path,
+        type: "intercept-function",
+    }, "*");
 };
 Utils.injectPageScript = (file) => __awaiter(this, void 0, void 0, function* () {
     const brow = chrome || browser;

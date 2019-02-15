@@ -1,20 +1,16 @@
 export default class Utils {
-    public static interceptFunction = (source: any, targetName: string, options: any) => {
-        const fnToWrap = source[targetName];
-
-        source[targetName] = function () {
-            if (options.hasOwnProperty("before")) {
-                options.before.apply(this, arguments);
+    public static interceptFunction = (path: string, func: string, action: () => void) => {
+        window.addEventListener("message", (ev: MessageEvent) => {
+            if (ev.data && ev.data.type === "intercept-function-result" && ev.data.id === path + func) {
+                action();
             }
+        });
 
-            const result = fnToWrap.apply(this, arguments);
-
-            if (options.hasOwnProperty("after")) {
-                options.after.apply(this, arguments);
-            }
-
-            return result;
-        };
+        window.postMessage({
+            function: func,
+            route: path,
+            type: "intercept-function",
+        }, "*");
     }
 
     public static injectPageScript = async (file: string) => {
@@ -37,7 +33,7 @@ export default class Utils {
         return Math.random().toString(36).substr(2, 9);
     }
 
-    public static async getBuilderControllerVariable(path: string) {
+    public static async getBuilderControllerVariable(path: string): Promise<any> {
         if (!this.getBuilderControllerVariableInjected) {
             await Utils.injectPageScript("js/inject.js");
             this.getBuilderControllerVariableInjected = true;

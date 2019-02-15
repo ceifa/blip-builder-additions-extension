@@ -1,4 +1,5 @@
 import storager from "../../shared/Storager";
+import Storager from "../../shared/Storager";
 
 export default (() => {
     let currentFeatureSettings: string = null;
@@ -49,9 +50,12 @@ export default (() => {
     const fixSettingsValues = async (): Promise<void> => {
         const inputs = document.querySelectorAll("input[config]");
         inputs.forEach(async (i: HTMLInputElement) => {
-            let value = await storager.get(i.getAttribute("config"));
+            const configKey = i.getAttribute("config");
+            let value = await storager.get(configKey);
+
             if (value === null) {
                 value = i.getAttribute("default");
+                await Storager.set(configKey, value);
             }
 
             if (i.type === "checkbox") {

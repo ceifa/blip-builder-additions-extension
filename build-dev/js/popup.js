@@ -800,6 +800,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Storager_1 = __webpack_require__(/*! ../../shared/Storager */ "./src/shared/Storager.ts");
+const Storager_2 = __webpack_require__(/*! ../../shared/Storager */ "./src/shared/Storager.ts");
 exports.default = (() => {
     let currentFeatureSettings = null;
     const addSettingsManipulationHandlers = () => {
@@ -844,9 +845,11 @@ exports.default = (() => {
     const fixSettingsValues = () => __awaiter(this, void 0, void 0, function* () {
         const inputs = document.querySelectorAll("input[config]");
         inputs.forEach((i) => __awaiter(this, void 0, void 0, function* () {
-            let value = yield Storager_1.default.get(i.getAttribute("config"));
+            const configKey = i.getAttribute("config");
+            let value = yield Storager_1.default.get(configKey);
             if (value === null) {
                 value = i.getAttribute("default");
+                yield Storager_2.default.set(configKey, value);
             }
             if (i.type === "checkbox") {
                 i.checked = value.toString() === "true";
@@ -1001,7 +1004,7 @@ exports.default = ((brow) => {
                     current[path] = value;
                     break;
                 }
-                else if (!storage.hasOwnProperty(path)) {
+                else if (!current.hasOwnProperty(path)) {
                     current[path] = {};
                 }
                 current = current[path];
