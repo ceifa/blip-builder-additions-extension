@@ -2,6 +2,7 @@ import Storager from "../shared/Storager";
 import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
 import { FeatureBase } from "./features/FeatureBase";
+import Communicator from "../shared/Communicator";
 
 export let isBuilderLoaded = false;
 export const features: Array<{ name: string, processor: FeatureBase }> = [
@@ -12,16 +13,20 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
 ];
 
 (async (brow: typeof chrome | typeof browser) => {
-    features.forEach(async (f) => {
-        const configuration = await Storager.get(f.name);
-        f.processor.OnReceiveConfiguration(configuration);
+    const refreshFeatures = (): void => {
+        features.forEach(async (f) => {
+            const configuration = await Storager.get(f.name);
+            f.processor.OnReceiveConfiguration(configuration);
 
-        if (configuration && configuration.enabled) {
-            f.processor.OnEnableFeature();
-        }
-    });
+            if (configuration && configuration.enabled && !f.processor.isEnabled) {
+                f.processor.OnEnableFeature();
+            }
+        });
+    };
 
-    setInterval(async () => {
+    Communicator.on("change-settings", refreshFeatures);
+
+    setInterval(async (): Promise<void> => {
         const isLoading: any = await Utils.getBuilderControllerVariable("isLoading");
         const isLoaded = isLoading === false;
 
@@ -31,4 +36,6 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
 
         isBuilderLoaded = isLoaded;
     }, 800);
+
+    refreshFeatures();
 })(chrome || browser);
