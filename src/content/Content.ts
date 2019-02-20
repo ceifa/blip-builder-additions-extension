@@ -1,8 +1,8 @@
+import Communicator from "../shared/Communicator";
 import Storager from "../shared/Storager";
 import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
 import { FeatureBase } from "./features/FeatureBase";
-import Communicator from "../shared/Communicator";
 
 export let isBuilderLoaded = false;
 export const features: Array<{ name: string, processor: FeatureBase }> = [
@@ -13,7 +13,9 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
 ];
 
 (async (brow: typeof chrome | typeof browser) => {
-    const refreshFeatures = (): void => {
+    const refreshFeatures = async (): Promise<void> => {
+        await Storager.refresh();
+
         features.forEach(async (f) => {
             const configuration = await Storager.get(f.name);
             f.processor.OnReceiveConfiguration(configuration);

@@ -1,5 +1,6 @@
 import storager from "../../shared/Storager";
 import Storager from "../../shared/Storager";
+import Communicator from "../../shared/Communicator";
 
 export default (() => {
     let currentFeatureSettings: string = null;
@@ -43,6 +44,7 @@ export default (() => {
                 const target = ev.target as HTMLInputElement;
                 const value = target.type === "checkbox" ? target.checked : target.value;
                 await storager.set(target.getAttribute("config"), value);
+                Communicator.emit("change-settings", null);
             });
         });
     };
