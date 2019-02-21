@@ -59,5 +59,7 @@ export default class Utils {
         });
     }
 
+    public static sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     private static getBuilderControllerVariableInjected: boolean = false;
 }

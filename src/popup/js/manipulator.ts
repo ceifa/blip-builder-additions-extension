@@ -1,6 +1,6 @@
+import Communicator from "../../shared/Communicator";
 import storager from "../../shared/Storager";
 import Storager from "../../shared/Storager";
-import Communicator from "../../shared/Communicator";
 
 export default (() => {
     let currentFeatureSettings: string = null;

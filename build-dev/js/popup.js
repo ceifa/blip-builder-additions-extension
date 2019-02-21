@@ -799,6 +799,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Communicator_1 = __webpack_require__(/*! ../../shared/Communicator */ "./src/shared/Communicator.ts");
 const Storager_1 = __webpack_require__(/*! ../../shared/Storager */ "./src/shared/Storager.ts");
 const Storager_2 = __webpack_require__(/*! ../../shared/Storager */ "./src/shared/Storager.ts");
 exports.default = (() => {
@@ -839,6 +840,7 @@ exports.default = (() => {
                 const target = ev.target;
                 const value = target.type === "checkbox" ? target.checked : target.value;
                 yield Storager_1.default.set(target.getAttribute("config"), value);
+                Communicator_1.default.emit("change-settings", null);
             }));
         });
     };
@@ -933,6 +935,37 @@ const manipulator = new Manipulator_1.default();
 
 /***/ }),
 
+/***/ "./src/shared/Communicator.ts":
+/*!************************************!*\
+  !*** ./src/shared/Communicator.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ((brow) => { var _a; return _a = class Communicator {
+    },
+    _a.on = (type, callback) => {
+        brow.runtime.onMessage.addListener((message) => {
+            if (message.type === type) {
+                callback(message.state);
+            }
+        });
+    },
+    _a.emit = (type, state) => {
+        brow.tabs.query({ url: "*://*.blip.ai/*" }, (tabs) => {
+            for (const tab of tabs) {
+                chrome.tabs.sendMessage(tab.id, { type, state });
+            }
+        });
+    },
+    _a; })(chrome || browser);
+
+
+/***/ }),
+
 /***/ "./src/shared/Storager.ts":
 /*!********************************!*\
   !*** ./src/shared/Storager.ts ***!
@@ -1004,7 +1037,7 @@ exports.default = ((brow) => {
                     current[path] = value;
                     break;
                 }
-                else if (!current.hasOwnProperty(path)) {
+                else if (!storage.hasOwnProperty(path)) {
                     current[path] = {};
                 }
                 current = current[path];

@@ -1,6 +1,6 @@
 export abstract class FeatureBase {
     public isEnabled: boolean = false;
-    private configuration: any;
+    protected configuration: any;
 
     public OnEnableFeature(): void {
         this.isEnabled = true;

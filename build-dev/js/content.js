@@ -104,6 +104,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Communicator_1 = __webpack_require__(/*! ../shared/Communicator */ "./src/shared/Communicator.ts");
 const Storager_1 = __webpack_require__(/*! ../shared/Storager */ "./src/shared/Storager.ts");
 const Utils_1 = __webpack_require__(/*! ../shared/Utils */ "./src/shared/Utils.ts");
 const AutoTag_1 = __webpack_require__(/*! ./features/AutoTag */ "./src/content/features/AutoTag.ts");
@@ -115,13 +116,17 @@ exports.features = [
     },
 ];
 ((brow) => __awaiter(this, void 0, void 0, function* () {
-    exports.features.forEach((f) => __awaiter(this, void 0, void 0, function* () {
-        const configuration = yield Storager_1.default.get(f.name);
-        f.processor.OnReceiveConfiguration(configuration);
-        if (configuration && configuration.enabled) {
-            f.processor.OnEnableFeature();
-        }
-    }));
+    const refreshFeatures = () => __awaiter(this, void 0, void 0, function* () {
+        yield Storager_1.default.refresh();
+        exports.features.forEach((f) => __awaiter(this, void 0, void 0, function* () {
+            const configuration = yield Storager_1.default.get(f.name);
+            f.processor.OnReceiveConfiguration(configuration);
+            if (configuration && configuration.enabled && !f.processor.isEnabled) {
+                f.processor.OnEnableFeature();
+            }
+        }));
+    });
+    Communicator_1.default.on("change-settings", refreshFeatures);
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
         const isLoading = yield Utils_1.default.getBuilderControllerVariable("isLoading");
         const isLoaded = isLoading === false;
@@ -130,6 +135,7 @@ exports.features = [
         }
         exports.isBuilderLoaded = isLoaded;
     }), 800);
+    refreshFeatures();
 }))(chrome || browser);
 
 
@@ -156,6 +162,74 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Utils_1 = __webpack_require__(/*! ../../shared/Utils */ "./src/shared/Utils.ts");
 const FeatureBase_1 = __webpack_require__(/*! ./FeatureBase */ "./src/content/features/FeatureBase.ts");
 class AutoTag extends FeatureBase_1.FeatureBase {
+    constructor() {
+        super(...arguments);
+        this.AddEventListeners = () => {
+            const elements = document.querySelectorAll("li[ng-click^='$ctrl.onAddAction'], i[ng-click^='$ctrl.onDeleteAction']");
+            elements.forEach((e) => {
+                e.removeEventListener("click", this.RepairWrongTags);
+                e.addEventListener("click", this.RepairWrongTags);
+            });
+        };
+        this.RepairWrongTags = () => __awaiter(this, void 0, void 0, function* () {
+            console.log("repair");
+            const enteringCustomActions = yield Utils_1.default.getBuilderControllerVariable("editingState.$enteringCustomActions");
+            const leavingCustomAction = yield Utils_1.default.getBuilderControllerVariable("editingState.$leavingCustomActions");
+            let actions = [...enteringCustomActions, ...leavingCustomAction];
+            actions = actions.map((a) => a.type);
+            let tags = yield Utils_1.default.getBuilderControllerVariable("editingState.$tags");
+            tags = tags.map((t) => t.label);
+            const possibleActions = [
+                ...new Set(Array.from(document.querySelectorAll("li[ng-click^='$ctrl.onAddAction']"))
+                    .map((a) => a.getAttribute("ng-click").match("'(.*)'")[1]))
+            ];
+            const shouldFixTags = tags.filter((t) => !actions.includes(t) && possibleActions.includes(t));
+            shouldFixTags.forEach(this.removeTag);
+            const shouldFixActions = actions.filter((a) => !tags.includes(a));
+            console.log(shouldFixActions);
+            shouldFixActions.forEach(this.addTag);
+        });
+        this.removeTag = (tagName) => {
+            const tagElements = Array.from(document.querySelectorAll(".sidebar-content-header .blip-tag__label"));
+            const correctTagElement = tagElements.find((t) => t.textContent.trim() === tagName);
+            if (correctTagElement) {
+                correctTagElement.nextElementSibling.click();
+            }
+        };
+        this.addTag = (tagName) => __awaiter(this, void 0, void 0, function* () {
+            const tab = document.getElementById("node-content-tab");
+            const header = tab.getElementsByClassName("sidebar-content-header")[0];
+            const tagMenuBtn = header.getElementsByTagName("img");
+            if (tagMenuBtn.length > 0) {
+                tagMenuBtn[0].click();
+            }
+            const tagMenu = header.getElementsByTagName("blip-tags")[0];
+            const input = tagMenu.getElementsByTagName("input")[0];
+            input.value = tagName;
+            yield Utils_1.default.sleep(10);
+            input.dispatchEvent(new Event("input"));
+            yield Utils_1.default.sleep(30);
+            const options = tagMenu.getElementsByClassName("blip-select__options");
+            options[0].style.display = "none";
+            const correctTagOption = options[0].getElementsByClassName("blip-select__option");
+            if (correctTagOption && correctTagOption.length > 0) {
+                correctTagOption[0].click();
+                yield Utils_1.default.sleep(20);
+                const color = this.configuration[tagName.toLowerCase()];
+                const colorSelector = tagMenu.getElementsByClassName("blip-tag-select-color");
+                if (colorSelector && colorSelector.length > 0) {
+                    colorSelector[0].style.display = "none";
+                    const colors = colorSelector[0].getElementsByClassName("blip-tag-color-option");
+                    for (const colorElement of Array.from(colors || [])) {
+                        const currentColor = colorElement.getAttribute("data-color");
+                        if (currentColor === color) {
+                            colorElement.click();
+                        }
+                    }
+                }
+            }
+        });
+    }
     OnLoadBuilder() {
         if (this.isEnabled) {
             this.StartAsync();
@@ -166,26 +240,6 @@ class AutoTag extends FeatureBase_1.FeatureBase {
             Utils_1.default.interceptFunction("SidebarContentService", "showSidebar", () => {
                 this.AddEventListeners();
             });
-        });
-    }
-    AddEventListeners() {
-        const elements = document.querySelectorAll("li[ng-click^='$ctrl.onAddAction'], i[ng-click^='$ctrl.onDeleteAction']");
-        const listener = (ev) => __awaiter(this, void 0, void 0, function* () {
-            yield this.FixWrongTags();
-        });
-        elements.forEach((e) => {
-            e.removeEventListener("click", listener);
-            e.addEventListener("click", listener);
-        });
-    }
-    FixWrongTags() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const enteringCustomActions = yield Utils_1.default.getBuilderControllerVariable("editingState.$enteringCustomActions");
-            const leavingCustomAction = yield Utils_1.default.getBuilderControllerVariable("editingState.$leavingCustomActions");
-            const actions = [...enteringCustomActions, ...leavingCustomAction];
-            const tags = yield Utils_1.default.getBuilderControllerVariable("editingState.$tags");
-            console.log(tags);
-            console.log(actions);
         });
     }
 }
@@ -219,6 +273,37 @@ class FeatureBase {
     }
 }
 exports.FeatureBase = FeatureBase;
+
+
+/***/ }),
+
+/***/ "./src/shared/Communicator.ts":
+/*!************************************!*\
+  !*** ./src/shared/Communicator.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ((brow) => { var _a; return _a = class Communicator {
+    },
+    _a.on = (type, callback) => {
+        brow.runtime.onMessage.addListener((message) => {
+            if (message.type === type) {
+                callback(message.state);
+            }
+        });
+    },
+    _a.emit = (type, state) => {
+        brow.tabs.query({ url: "*://*.blip.ai/*" }, (tabs) => {
+            for (const tab of tabs) {
+                chrome.tabs.sendMessage(tab.id, { type, state });
+            }
+        });
+    },
+    _a; })(chrome || browser);
 
 
 /***/ }),
@@ -385,6 +470,7 @@ Utils.injectPageScript = (file) => __awaiter(this, void 0, void 0, function* () 
         });
     });
 });
+Utils.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 Utils.getBuilderControllerVariableInjected = false;
 exports.default = Utils;
 
