@@ -9,9 +9,7 @@ export default class AutoTag extends FeatureBase {
     }
 
     private async StartAsync(): Promise<void> {
-        Utils.interceptFunction("SidebarContentService", "showSidebar", () => {
-            this.AddEventListeners();
-        });
+        Utils.interceptFunction("SidebarContentService", "showSidebar", this.AddEventListeners);
     }
 
     private AddEventListeners = () => {
@@ -25,7 +23,10 @@ export default class AutoTag extends FeatureBase {
     }
 
     private RepairWrongTags = async () => {
-        console.log("repair");
+        if (!this.isEnabled) {
+            return;
+        }
+
         const enteringCustomActions: [] =
             await Utils.getBuilderControllerVariable("editingState.$enteringCustomActions");
         const leavingCustomAction: [] =

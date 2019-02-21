@@ -172,7 +172,9 @@ class AutoTag extends FeatureBase_1.FeatureBase {
             });
         };
         this.RepairWrongTags = () => __awaiter(this, void 0, void 0, function* () {
-            console.log("repair");
+            if (!this.isEnabled) {
+                return;
+            }
             const enteringCustomActions = yield Utils_1.default.getBuilderControllerVariable("editingState.$enteringCustomActions");
             const leavingCustomAction = yield Utils_1.default.getBuilderControllerVariable("editingState.$leavingCustomActions");
             let actions = [...enteringCustomActions, ...leavingCustomAction];
@@ -237,9 +239,7 @@ class AutoTag extends FeatureBase_1.FeatureBase {
     }
     StartAsync() {
         return __awaiter(this, void 0, void 0, function* () {
-            Utils_1.default.interceptFunction("SidebarContentService", "showSidebar", () => {
-                this.AddEventListeners();
-            });
+            Utils_1.default.interceptFunction("SidebarContentService", "showSidebar", this.AddEventListeners);
         });
     }
 }
