@@ -9,7 +9,7 @@ export default class AutoTag extends FeatureBase {
     }
 
     private async StartAsync(): Promise<void> {
-        Utils.interceptFunction("SidebarContentService", "showSidebar", this.AddEventListeners);
+        Utils.interceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.AddEventListeners);
     }
 
     private AddEventListeners = () => {
@@ -28,14 +28,14 @@ export default class AutoTag extends FeatureBase {
         }
 
         const enteringCustomActions: [] =
-            await Utils.getBuilderControllerVariable("editingState.$enteringCustomActions");
+            await Utils.getBuilderControllerVariable("#canvas", null, "editingState.$enteringCustomActions");
         const leavingCustomAction: [] =
-            await Utils.getBuilderControllerVariable("editingState.$leavingCustomActions");
+            await Utils.getBuilderControllerVariable("#canvas", null, "editingState.$leavingCustomActions");
 
         let actions: any[] = [...enteringCustomActions, ...leavingCustomAction];
         actions = actions.map((a) => a.type);
 
-        let tags: any[] = await Utils.getBuilderControllerVariable("editingState.$tags");
+        let tags: any[] = await Utils.getBuilderControllerVariable("#canvas", null, "editingState.$tags");
         tags = tags.map((t) => t.label);
 
         const possibleActions = [
@@ -46,7 +46,6 @@ export default class AutoTag extends FeatureBase {
         shouldFixTags.forEach(this.removeTag);
 
         const shouldFixActions = actions.filter((a) => !tags.includes(a));
-        console.log(shouldFixActions)
         shouldFixActions.forEach(this.addTag);
     }
 

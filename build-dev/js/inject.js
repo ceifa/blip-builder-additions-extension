@@ -33,18 +33,22 @@ window.addEventListener("message", function (ev) {
         throw new Error("Unable to copy obj! Its type isn't supported.");
     }
 
-    var getController = function getController() {
-        var canvas = document.getElementById("canvas");
+    var getController = function getController(selector, controller) {
+        var element = window.angular.element(document.querySelector(selector));
 
-        if (canvas) {
-            return window.angular.element(canvas).controller();
+        if (element) {
+            if (controller) {
+                return element.controller(controller);
+            } else {
+                return element.controller();
+            }
         }
 
         return false;
     };
 
-    var getControllerVariable = function getControllerVariable(route) {
-        var controller = getController();
+    var getControllerVariable = function getControllerVariable(selector, controller, route) {
+        var controller = getController(selector, controller);
 
         if (controller) {
             var route = route && route.split('.');
@@ -75,9 +79,9 @@ window.addEventListener("message", function (ev) {
             }, "*");
         };
 
-        return result(getControllerVariable(ev.data.route));
+        return result(getControllerVariable(ev.data.selector, ev.data.controller, ev.data.route));
     } else if (ev.data && ev.data.type === "intercept-function" && ev.data.function) {
-        var obj = getControllerVariable(ev.data.route);
+        var obj = getControllerVariable(ev.data.selector, ev.data.controller, ev.data.route);
         var fnToWrap = obj[ev.data.function];
 
         obj[ev.data.function] = function () {

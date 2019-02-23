@@ -2,13 +2,23 @@ import Communicator from "../shared/Communicator";
 import Storager from "../shared/Storager";
 import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
+import CleanEnvironment from "./features/CleanEnvironment";
 import { FeatureBase } from "./features/FeatureBase";
+import WhatsappMarkdown from "./features/WhatsappMarkdown";
 
 export let isBuilderLoaded = false;
 export const features: Array<{ name: string, processor: FeatureBase }> = [
     {
         name: "autotag",
         processor: new AutoTag(),
+    },
+    {
+        name: "whatsappmarkdown",
+        processor: new WhatsappMarkdown(),
+    },
+    {
+        name: "cleanenvironment",
+        processor: new CleanEnvironment(),
     },
 ];
 
@@ -29,7 +39,7 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     Communicator.on("change-settings", refreshFeatures);
 
     setInterval(async (): Promise<void> => {
-        const isLoading: any = await Utils.getBuilderControllerVariable("isLoading");
+        const isLoading: any = await Utils.getBuilderControllerVariable("#canvas", null, "isLoading");
         const isLoaded = isLoading === false;
 
         if (isLoaded && isLoaded !== isBuilderLoaded) {

@@ -1,17 +1,20 @@
 export default class Utils {
-    public static interceptFunction = (path: string, func: string, action: () => void) => {
-        window.addEventListener("message", (ev: MessageEvent) => {
-            if (ev.data && ev.data.type === "intercept-function-result" && ev.data.id === path + func) {
-                action();
-            }
-        });
+    public static interceptFunction =
+        (selector: string, controller: string, path: string, func: string, action: () => void) => {
+            window.addEventListener("message", (ev: MessageEvent) => {
+                if (ev.data && ev.data.type === "intercept-function-result" && ev.data.id === path + func) {
+                    action();
+                }
+            });
 
-        window.postMessage({
-            function: func,
-            route: path,
-            type: "intercept-function",
-        }, "*");
-    }
+            window.postMessage({
+                controller,
+                function: func,
+                route: path,
+                selector,
+                type: "intercept-function",
+            }, "*");
+        }
 
     public static injectPageScript = async (file: string) => {
         const brow = chrome || browser;
@@ -33,7 +36,7 @@ export default class Utils {
         return Math.random().toString(36).substr(2, 9);
     }
 
-    public static async getBuilderControllerVariable(path: string): Promise<any> {
+    public static async getBuilderControllerVariable(selector: string, controller: string, path: string): Promise<any> {
         if (!this.getBuilderControllerVariableInjected) {
             await Utils.injectPageScript("js/inject.js");
             this.getBuilderControllerVariableInjected = true;
@@ -52,8 +55,10 @@ export default class Utils {
             window.addEventListener("message", listener);
 
             window.postMessage({
+                controller,
                 id: identifier,
                 route: path,
+                selector,
                 type: "controller-variable",
             }, "*");
         });

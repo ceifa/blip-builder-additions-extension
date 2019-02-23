@@ -1,8 +1,8 @@
 export default ((brow: typeof browser | typeof chrome) => {
-    let storage: any = null;
+    let storage: any = {};
 
     const ensureHasStorage = (): Promise<void> => new Promise((resolve: () => void) => {
-        if (!storage) {
+        if (!storage || Object.keys(storage).length === 0) {
             try {
                 storage = brow.storage.sync.get("settings", (result: any) => {
                     storage = result && result.settings;
@@ -27,7 +27,7 @@ export default ((brow: typeof browser | typeof chrome) => {
         public static get = async (key: string | void): Promise<any> => {
             await ensureHasStorage();
 
-            let current = storage || {};
+            let current = storage;
 
             if (key) {
                 const keys = key.split(".");
@@ -47,7 +47,7 @@ export default ((brow: typeof browser | typeof chrome) => {
         public static set = async (key: string, value: any): Promise<void> => {
             await ensureHasStorage();
 
-            let current = storage || {};
+            let current = storage;
             const keys = key.split(".");
 
             for (let i = 0; i < keys.length; i++) {
@@ -56,7 +56,7 @@ export default ((brow: typeof browser | typeof chrome) => {
                 if (i === keys.length - 1) {
                     current[path] = value;
                     break;
-                } else if (!storage.hasOwnProperty(path)) {
+                } else if (!storage || !storage.hasOwnProperty(path)) {
                     current[path] = {};
                 }
 
@@ -72,7 +72,7 @@ export default ((brow: typeof browser | typeof chrome) => {
         }
 
         public static refresh = async (): Promise<void> => {
-            storage = null;
+            storage = {};
             await ensureHasStorage();
         }
     };

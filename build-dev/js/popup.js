@@ -986,9 +986,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ((brow) => {
     var _a;
-    let storage = null;
+    let storage = {};
     const ensureHasStorage = () => new Promise((resolve) => {
-        if (!storage) {
+        if (!storage || Object.keys(storage).length === 0) {
             try {
                 storage = brow.storage.sync.get("settings", (result) => {
                     storage = result && result.settings;
@@ -1013,7 +1013,7 @@ exports.default = ((brow) => {
         },
         _a.get = (key) => __awaiter(this, void 0, void 0, function* () {
             yield ensureHasStorage();
-            let current = storage || {};
+            let current = storage;
             if (key) {
                 const keys = key.split(".");
                 for (const path of keys) {
@@ -1029,7 +1029,7 @@ exports.default = ((brow) => {
         }),
         _a.set = (key, value) => __awaiter(this, void 0, void 0, function* () {
             yield ensureHasStorage();
-            let current = storage || {};
+            let current = storage;
             const keys = key.split(".");
             for (let i = 0; i < keys.length; i++) {
                 const path = keys[i];
@@ -1037,7 +1037,7 @@ exports.default = ((brow) => {
                     current[path] = value;
                     break;
                 }
-                else if (!storage.hasOwnProperty(path)) {
+                else if (!storage || !storage.hasOwnProperty(path)) {
                     current[path] = {};
                 }
                 current = current[path];
@@ -1049,7 +1049,7 @@ exports.default = ((brow) => {
             yield syncStorage();
         }),
         _a.refresh = () => __awaiter(this, void 0, void 0, function* () {
-            storage = null;
+            storage = {};
             yield ensureHasStorage();
         }),
         _a;
