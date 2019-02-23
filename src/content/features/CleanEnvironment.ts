@@ -2,10 +2,16 @@ import { FeatureBase } from "./FeatureBase";
 
 export default class CleanEnvironment extends FeatureBase {
     private isShowingNavbar = true;
+    private button: any;
 
     public OnEnableFeature(): void {
         super.OnEnableFeature();
         this.StartAsync();
+    }
+
+    public OnDisableFeature(): void {
+        super.OnDisableFeature();
+        this.RemoveHeaderCollapse();
     }
 
     public OnLoadBuilder(): void {
@@ -14,9 +20,16 @@ export default class CleanEnvironment extends FeatureBase {
         }
     }
 
+    public OnUnloadBuilder(): void {
+        super.OnUnloadBuilder();
+        this.RemoveHeaderCollapse();
+    }
+
     private async StartAsync(): Promise<void> {
         this.RemoveBlipChatIcon();
         this.RemoveShadow();
+
+        this.isShowingNavbar = true;
         this.AddHeaderCollapser();
     }
 
@@ -25,14 +38,25 @@ export default class CleanEnvironment extends FeatureBase {
     }
 
     private RemoveBlipChatIcon = () => {
-        document.getElementById("blip-chat-open-iframe")!.remove();
+        if (document.getElementById("blip-chat-open-iframe")) {
+            document.getElementById("blip-chat-open-iframe").remove();
+        }
+    }
+
+    private RemoveHeaderCollapse = () => {
+        this.ToggleUserNavbar(false);
+        const canvas = document.getElementById("canvas");
+        if (canvas) { canvas.style.height = ""; }
+        const container = (document.querySelector(".builder-container") as HTMLElement);
+        if (container) { container.style.height = ""; }
+        this.button.remove();
     }
 
     private AddHeaderCollapser = () => {
-        const button = document.createElement("li");
-        button.innerHTML = "<i id='btn-nav-collapse' class='icon-arrowup'></i>";
-        document.querySelector("ul.action-icons").appendChild(button);
-        button.onclick = () => {
+        this.button = document.createElement("li");
+        this.button.innerHTML = "<i id='btn-nav-collapse' class='icon-arrowup'></i>";
+        document.querySelector("ul.action-icons").appendChild(this.button);
+        this.button.onclick = () => {
             this.isShowingNavbar = !this.isShowingNavbar;
 
             const collapser = document.getElementById("btn-nav-collapse");
@@ -48,12 +72,16 @@ export default class CleanEnvironment extends FeatureBase {
                 (document.querySelector(".builder-container") as HTMLElement).style.height = "calc(100vh - 56px)";
             }
 
-            this.ToggleUserNavbar(this.isShowingNavbar);
+            this.ToggleUserNavbar(!this.isShowingNavbar);
         };
-        button.click();
+        this.button.click();
     }
 
     private ToggleUserNavbar = (toggle: boolean) => {
-        document.querySelector(".main-header-top").classList.toggle("dn");
+        if (toggle) {
+            document.querySelector(".main-header-top").classList.add("dn");
+        } else {
+            document.querySelector(".main-header-top").classList.remove("dn");
+        }
     }
 }

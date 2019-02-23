@@ -140,8 +140,13 @@ exports.features = [
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
         const isLoading = yield Utils_1.default.getBuilderControllerVariable("#canvas", null, "isLoading");
         const isLoaded = isLoading === false;
-        if (isLoaded && isLoaded !== exports.isBuilderLoaded) {
-            exports.features.forEach((f) => f.processor.OnLoadBuilder());
+        if (isLoaded !== exports.isBuilderLoaded) {
+            if (isLoaded) {
+                exports.features.forEach((f) => f.processor.OnLoadBuilder());
+            }
+            else {
+                exports.features.forEach((f) => f.processor.OnUnloadBuilder());
+            }
         }
         exports.isBuilderLoaded = isLoaded;
     }), 800);
@@ -284,13 +289,27 @@ class CleanEnvironment extends FeatureBase_1.FeatureBase {
             document.getElementsByClassName("builder-header-shadow")[0].remove();
         };
         this.RemoveBlipChatIcon = () => {
-            document.getElementById("blip-chat-open-iframe").remove();
+            if (document.getElementById("blip-chat-open-iframe")) {
+                document.getElementById("blip-chat-open-iframe").remove();
+            }
+        };
+        this.RemoveHeaderCollapse = () => {
+            this.ToggleUserNavbar(false);
+            const canvas = document.getElementById("canvas");
+            if (canvas) {
+                canvas.style.height = "";
+            }
+            const container = document.querySelector(".builder-container");
+            if (container) {
+                container.style.height = "";
+            }
+            this.button.remove();
         };
         this.AddHeaderCollapser = () => {
-            const button = document.createElement("li");
-            button.innerHTML = "<i id='btn-nav-collapse' class='icon-arrowup'></i>";
-            document.querySelector("ul.action-icons").appendChild(button);
-            button.onclick = () => {
+            this.button = document.createElement("li");
+            this.button.innerHTML = "<i id='btn-nav-collapse' class='icon-arrowup'></i>";
+            document.querySelector("ul.action-icons").appendChild(this.button);
+            this.button.onclick = () => {
                 this.isShowingNavbar = !this.isShowingNavbar;
                 const collapser = document.getElementById("btn-nav-collapse");
                 if (this.isShowingNavbar) {
@@ -305,27 +324,41 @@ class CleanEnvironment extends FeatureBase_1.FeatureBase {
                     document.getElementById("canvas").style.height = "calc(100vh - 56px)";
                     document.querySelector(".builder-container").style.height = "calc(100vh - 56px)";
                 }
-                this.ToggleUserNavbar(this.isShowingNavbar);
+                this.ToggleUserNavbar(!this.isShowingNavbar);
             };
-            button.click();
+            this.button.click();
         };
         this.ToggleUserNavbar = (toggle) => {
-            document.querySelector(".main-header-top").classList.toggle("dn");
+            if (toggle) {
+                document.querySelector(".main-header-top").classList.add("dn");
+            }
+            else {
+                document.querySelector(".main-header-top").classList.remove("dn");
+            }
         };
     }
     OnEnableFeature() {
         super.OnEnableFeature();
         this.StartAsync();
     }
+    OnDisableFeature() {
+        super.OnDisableFeature();
+        this.RemoveHeaderCollapse();
+    }
     OnLoadBuilder() {
         if (this.isEnabled) {
             this.StartAsync();
         }
     }
+    OnUnloadBuilder() {
+        super.OnUnloadBuilder();
+        this.RemoveHeaderCollapse();
+    }
     StartAsync() {
         return __awaiter(this, void 0, void 0, function* () {
             this.RemoveBlipChatIcon();
             this.RemoveShadow();
+            this.isShowingNavbar = true;
             this.AddHeaderCollapser();
         });
     }
@@ -357,6 +390,9 @@ class FeatureBase {
     }
     OnReceiveConfiguration(configuration) {
         this.configuration = configuration;
+    }
+    OnUnloadBuilder() {
+        // I don't know what to do here
     }
 }
 exports.FeatureBase = FeatureBase;

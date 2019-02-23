@@ -42,8 +42,12 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
         const isLoading: any = await Utils.getBuilderControllerVariable("#canvas", null, "isLoading");
         const isLoaded = isLoading === false;
 
-        if (isLoaded && isLoaded !== isBuilderLoaded) {
-            features.forEach((f) => f.processor.OnLoadBuilder());
+        if (isLoaded !== isBuilderLoaded) {
+            if (isLoaded) {
+                features.forEach((f) => f.processor.OnLoadBuilder());
+            } else {
+                features.forEach((f) => f.processor.OnUnloadBuilder());
+            }
         }
 
         isBuilderLoaded = isLoaded;

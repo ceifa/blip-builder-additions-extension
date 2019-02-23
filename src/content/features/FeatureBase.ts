@@ -14,5 +14,9 @@ export abstract class FeatureBase {
         this.configuration = configuration;
     }
 
+    public OnUnloadBuilder(): void {
+        // I don't know what to do here
+    }
+
     public abstract OnLoadBuilder(): void;
 }
