@@ -38,7 +38,7 @@ window.addEventListener("message", (ev) => {
     }
 
     const getController = (selector: string, controller: string) => {
-        const element = window.angular.element(document.querySelector(selector));
+        const element = window.angular && window.angular.element(document.querySelector(selector));
 
         if (element) {
             if (controller) {
