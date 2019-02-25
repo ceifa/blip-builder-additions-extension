@@ -90,7 +90,7 @@ window.addEventListener("message", (ev) => {
         if (obj) {
             const fnToWrap = obj[ev.data.function];
 
-            obj[ev.data.function] = function () {
+            obj[ev.data.function] = function() {
                 const result = fnToWrap.apply(this, arguments);
 
                 window.postMessage({
