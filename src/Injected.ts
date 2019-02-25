@@ -86,16 +86,19 @@ window.addEventListener("message", (ev) => {
         return result(getControllerVariable(ev.data.selector, ev.data.controller, ev.data.route));
     } else if (ev.data && ev.data.type === "intercept-function" && ev.data.function) {
         const obj = getControllerVariable(ev.data.selector, ev.data.controller, ev.data.route);
-        const fnToWrap = obj[ev.data.function];
 
-        obj[ev.data.function] = function() {
-            const result = fnToWrap.apply(this, arguments);
+        if (obj) {
+            const fnToWrap = obj[ev.data.function];
 
-            window.postMessage({
-                id: ev.data.route + ev.data.function,
-                type: "intercept-function-result",
-            }, "*");
-            return result;
-        };
+            obj[ev.data.function] = function () {
+                const result = fnToWrap.apply(this, arguments);
+
+                window.postMessage({
+                    id: ev.data.route + ev.data.function,
+                    type: "intercept-function-result",
+                }, "*");
+                return result;
+            };
+        }
     }
 });
