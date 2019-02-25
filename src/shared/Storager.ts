@@ -5,7 +5,7 @@ export default ((brow: typeof browser | typeof chrome) => {
         if (!storage || Object.keys(storage).length === 0) {
             try {
                 brow.storage.sync.get("settings", (result: any) => {
-                    storage = result && result.settings;
+                    storage = (result && result.settings) || {};
                     resolve();
                 });
             } catch {

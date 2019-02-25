@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "webpack --config webpack.config.js --watch --progress"
+        "start": "webpack --mode=development --config webpack.config.js --watch --progress"
     },
     "repository": {
         "type": "git",
@@ -19,6 +19,7 @@
     "devDependencies": {
         "@types/chrome": "^0.0.79",
         "@types/firefox-webext-browser": "^65.0.0",
+        "copy-webpack-plugin": "^5.0.0",
         "css-loader": "^2.1.0",
         "node-sass": "^4.11.0",
         "sass-loader": "^7.1.0",

@@ -131,8 +131,13 @@ exports.features = [
         exports.features.forEach((f) => __awaiter(this, void 0, void 0, function* () {
             const configuration = yield Storager_1.default.get(f.name);
             f.processor.OnReceiveConfiguration(configuration);
-            if (configuration && configuration.enabled && !f.processor.isEnabled) {
-                f.processor.OnEnableFeature();
+            if (configuration) {
+                if (configuration.enabled && !f.processor.isEnabled) {
+                    f.processor.OnEnableFeature();
+                }
+                else if (!configuration.enabled && f.processor.isEnabled) {
+                    f.processor.OnDisableFeature();
+                }
             }
         }));
     });
@@ -208,7 +213,7 @@ class AutoTag extends FeatureBase_1.FeatureBase {
         this.removeTag = (tagName) => {
             const tagElements = Array.from(document.querySelectorAll(".sidebar-content-header .blip-tag__label"));
             const correctTagElement = tagElements.find((t) => t.textContent.trim() === tagName);
-            if (correctTagElement) {
+            if (correctTagElement && correctTagElement.nextElementSibling) {
                 correctTagElement.nextElementSibling.click();
             }
         };
@@ -226,20 +231,25 @@ class AutoTag extends FeatureBase_1.FeatureBase {
             input.dispatchEvent(new Event("input"));
             yield Utils_1.default.sleep(30);
             const options = tagMenu.getElementsByClassName("blip-select__options");
-            options[0].style.display = "none";
-            const correctTagOption = options[0].getElementsByClassName("blip-select__option");
-            if (correctTagOption && correctTagOption.length > 0) {
-                correctTagOption[0].click();
-                yield Utils_1.default.sleep(20);
-                const color = this.configuration[tagName.toLowerCase()];
-                const colorSelector = tagMenu.getElementsByClassName("blip-tag-select-color");
-                if (colorSelector && colorSelector.length > 0) {
-                    colorSelector[0].style.display = "none";
-                    const colors = colorSelector[0].getElementsByClassName("blip-tag-color-option");
-                    for (const colorElement of Array.from(colors || [])) {
-                        const currentColor = colorElement.getAttribute("data-color");
-                        if (currentColor === color) {
-                            colorElement.click();
+            if (options.length > 0) {
+                options[0].style.display = "none";
+                const correctTagOption = options[0].getElementsByClassName("blip-select__option");
+                if (correctTagOption.length > 0) {
+                    correctTagOption[0].click();
+                    yield Utils_1.default.sleep(20);
+                    const color = this.configuration[tagName.toLowerCase()];
+                    const colorSelector = tagMenu.getElementsByClassName("blip-tag-select-color");
+                    if (colorSelector && colorSelector.length > 0) {
+                        colorSelector[0].style.display = "none";
+                        const colors = colorSelector[0]
+                            .getElementsByClassName("blip-tag-color-option");
+                        if (colors.length > 0) {
+                            for (const colorElement of Array.from(colors)) {
+                                const currentColor = colorElement.getAttribute("data-color");
+                                if (currentColor === color) {
+                                    colorElement.click();
+                                }
+                            }
                         }
                     }
                 }
@@ -280,88 +290,105 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const Utils_1 = __webpack_require__(/*! ../../shared/Utils */ "./src/shared/Utils.ts");
+const Content_1 = __webpack_require__(/*! ../Content */ "./src/content/Content.ts");
 const FeatureBase_1 = __webpack_require__(/*! ./FeatureBase */ "./src/content/features/FeatureBase.ts");
+exports.USER_HEADER_SELECTOR = ".main-header-top:first-child";
 class CleanEnvironment extends FeatureBase_1.FeatureBase {
     constructor() {
         super(...arguments);
-        this.isShowingNavbar = true;
-        this.RemoveShadow = () => {
-            document.getElementsByClassName("builder-header-shadow")[0].remove();
-        };
-        this.RemoveBlipChatIcon = () => {
-            if (document.getElementById("blip-chat-open-iframe")) {
-                document.getElementById("blip-chat-open-iframe").remove();
+        this.shouldHide = [
+            "#blip-chat-container",
+            ".builder-header-shadow:first-child",
+        ];
+    }
+    OnEnableFeature() {
+        super.OnEnableFeature();
+        if (Content_1.isBuilderLoaded) {
+            this.StartAsync();
+        }
+    }
+    OnDisableFeature() {
+        super.OnDisableFeature();
+        this.StopAsync();
+    }
+    OnLoadBuilder() {
+        this.StartAsync();
+    }
+    OnUnloadBuilder() {
+        super.OnUnloadBuilder();
+        this.StopAsync();
+    }
+    StopAsync() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.ToggleHidables(false);
+            this.RemoveHeaderCollapser();
+        });
+    }
+    StartAsync() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.isEnabled) {
+                return;
             }
-        };
-        this.RemoveHeaderCollapse = () => {
-            this.ToggleUserNavbar(false);
-            const canvas = document.getElementById("canvas");
-            if (canvas) {
-                canvas.style.height = "";
-            }
-            const container = document.querySelector(".builder-container");
-            if (container) {
-                container.style.height = "";
-            }
-            this.button.remove();
-        };
-        this.AddHeaderCollapser = () => {
-            this.button = document.createElement("li");
-            this.button.classList.add("cursor-pointer");
-            this.button.innerHTML = "<i id='btn-nav-collapse' class='icon-arrowup'></i>";
-            document.querySelector("ul.action-icons").appendChild(this.button);
-            this.button.onclick = () => {
-                this.isShowingNavbar = !this.isShowingNavbar;
-                const collapser = document.getElementById("btn-nav-collapse");
+            this.ToggleHidables(true);
+            yield this.AddHeaderCollapser();
+        });
+    }
+    AddHeaderCollapser() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield fetch(Utils_1.default.getUrl("resources/collapser.html"));
+            const html = yield res.text();
+            document.querySelector("ul.action-icons").innerHTML += html;
+            yield Utils_1.default.sleep(20);
+            const button = document.getElementById("addictions-cleanenv-li");
+            button.onclick = () => {
+                const collapser = document.getElementById("addictions-cleanenv-i");
                 if (this.isShowingNavbar) {
-                    collapser.classList.remove("icon-arrowdown");
-                    collapser.classList.add("icon-arrowup");
+                    collapser.className = "icon-arrowup";
                     document.getElementById("canvas").style.height = "";
                     document.querySelector(".builder-container").style.height = "";
                 }
                 else {
-                    collapser.classList.remove("icon-arrowup");
-                    collapser.classList.add("icon-arrowdown");
+                    collapser.className = "icon-arrowdown";
                     document.getElementById("canvas").style.height = "calc(100vh - 56px)";
                     document.querySelector(".builder-container").style.height = "calc(100vh - 56px)";
                 }
-                this.ToggleUserNavbar(!this.isShowingNavbar);
+                this.isShowingNavbar = !this.isShowingNavbar;
+                this.ToggleElementDisplay(document.querySelector(exports.USER_HEADER_SELECTOR), this.isShowingNavbar);
             };
-            this.button.click();
-        };
-        this.ToggleUserNavbar = (toggle) => {
-            if (toggle) {
-                document.querySelector(".main-header-top").classList.add("dn");
-            }
-            else {
-                document.querySelector(".main-header-top").classList.remove("dn");
-            }
-        };
+            button.click();
+        });
     }
-    OnEnableFeature() {
-        super.OnEnableFeature();
-        this.StartAsync();
-    }
-    OnDisableFeature() {
-        super.OnDisableFeature();
-        this.RemoveHeaderCollapse();
-    }
-    OnLoadBuilder() {
-        if (this.isEnabled) {
-            this.StartAsync();
+    RemoveHeaderCollapser() {
+        this.ToggleElementDisplay(document.querySelector(exports.USER_HEADER_SELECTOR), false);
+        const canvas = document.getElementById("canvas");
+        if (canvas) {
+            canvas.style.height = "";
+        }
+        const container = document.querySelector(".builder-container");
+        if (container) {
+            container.style.height = "";
+        }
+        const button = document.getElementById("addictions-cleanenv-li");
+        if (button) {
+            button.remove();
         }
     }
-    OnUnloadBuilder() {
-        super.OnUnloadBuilder();
-        this.RemoveHeaderCollapse();
-    }
-    StartAsync() {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.RemoveBlipChatIcon();
-            this.RemoveShadow();
-            this.isShowingNavbar = true;
-            this.AddHeaderCollapser();
+    ToggleHidables(toggle) {
+        this.shouldHide.forEach((s) => {
+            const element = document.querySelector(s);
+            if (element && element.classList) {
+                this.ToggleElementDisplay(element, toggle);
+            }
         });
+    }
+    ToggleElementDisplay(element, toggle) {
+        if (toggle) {
+            element.classList.add("dn");
+        }
+        else {
+            element.classList.remove("dn");
+        }
     }
 }
 exports.default = CleanEnvironment;
@@ -447,6 +474,9 @@ class WhatsappMarkdown extends FeatureBase_1.FeatureBase {
             Utils_1.default.interceptFunction("contents", "contents", null, "onUpdateAndSave", this.AddWhatsappMarkdown);
         };
         this.AddWhatsappMarkdown = () => {
+            if (!this.isEnabled) {
+                return;
+            }
             const messages = document.querySelectorAll(".bubble.left");
             messages.forEach((m) => {
                 const isTypingOrAreEditing = !messages ||
@@ -536,8 +566,8 @@ exports.default = ((brow) => {
     const ensureHasStorage = () => new Promise((resolve) => {
         if (!storage || Object.keys(storage).length === 0) {
             try {
-                storage = brow.storage.sync.get("settings", (result) => {
-                    storage = result && result.settings;
+                brow.storage.sync.get("settings", (result) => {
+                    storage = (result && result.settings) || {};
                     resolve();
                 });
             }
@@ -629,7 +659,7 @@ class Utils {
     static getBuilderControllerVariable(selector, controller, path) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.getBuilderControllerVariableInjected) {
-                yield Utils.injectPageScript("js/inject.js");
+                yield Utils.injectPageScript("js/injected.js");
                 this.getBuilderControllerVariableInjected = true;
             }
             return new Promise((resolve) => {
@@ -667,10 +697,8 @@ Utils.interceptFunction = (selector, controller, path, func, action) => {
     }, "*");
 };
 Utils.injectPageScript = (file) => __awaiter(this, void 0, void 0, function* () {
-    const brow = chrome || browser;
-    const src = brow.extension.getURL(file);
     const element = document.createElement("script");
-    element.src = src;
+    element.src = Utils.getUrl(file);
     document.head.appendChild(element);
     return new Promise((resolve) => {
         element.addEventListener("load", () => {
@@ -678,6 +706,7 @@ Utils.injectPageScript = (file) => __awaiter(this, void 0, void 0, function* () 
         });
     });
 });
+Utils.getUrl = (path) => (chrome || browser).extension.getURL(path);
 Utils.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 Utils.getBuilderControllerVariableInjected = false;
 exports.default = Utils;

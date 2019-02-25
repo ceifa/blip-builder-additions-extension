@@ -30,8 +30,12 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
             const configuration = await Storager.get(f.name);
             f.processor.OnReceiveConfiguration(configuration);
 
-            if (configuration && configuration.enabled && !f.processor.isEnabled) {
-                f.processor.OnEnableFeature();
+            if (configuration) {
+                if (configuration.enabled && !f.processor.isEnabled) {
+                    f.processor.OnEnableFeature();
+                } else if (!configuration.enabled && f.processor.isEnabled) {
+                    f.processor.OnDisableFeature();
+                }
             }
         });
     };

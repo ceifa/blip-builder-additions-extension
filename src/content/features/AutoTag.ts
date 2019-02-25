@@ -52,7 +52,7 @@ export default class AutoTag extends FeatureBase {
     private removeTag = (tagName: string) => {
         const tagElements = Array.from(document.querySelectorAll(".sidebar-content-header .blip-tag__label"));
         const correctTagElement = tagElements.find((t) => t.textContent.trim() === tagName);
-        if (correctTagElement) {
+        if (correctTagElement && correctTagElement.nextElementSibling) {
             (correctTagElement.nextElementSibling as HTMLElement).click();
         }
     }
@@ -79,33 +79,39 @@ export default class AutoTag extends FeatureBase {
         await Utils.sleep(30);
 
         const options = tagMenu.getElementsByClassName("blip-select__options") as HTMLCollectionOf<HTMLElement>;
-        options[0]!.style.display = "none";
 
-        const correctTagOption =
-            options[0].getElementsByClassName("blip-select__option") as HTMLCollectionOf<HTMLElement>;
+        if (options.length > 0) {
+            options[0].style.display = "none";
 
-        if (correctTagOption && correctTagOption.length > 0) {
-            correctTagOption[0].click();
+            const correctTagOption =
+                options[0].getElementsByClassName("blip-select__option") as HTMLCollectionOf<HTMLElement>;
 
-            await Utils.sleep(20);
+            if (correctTagOption.length > 0) {
+                correctTagOption[0].click();
 
-            const color = this.configuration[tagName.toLowerCase()];
+                await Utils.sleep(20);
 
-            const colorSelector =
-                tagMenu.getElementsByClassName("blip-tag-select-color") as HTMLCollectionOf<HTMLElement>;
+                const color = this.configuration[tagName.toLowerCase()];
 
-            if (colorSelector && colorSelector.length > 0) {
-                colorSelector[0].style.display = "none";
+                const colorSelector =
+                    tagMenu.getElementsByClassName("blip-tag-select-color") as HTMLCollectionOf<HTMLElement>;
 
-                const colors =
-                    colorSelector![0].getElementsByClassName("blip-tag-color-option") as HTMLCollectionOf<HTMLElement>;
+                if (colorSelector && colorSelector.length > 0) {
+                    colorSelector[0].style.display = "none";
 
-                for (const colorElement of Array.from(colors || [])) {
-                    const currentColor = colorElement.getAttribute("data-color");
+                    const colors = colorSelector[0]
+                        .getElementsByClassName("blip-tag-color-option") as HTMLCollectionOf<HTMLElement>;
 
-                    if (currentColor === color) {
-                        colorElement.click();
+                    if (colors.length > 0) {
+                        for (const colorElement of Array.from(colors)) {
+                            const currentColor = colorElement.getAttribute("data-color");
+
+                            if (currentColor === color) {
+                                colorElement.click();
+                            }
+                        }
                     }
+
                 }
             }
         }

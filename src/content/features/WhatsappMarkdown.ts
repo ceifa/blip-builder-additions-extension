@@ -37,6 +37,10 @@ export default class WhatsappMarkdown extends FeatureBase {
     }
 
     private AddWhatsappMarkdown = () => {
+        if (!this.isEnabled) {
+            return;
+        }
+
         const messages = document.querySelectorAll(".bubble.left");
         messages.forEach((m) => {
             const isTypingOrAreEditing =

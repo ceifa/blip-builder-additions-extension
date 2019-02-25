@@ -1,10 +1,12 @@
 const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     mode: 'development',
     entry: {
         popup: './src/popup/js/Popup.ts',
-        content: './src/content/Content.ts'
+        content: './src/content/Content.ts',
+        injected: './src/Injected.ts'
     },
     devtool: "source-map",
     module: {
@@ -39,5 +41,14 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'build-dev', 'js')
-    }
+    },
+    plugins: [
+        new CopyPlugin([
+            { from: './src/resources', to: '../resources', flatten: true },
+            { from: './manifest', to: '../manifest' },
+            { from: './manifest.json', to: '../' },
+            { from: './src/popup/pages', to: '../pages', flatten: true },
+            { from: './src/popup/img', to: '../img', flatten: true }
+        ])
+    ]
 };

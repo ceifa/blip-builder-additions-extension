@@ -17,11 +17,8 @@ export default class Utils {
         }
 
     public static injectPageScript = async (file: string) => {
-        const brow = chrome || browser;
-        const src = brow.extension.getURL(file);
-
         const element = document.createElement("script");
-        element.src = src;
+        element.src = Utils.getUrl(file);
 
         document.head.appendChild(element);
 
@@ -38,7 +35,7 @@ export default class Utils {
 
     public static async getBuilderControllerVariable(selector: string, controller: string, path: string): Promise<any> {
         if (!this.getBuilderControllerVariableInjected) {
-            await Utils.injectPageScript("js/inject.js");
+            await Utils.injectPageScript("js/injected.js");
             this.getBuilderControllerVariableInjected = true;
         }
 
@@ -63,6 +60,8 @@ export default class Utils {
             }, "*");
         });
     }
+
+    public static getUrl = (path: string) => (chrome || browser).extension.getURL(path);
 
     public static sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
