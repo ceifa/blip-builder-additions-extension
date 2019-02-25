@@ -32,6 +32,6 @@
         "webpack-cli": "^3.2.3"
     },
     "dependencies": {
-        "blip-toolkit": "^4.1.1"
+        "blip-toolkit": "^4.2.1"
     }
 }

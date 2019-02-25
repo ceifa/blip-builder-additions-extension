@@ -307,6 +307,7 @@ class CleanEnvironment extends FeatureBase_1.FeatureBase {
         };
         this.AddHeaderCollapser = () => {
             this.button = document.createElement("li");
+            this.button.classList.add("cursor-pointer");
             this.button.innerHTML = "<i id='btn-nav-collapse' class='icon-arrowup'></i>";
             document.querySelector("ul.action-icons").appendChild(this.button);
             this.button.onclick = () => {
