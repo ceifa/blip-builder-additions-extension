@@ -4,7 +4,7 @@ export default ((brow: typeof browser | typeof chrome) => {
     const ensureHasStorage = (): Promise<void> => new Promise((resolve: () => void) => {
         if (!storage || Object.keys(storage).length === 0) {
             try {
-                storage = brow.storage.sync.get("settings", (result: any) => {
+                brow.storage.sync.get("settings", (result: any) => {
                     storage = result && result.settings;
                     resolve();
                 });
