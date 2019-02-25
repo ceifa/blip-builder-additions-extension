@@ -51,7 +51,8 @@ export default class CleanEnvironment extends FeatureBase {
         const res = await fetch(Utils.getUrl("resources/collapser.html"));
         const html = await res.text();
 
-        document.querySelector("ul.action-icons").innerHTML += html;
+        const icons = document.querySelector("ul.action-icons");
+        icons.innerHTML += html;
         await Utils.sleep(20);
 
         const button = document.getElementById("addictions-cleanenv-li");

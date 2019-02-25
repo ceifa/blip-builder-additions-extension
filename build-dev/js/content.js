@@ -338,7 +338,8 @@ class CleanEnvironment extends FeatureBase_1.FeatureBase {
         return __awaiter(this, void 0, void 0, function* () {
             const res = yield fetch(Utils_1.default.getUrl("resources/collapser.html"));
             const html = yield res.text();
-            document.querySelector("ul.action-icons").innerHTML += html;
+            const icons = document.querySelector("ul.action-icons");
+            icons.innerHTML += html;
             yield Utils_1.default.sleep(20);
             const button = document.getElementById("addictions-cleanenv-li");
             button.onclick = () => {
