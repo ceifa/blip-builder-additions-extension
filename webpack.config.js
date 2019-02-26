@@ -43,12 +43,16 @@ module.exports = {
         path: path.resolve(__dirname, 'build-dev', 'js')
     },
     plugins: [
-        new CopyPlugin([
-            { from: './src/resources', to: '../resources', flatten: true },
-            { from: './manifest', to: '../manifest' },
-            { from: './manifest.json', to: '../' },
-            { from: './src/popup/pages', to: '../pages', flatten: true },
-            { from: './src/popup/img', to: '../img', flatten: true }
-        ])
+        new CopyPlugin(
+            [
+                { from: './src/resources', to: '../resources', flatten: true },
+                { from: './manifest', to: '../manifest' },
+                { from: './manifest.json', to: '../' },
+                { from: './src/popup/pages', to: '../pages', flatten: true },
+                { from: './src/popup/img', to: '../img', flatten: true }
+            ],
+            {
+                copyUnmodified: true
+            })
     ]
 };

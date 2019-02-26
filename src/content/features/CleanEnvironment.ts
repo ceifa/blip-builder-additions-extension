@@ -51,13 +51,13 @@ export default class CleanEnvironment extends FeatureBase {
         const res = await fetch(Utils.getUrl("resources/collapser.html"));
         const html = await res.text();
 
-        const icons = document.querySelector("ul.action-icons");
-        icons.innerHTML += html;
+        const icons = document.querySelector(".bot-header-details");
+        icons.innerHTML = html + icons.innerHTML;
         await Utils.sleep(20);
 
-        const button = document.getElementById("addictions-cleanenv-li");
-        button.onclick = () => {
-            const collapser = document.getElementById("addictions-cleanenv-i");
+        const button = document.getElementById("addictions-cleanenv-collapser");
+        button.addEventListener("click", () => {
+            const collapser = document.getElementById("addictions-cleanenv-icon");
 
             if (this.isShowingNavbar) {
                 collapser.className = "icon-arrowup";
@@ -71,7 +71,7 @@ export default class CleanEnvironment extends FeatureBase {
 
             this.isShowingNavbar = !this.isShowingNavbar;
             this.ToggleElementDisplay(document.querySelector(USER_HEADER_SELECTOR), this.isShowingNavbar);
-        };
+        });
 
         button.click();
     }
@@ -89,7 +89,7 @@ export default class CleanEnvironment extends FeatureBase {
             container.style.height = "";
         }
 
-        const button = document.getElementById("addictions-cleanenv-li");
+        const button = document.getElementById("addictions-cleanenv-collapser");
         if (button) {
             button.remove();
         }
@@ -98,17 +98,17 @@ export default class CleanEnvironment extends FeatureBase {
     private ToggleHidables(toggle: boolean): void {
         this.shouldHide.forEach((s) => {
             const element = document.querySelector(s);
-            if (element && element.classList) {
-                this.ToggleElementDisplay(element, toggle);
-            }
+            this.ToggleElementDisplay(element, toggle);
         });
     }
 
     private ToggleElementDisplay(element: Element, toggle: boolean): void {
-        if (toggle) {
-            element.classList.add("dn");
-        } else {
-            element.classList.remove("dn");
+        if (element && element.classList) {
+            if (toggle) {
+                element.classList.add("dn");
+            } else {
+                element.classList.remove("dn");
+            }
         }
     }
 }
