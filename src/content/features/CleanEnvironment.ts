@@ -52,7 +52,9 @@ export default class CleanEnvironment extends FeatureBase {
         const html = await res.text();
 
         const icons = document.querySelector(".bot-header-details");
-        icons.innerHTML = html + icons.innerHTML;
+        const collapserContainer = document.createElement("div");
+        collapserContainer.innerHTML = html;
+        icons.prepend(collapserContainer);
         await Utils.sleep(20);
 
         const button = document.getElementById("addictions-cleanenv-collapser");
