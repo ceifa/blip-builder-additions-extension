@@ -3,6 +3,7 @@ import Storager from "../shared/Storager";
 import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
 import CleanEnvironment from "./features/CleanEnvironment";
+import Configuration from "./features/Configuration";
 import { FeatureBase } from "./features/FeatureBase";
 import WhatsappMarkdown from "./features/WhatsappMarkdown";
 
@@ -19,6 +20,10 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     {
         name: "cleanenvironment",
         processor: new CleanEnvironment(),
+    },
+    {
+        name: "configuration",
+        processor: new Configuration(),
     },
 ];
 

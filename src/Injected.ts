@@ -76,11 +76,19 @@ window.addEventListener("message", (ev) => {
 
     if (ev.data && ev.data.type === "controller-variable" && ev.data.route) {
         const result = (value: any) => {
-            window.postMessage({
-                id: ev.data.id,
-                type: "controller-variable-result",
-                value: clone(value),
-            }, "*");
+            try {
+                window.postMessage({
+                    id: ev.data.id,
+                    type: "controller-variable-result",
+                    value: clone(value),
+                }, "*");
+            } catch{
+                window.postMessage({
+                    id: ev.data.id,
+                    type: "controller-variable-result",
+                    value: null,
+                }, "*");
+            }
         };
 
         return result(getControllerVariable(ev.data.selector, ev.data.controller, ev.data.route));
@@ -90,7 +98,7 @@ window.addEventListener("message", (ev) => {
         if (obj) {
             const fnToWrap = obj[ev.data.function];
 
-            obj[ev.data.function] = function() {
+            obj[ev.data.function] = function () {
                 const result = fnToWrap.apply(this, arguments);
 
                 window.postMessage({
@@ -100,5 +108,8 @@ window.addEventListener("message", (ev) => {
                 return result;
             };
         }
+    } else if (ev.data && ev.data.type === "call-function") {
+        const obj = getControllerVariable(ev.data.selector, ev.data.controller, ev.data.route);
+        obj[ev.data.func](...ev.data.params);
     }
 });

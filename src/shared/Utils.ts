@@ -61,6 +61,17 @@ export default class Utils {
         });
     }
 
+    public static callFunction(selector: string, controller: string, path: string, func: string, params: Array<any>) {
+        window.postMessage({
+            controller,
+            func,
+            params,
+            route: path,
+            selector,
+            type: "call-function",
+        }, "*");
+    }
+
     public static getUrl = (path: string) => (chrome || browser).extension.getURL(path);
 
     public static sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

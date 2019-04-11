@@ -1,0 +1,58 @@
+<div class="sidebar-inner-content pa5">
+    <div class="flex flex-column">
+        <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1 mt3">Extras</span>
+        <span>Apply extras information for all event tracks</span>
+        <div class="mt3">
+            <form>
+                <ul id="extras-key-value-list" class="key-value-list">
+                    <li id="key-value-template" class="dn">
+                        <div class="flex flex-row justify-between">
+                            <div type="text" class="w-45">
+                                <div class="bp-input-wrapper relative">
+                                    <label class="bp-label tl bp-c-rooftop">Key</label>
+                                    <div class="w-100 relative flex flex-row justify-between">
+                                        <input class="w-100 bp-input bp-c-city extras-key" name="key" type="text" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div type="text" class="w-45">
+                                <div class="bp-input-wrapper relative">
+                                    <label class="bp-label tl bp-c-rooftop">Value</label>
+                                    <div class="w-100 relative flex flex-row justify-between">
+                                        <input class="w-100 bp-input bp-c-city extras-value" name="value" type="text" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <i class="self-center icon-close lh-solid cursor-pointer"></i>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+            <div class="addictions-extras-button-container">
+                <div class="addictions-extras-button">
+                    <button id="extras-add-btn" class="bp-btn bp-btn--bot bp-btn--dashed flex justify-center items-center h3-1 w-100 b">
+                        + Add extras</button>
+                </div>
+                <div class="addictions-extras-button">
+                    <button id="extras-apply-btn" class="bp-btn bp-btn--bot flex justify-center items-center h3-1 w-100 b">
+                        Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .addictions-extras-button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .addictions-extras-button {
+            width: 48%;
+            height: 50px;
+        }
+
+        .addictions-extras-button button {
+            height: inherit;
+        }
+    </style>
+</div>
