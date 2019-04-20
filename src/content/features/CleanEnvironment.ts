@@ -48,14 +48,14 @@ export default class CleanEnvironment extends FeatureBase {
     }
 
     private async AddHeaderCollapser(): Promise<void> {
-        const res = await fetch(Utils.getUrl("resources/collapser.html"));
+        const res = await fetch(Utils.GetUrl("resources/collapser.html"));
         const html = await res.text();
 
         const icons = document.querySelector(".bot-header-details");
         const collapserContainer = document.createElement("div");
         collapserContainer.innerHTML = html;
         icons.prepend(collapserContainer);
-        await Utils.sleep(20);
+        await Utils.Sleep(20);
 
         const button = document.getElementById("addictions-cleanenv-collapser");
         button.addEventListener("click", () => {

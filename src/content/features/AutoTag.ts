@@ -9,7 +9,7 @@ export default class AutoTag extends FeatureBase {
     }
 
     private async StartAsync(): Promise<void> {
-        Utils.interceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.AddEventListeners);
+        await Utils.InterceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.AddEventListeners);
     }
 
     private AddEventListeners = () => {
@@ -27,15 +27,16 @@ export default class AutoTag extends FeatureBase {
             return;
         }
 
-        const enteringCustomActions: [] =
-            await Utils.getBuilderControllerVariable("#canvas", null, "editingState.$enteringCustomActions");
-        const leavingCustomAction: [] =
-            await Utils.getBuilderControllerVariable("#canvas", null, "editingState.$leavingCustomActions");
+        const enteringCustomActions: [] = await Utils.SendCommand(
+            "Variable", "#canvas", null, "editingState.$enteringCustomActions");
+        const leavingCustomAction: [] = await Utils.SendCommand(
+            "Variable", "#canvas", null, "editingState.$leavingCustomActions");
 
         let actions: any[] = [...enteringCustomActions, ...leavingCustomAction];
         actions = actions.map((a) => a.type);
 
-        let tags: any[] = await Utils.getBuilderControllerVariable("#canvas", null, "editingState.$tags");
+        let tags: any[] = await Utils.SendCommand(
+            "Variable", "#canvas", null, "editingState.$tags");
         tags = tags.map((t) => t.label);
 
         const possibleActions = [
@@ -72,11 +73,11 @@ export default class AutoTag extends FeatureBase {
         const input = tagMenu.getElementsByTagName("input")[0];
         input.value = tagName;
 
-        await Utils.sleep(10);
+        await Utils.Sleep(10);
 
         input.dispatchEvent(new Event("input"));
 
-        await Utils.sleep(30);
+        await Utils.Sleep(30);
 
         const options = tagMenu.getElementsByClassName("blip-select__options") as HTMLCollectionOf<HTMLElement>;
 
@@ -89,7 +90,7 @@ export default class AutoTag extends FeatureBase {
             if (correctTagOption.length > 0) {
                 correctTagOption[0].click();
 
-                await Utils.sleep(20);
+                await Utils.Sleep(20);
 
                 const color = this.configuration[tagName.toLowerCase()];
 

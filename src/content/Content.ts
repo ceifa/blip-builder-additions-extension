@@ -28,6 +28,8 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
 ];
 
 (async (brow: typeof chrome | typeof browser) => {
+    Utils.StartListeningCommands();
+
     const refreshFeatures = async (): Promise<void> => {
         await Storager.refresh();
 
@@ -48,7 +50,7 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     Communicator.on("change-settings", refreshFeatures);
 
     setInterval(async (): Promise<void> => {
-        const isLoading: any = await Utils.getBuilderControllerVariable("#canvas", null, "isLoading");
+        const isLoading: any = await Utils.SendCommand("Variable", "#canvas", null, "isLoading");
         const isLoaded = isLoading === false;
 
         if (isLoaded !== isBuilderLoaded) {

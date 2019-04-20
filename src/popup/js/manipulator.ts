@@ -85,7 +85,7 @@ export default (() => {
                     for (const attribute of Array.from(element.attributes)) {
                         if (attribute.name.indexOf("event-") === 0) {
                             const event = attribute.name.replace("event-", "");
-                            element.addEventListener(event, ( this as any)[attribute.value]);
+                            element.addEventListener(event, (this as any)[attribute.value]);
                         }
                     }
                 }

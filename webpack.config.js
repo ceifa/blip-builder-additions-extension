@@ -6,7 +6,7 @@ module.exports = {
     entry: {
         popup: './src/popup/js/Popup.ts',
         content: './src/content/Content.ts',
-        injected: './src/Injected.ts'
+        injected: './src/injections/Inject.ts'
     },
     devtool: "source-map",
     module: {

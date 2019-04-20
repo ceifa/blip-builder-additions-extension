@@ -1,9 +1,10 @@
-import { FeatureBase } from "./FeatureBase";
 import Utils from "../../shared/Utils";
+import { FeatureBase } from "./FeatureBase";
 
 export default class Configuration extends FeatureBase {
-    public OnLoadBuilder(): void {
-        Utils.interceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.AddCustomConfiguration);
+    public async OnLoadBuilder(): Promise<void> {
+        await Utils.InterceptFunction(
+            "#canvas", null, "SidebarContentService", "showSidebar", this.AddCustomConfiguration);
     }
 
     private AddCustomConfiguration = (): void => {
@@ -36,7 +37,7 @@ export default class Configuration extends FeatureBase {
     }
 
     private RenderCustomConfiguration = async () => {
-        const res = await fetch(Utils.getUrl("resources/addictionsConfiguration.html"));
+        const res = await fetch(Utils.GetUrl("resources/addictionsConfiguration.html"));
         const html = await res.text();
 
         const configSection = document.querySelector(".content-tabs div");
@@ -64,7 +65,7 @@ export default class Configuration extends FeatureBase {
 
         document.getElementById("extras-apply-btn").addEventListener("click", async ev => {
             try {
-                Utils.callFunction("#canvas", null, "LoadingService", "startLoading", [false]);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "LoadingService", "startLoading", [false]);
 
                 let extras: { key: string, value: string }[] = [];
 
@@ -89,21 +90,20 @@ export default class Configuration extends FeatureBase {
                     return search;
                 }
 
-                let flow = await Utils.getBuilderControllerVariable("#canvas", null, "flow");
+                let flow = await Utils.SendCommand("Variable", "#canvas", null, "flow");
                 Object.keys(flow).forEach(k => {
                     flow[k]["$enteringCustomActions"] = replaceExtras(flow[k]["$enteringCustomActions"]);
                     flow[k]["$leavingCustomActions"] = replaceExtras(flow[k]["$leavingCustomActions"]);
                 });
 
-                Utils.callFunction("#canvas", null, "BuilderService", "setFlow", [flow]);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "BuilderService", "setFlow", [flow]);
 
-                setTimeout(() => {
-                    Utils.callFunction("#canvas", null, "LoadingService", "stopLoading", []);
-                    Utils.callFunction("#canvas", null, "$state", "reload", []);
-                }, 500);
+                await Utils.Sleep(500);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "LoadingService", "stopLoading", []);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "$state", "reload", []);
             } catch {
-                const toast = Utils.callFunction("#canvas", null, "ngToast", "danger", ["Error when trying to apply event track extras. (nothing was applied)"]);
-                Utils.callFunction("#canvas", null, "LoadingService", "stopLoading", []);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "ngToast", "danger", ["Error when trying to apply event track extras. (nothing was applied)"]);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "LoadingService", "stopLoading", []);
             }
         });
     }

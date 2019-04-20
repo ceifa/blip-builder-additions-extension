@@ -1,80 +1,58 @@
 export default class Utils {
-    public static interceptFunction =
-        (selector: string, controller: string, path: string, func: string, action: () => void) => {
-            window.addEventListener("message", (ev: MessageEvent) => {
-                if (ev.data && ev.data.type === "intercept-function-result" && ev.data.id === path + func) {
-                    action();
+    public static StartListeningCommands = () => {
+        window.addEventListener("message", (message: MessageEvent) => {
+            if (message.data.isAddiction && !message.data.fromExtension) {
+                Utils.resolvers[message.data.identifier].forEach((f) => f(message.data.result));
+
+                if (message.data.shouldDelete) {
+                    delete Utils.resolvers[message.data.identifier];
                 }
-            });
+            }
+        });
+    }
 
-            window.postMessage({
-                controller,
-                function: func,
-                route: path,
-                selector,
-                type: "intercept-function",
-            }, "*");
-        }
-
-    public static injectPageScript = async (file: string) => {
+    public static InjectPageScript = (file: string) => {
         const element = document.createElement("script");
-        element.src = Utils.getUrl(file);
+        element.src = Utils.GetUrl(file);
 
         document.head.appendChild(element);
-
-        return new Promise((resolve) => {
-            element.addEventListener("load", () => {
-                resolve();
-            });
-        });
+        return new Promise((resolve) => element.addEventListener("load", resolve));
     }
 
-    public static getRandomId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
+    public static SendCommand = (functionName: string, ...parameters: any[]): Promise<any> =>
+        new Promise(async (resolve) => {
+            if (!Utils.isScriptInjected) {
+                await Utils.InjectPageScript("js/injected.js");
+                Utils.isScriptInjected = true;
+            }
 
-    public static async getBuilderControllerVariable(selector: string, controller: string, path: string): Promise<any> {
-        if (!this.getBuilderControllerVariableInjected) {
-            await Utils.injectPageScript("js/injected.js");
-            this.getBuilderControllerVariableInjected = true;
-        }
-
-        return new Promise((resolve) => {
-            const identifier = this.getRandomId();
-
-            const listener = (ev: MessageEvent) => {
-                if (ev.data && ev.data.type === "controller-variable-result" && ev.data.id === identifier) {
-                    window.removeEventListener("message", listener);
-                    return resolve(ev.data.value);
-                }
-            };
-
-            window.addEventListener("message", listener);
+            const identifier = Utils.GetRandomIdentifier();
+            Utils.resolvers[identifier] = [...(Utils.resolvers[identifier] || []), resolve];
 
             window.postMessage({
-                controller,
-                id: identifier,
-                route: path,
-                selector,
-                type: "controller-variable",
+                fromExtension: true,
+                function: functionName,
+                identifier,
+                isAddiction: true,
+                parameters,
             }, "*");
-        });
-    }
+        })
 
-    public static callFunction(selector: string, controller: string, path: string, func: string, params: Array<any>) {
-        window.postMessage({
-            controller,
-            func,
-            params,
-            route: path,
-            selector,
-            type: "call-function",
-        }, "*");
-    }
+    public static InterceptFunction =
+        async (selector: string, controllerName: string, route: string, functionName: string, callback: () => void) => {
+            await Utils.SendCommand("InterceptFunction", selector, controllerName, route, functionName);
 
-    public static getUrl = (path: string) => (chrome || browser).extension.getURL(path);
+            const key = `${route}_${functionName}`;
+            Utils.resolvers[key] = [...(Utils.resolvers[key] || []), callback];
+        }
 
-    public static sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    public static GetRandomIdentifier = () => Math.random().toString(36).substr(2, 9);
 
-    private static getBuilderControllerVariableInjected: boolean = false;
+    public static GetUrl = (path: string) => (chrome || browser).extension.getURL(path);
+
+    public static Sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    private static resolvers: { [identifier: string]: Array<(value?: any) => void> } = {};
+
+    private static isScriptInjected: boolean = false;
 }

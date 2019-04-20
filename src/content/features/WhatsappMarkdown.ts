@@ -28,12 +28,12 @@ export default class WhatsappMarkdown extends FeatureBase {
     }
 
     private async StartAsync(): Promise<void> {
-        Utils.interceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.OnOpenSidebar);
+        await Utils.InterceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.OnOpenSidebar);
     }
 
-    private OnOpenSidebar = () => {
+    private OnOpenSidebar = async () => {
         this.AddWhatsappMarkdown();
-        Utils.interceptFunction("contents", "contents", null, "onUpdateAndSave", this.AddWhatsappMarkdown);
+        await Utils.InterceptFunction("contents", "contents", null, "onUpdateAndSave", this.AddWhatsappMarkdown);
     }
 
     private AddWhatsappMarkdown = () => {
