@@ -7,33 +7,55 @@ export default class Configuration extends FeatureBase {
             "#canvas", null, "SidebarContentService", "showSidebar", this.AddCustomConfiguration);
     }
 
-    private AddCustomConfiguration = (): void => {
-        setTimeout(() => {
-            const configurationTab = document.getElementById("flow-config-tab");
-            const contentTabItems = document.querySelector("ul.content-tabs-items");
+    private AddCustomConfiguration = async (): Promise<void> => {
+        const configurationTab = document.getElementById("flow-config-tab");
+        const contentTabItems = document.querySelectorAll("ul.content-tabs-items");
 
-            if (configurationTab && contentTabItems.childElementCount === 2) {
-                const customTab = document.createElement("li");
-                contentTabItems.childNodes.forEach(c => c.addEventListener("click", e => {
-                    document.getElementById("customContent") && document.getElementById("customContent").remove();
-                    customTab.classList.remove("active");
-                }));
+        if (configurationTab) {
+            this.isCustomTabOpened = false;
 
-                customTab.id = "addictionsTab";
-                customTab.innerHTML = "<span>Addictions</span>";
-                customTab.classList.add("cursor-pointer");
-                customTab.addEventListener("click", async e => {
-                    contentTabItems.childNodes.forEach((t: Element) => t && t.classList && t.classList.remove("active"));
-                    customTab.classList.add("active");
+            contentTabItems.forEach(c => {
+                if (c.childElementCount === 2) {
+                    let currentActive: Element;
 
-                    const contents = document.querySelectorAll(".tab-content");
-                    contents.forEach(c => !c.classList.contains("ng-hide") && c.classList.add("ng-hide"));
-                    await this.RenderCustomConfiguration();
-                });
+                    const customTab = document.createElement("li");
+                    c.childNodes.forEach(c => c.addEventListener("click", async e => {
+                        if (this.isCustomTabOpened) {
+                            this.isCustomTabOpened = false;
+                            document.getElementById("customContent") && document.getElementById("customContent").remove();
+                            customTab.classList.remove("active");
 
-                contentTabItems.appendChild(customTab);
-            }
-        }, 100);
+                            await Utils.Sleep(50);
+                            const contents = document.querySelectorAll(".tab-content");
+                            if (Array.from(contents).every(c => c.classList.contains("ng-hide"))) {
+                                currentActive.classList.remove("ng-hide");
+                            }
+                        }
+                    }));
+
+                    customTab.id = "addictionsTab";
+                    customTab.innerHTML = "<span>Addictions</span>";
+                    customTab.classList.add("cursor-pointer");
+                    customTab.addEventListener("click", async e => {
+                        if (!this.isCustomTabOpened) {
+                            this.isCustomTabOpened = true;
+                            c.childNodes.forEach((t: Element) => t && t.classList && t.classList.remove("active"));
+                            customTab.classList.add("active");
+
+                            const contents = document.querySelectorAll(".tab-content");
+                            currentActive = Array.from(contents).find(c => !c.classList.contains("ng-hide"));
+                            if (currentActive) {
+                                currentActive.classList.add("ng-hide");
+                            }
+
+                            await this.RenderCustomConfiguration();
+                        }
+                    });
+
+                    c.appendChild(customTab);
+                }
+            });
+        }
     }
 
     private RenderCustomConfiguration = async () => {
@@ -102,9 +124,11 @@ export default class Configuration extends FeatureBase {
                 await Utils.SendCommand("CallFunction", "#canvas", null, "LoadingService", "stopLoading", []);
                 await Utils.SendCommand("CallFunction", "#canvas", null, "$state", "reload", []);
             } catch {
-                await Utils.SendCommand("CallFunction", "#canvas", null, "ngToast", "danger", ["Error when trying to apply event track extras. (nothing was applied)"]);
+                await Utils.SendCommand("CallFunction", "#canvas", null, "ngToast", "danger", ["Error when trying to apply event track extras. (Maybe nothing has been applied)"]);
                 await Utils.SendCommand("CallFunction", "#canvas", null, "LoadingService", "stopLoading", []);
             }
         });
     }
+
+    private isCustomTabOpened: boolean = false;
 }

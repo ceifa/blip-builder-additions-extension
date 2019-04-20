@@ -1,5 +1,4 @@
 import Communicator from "../../shared/Communicator";
-import storager from "../../shared/Storager";
 import Storager from "../../shared/Storager";
 
 export default (() => {
@@ -43,7 +42,7 @@ export default (() => {
             i.addEventListener("change", async (ev) => {
                 const target = ev.target as HTMLInputElement;
                 const value = target.type === "checkbox" ? target.checked : target.value;
-                await storager.set(target.getAttribute("config"), value);
+                await Storager.set(target.getAttribute("config"), value);
                 Communicator.emit("change-settings", null);
             });
         });
@@ -51,23 +50,25 @@ export default (() => {
 
     const fixSettingsValues = async (): Promise<void> => {
         const inputs = document.querySelectorAll("input[config]");
-        inputs.forEach(async (i: HTMLInputElement) => {
-            const configKey = i.getAttribute("config");
-            let value = await storager.get(configKey);
+        for (let i = 0; i < inputs.length; i++) {
+            const input = inputs[i] as HTMLInputElement;
+
+            const configKey = input.getAttribute("config");
+            let value = await Storager.get(configKey);
 
             if (value === null) {
-                value = i.getAttribute("default");
+                value = input.getAttribute("default");
                 await Storager.set(configKey, value);
             }
 
-            if (i.type === "checkbox") {
-                i.checked = value.toString() === "true";
+            if (input.type === "checkbox") {
+                input.checked = value.toString() === "true";
             } else {
-                i.value = value;
+                input.value = value;
             }
 
-            i.dispatchEvent(new Event("change"));
-        });
+            input.dispatchEvent(new Event("change"));
+        }
     };
 
     return class Manipulator {
@@ -77,9 +78,7 @@ export default (() => {
         constructor() {
             document.addEventListener("DOMContentLoaded", () => {
                 addSettingsManipulationHandlers();
-                fixSettingsValues().then((_) => {
-                    addInputEventListeners();
-                });
+                fixSettingsValues().then(addInputEventListeners);
 
                 for (const element of Array.from(document.all)) {
                     for (const attribute of Array.from(element.attributes)) {
@@ -131,7 +130,7 @@ export default (() => {
         }
 
         public resetConfig = async (): Promise<void> => {
-            await storager.clear();
+            await Storager.clear();
             await fixSettingsValues();
         }
     };
