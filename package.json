@@ -17,22 +17,22 @@
     },
     "homepage": "https://github.com/ceifa/blip-builder-additions-extension#readme",
     "devDependencies": {
-        "@types/chrome": "^0.0.79",
-        "@types/firefox-webext-browser": "^65.0.0",
-        "copy-webpack-plugin": "^5.0.0",
-        "css-loader": "^2.1.0",
+        "@types/chrome": "0.0.79",
+        "@types/firefox-webext-browser": "^65.0.3",
+        "copy-webpack-plugin": "^5.0.2",
+        "css-loader": "^2.1.1",
         "node-sass": "^4.11.0",
         "sass-loader": "^7.1.0",
         "style-loader": "^0.23.1",
         "ts-loader": "^5.3.3",
-        "tslint": "^5.12.1",
+        "tslint": "^5.16.0",
         "tslint-loader": "^3.5.4",
-        "typescript": "^3.3.3",
+        "typescript": "^3.4.4",
         "typescript-tslint-plugin": "^0.3.1",
-        "webpack": "^4.29.3",
-        "webpack-cli": "^3.2.3"
+        "webpack": "^4.30.0",
+        "webpack-cli": "^3.3.0"
     },
     "dependencies": {
-        "blip-toolkit": "^4.2.1"
+        "blip-toolkit": "^4.10.0"
     }
 }
