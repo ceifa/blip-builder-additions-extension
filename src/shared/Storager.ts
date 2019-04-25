@@ -17,7 +17,6 @@ export default ((brow: typeof browser | typeof chrome) => {
     });
 
     const syncStorage = async (): Promise<void> => {
-        await ensureHasStorage();
         brow.storage.sync.set({
             settings: storage,
         });
