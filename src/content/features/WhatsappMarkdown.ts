@@ -1,5 +1,5 @@
 import Utils from "../../shared/Utils";
-import { FeatureBase } from "./FeatureBase";
+import FeatureBase from "./FeatureBase";
 
 export default class WhatsappMarkdown extends FeatureBase {
     private readonly MarkdownRules = [

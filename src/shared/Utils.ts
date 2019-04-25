@@ -1,3 +1,5 @@
+import { Command } from "./types/Command";
+
 export default class Utils {
     public static StartListeningCommands = () => {
         window.addEventListener("message", (message: MessageEvent) => {
@@ -19,7 +21,7 @@ export default class Utils {
         return new Promise((resolve) => element.addEventListener("load", resolve));
     }
 
-    public static SendCommand = (functionName: string, ...parameters: any[]): Promise<any> =>
+    public static SendCommand = (command: Command, ...parameters: any[]): Promise<any> =>
         new Promise(async (resolve) => {
             if (!Utils.isScriptInjected) {
                 await Utils.InjectPageScript("js/injected.js");
@@ -31,7 +33,7 @@ export default class Utils {
 
             window.postMessage({
                 fromExtension: true,
-                function: functionName,
+                function: command,
                 identifier,
                 isAddiction: true,
                 parameters,
@@ -40,7 +42,7 @@ export default class Utils {
 
     public static InterceptFunction =
         async (selector: string, controllerName: string, route: string, functionName: string, callback: () => void) => {
-            await Utils.SendCommand("InterceptFunction", selector, controllerName, route, functionName);
+            await Utils.SendCommand(Command.InterceptFunction, selector, controllerName, route, functionName);
 
             const key = `${route}_${functionName}`;
             Utils.resolvers[key] = [...(Utils.resolvers[key] || []), callback];

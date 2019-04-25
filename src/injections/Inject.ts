@@ -1,4 +1,4 @@
-import Injectables from "./Injectables";
+import Injectables from "./InjectCommands";
 
 window.addEventListener("message", (message: MessageEvent) => {
     if (message.data.isAddiction && message.data.fromExtension) {

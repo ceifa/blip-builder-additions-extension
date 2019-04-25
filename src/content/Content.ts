@@ -1,10 +1,11 @@
 import Communicator from "../shared/Communicator";
 import Storager from "../shared/Storager";
+import { Command } from "../shared/types/Command";
 import Utils from "../shared/Utils";
 import AutoTag from "./features/AutoTag";
 import CleanEnvironment from "./features/CleanEnvironment";
-import Configuration from "./features/Configuration";
-import { FeatureBase } from "./features/FeatureBase";
+import Configuration from "./features/configurations/Configuration";
+import FeatureBase from "./features/FeatureBase";
 import WhatsappMarkdown from "./features/WhatsappMarkdown";
 
 export let isBuilderLoaded = false;
@@ -50,7 +51,7 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     Communicator.on("change-settings", refreshFeatures);
 
     setInterval(async (): Promise<void> => {
-        const isLoading: any = await Utils.SendCommand("Variable", "#canvas", null, "isLoading");
+        const isLoading: any = await Utils.SendCommand(Command.GetVariable, "#canvas", null, "isLoading");
         const isLoaded = isLoading === false;
 
         if (isLoaded !== isBuilderLoaded) {

@@ -1,5 +1,6 @@
+import { Command } from "../../shared/types/Command";
 import Utils from "../../shared/Utils";
-import { FeatureBase } from "./FeatureBase";
+import FeatureBase from "./FeatureBase";
 
 export default class AutoTag extends FeatureBase {
     public OnLoadBuilder(): void {
@@ -28,15 +29,15 @@ export default class AutoTag extends FeatureBase {
         }
 
         const enteringCustomActions: [] = await Utils.SendCommand(
-            "Variable", "#canvas", null, "editingState.$enteringCustomActions");
+            Command.GetVariable, "#canvas", null, "editingState.$enteringCustomActions");
         const leavingCustomAction: [] = await Utils.SendCommand(
-            "Variable", "#canvas", null, "editingState.$leavingCustomActions");
+            Command.GetVariable, "#canvas", null, "editingState.$leavingCustomActions");
 
         let actions: any[] = [...enteringCustomActions, ...leavingCustomAction];
         actions = actions.map((a) => a.type);
 
         let tags: any[] = await Utils.SendCommand(
-            "Variable", "#canvas", null, "editingState.$tags");
+            Command.GetVariable, "#canvas", null, "editingState.$tags");
         tags = tags.map((t) => t.label);
 
         const possibleActions = [

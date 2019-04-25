@@ -1,4 +1,4 @@
-export abstract class FeatureBase {
+export default abstract class FeatureBase {
     public isEnabled: boolean = false;
     protected configuration: any;
 

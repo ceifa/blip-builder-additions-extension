@@ -1,6 +1,6 @@
 import Utils from "../../shared/Utils";
 import { isBuilderLoaded } from "../Content";
-import { FeatureBase } from "./FeatureBase";
+import FeatureBase from "./FeatureBase";
 
 export const USER_HEADER_SELECTOR = ".main-header-top:first-child";
 

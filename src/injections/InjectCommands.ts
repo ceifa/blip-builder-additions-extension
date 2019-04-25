@@ -4,7 +4,7 @@ export default class Injectables {
     [key: string]: any;
 
     public InterceptFunction =
-        (selector: string, controllerName: string, route: string, functionName: string): any => {
+        (selector: string, controllerName: string, route: string, functionName: string): void => {
             const source = this.GetControllerVariable(selector, controllerName, route);
             const functionToWrap = source[functionName];
 
@@ -27,7 +27,7 @@ export default class Injectables {
             return functionSource && functionSource[functionName](...parameters);
         }
 
-    public Variable = (selector: string, controllerName: string, route: string): any => {
+    public GetVariable = (selector: string, controllerName: string, route: string): any => {
         return cloneObject(this.GetControllerVariable(selector, controllerName, route));
     }
 
