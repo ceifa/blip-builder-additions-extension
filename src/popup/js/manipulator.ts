@@ -50,9 +50,8 @@ export default (() => {
 
     const fixSettingsValues = async (): Promise<void> => {
         const inputs = document.querySelectorAll("input[config]");
-        for (let i = 0; i < inputs.length; i++) {
-            const input = inputs[i] as HTMLInputElement;
 
+        for (const input of Array.from(inputs) as HTMLInputElement[]) {
             const configKey = input.getAttribute("config");
             let value = await Storager.get(configKey);
 
