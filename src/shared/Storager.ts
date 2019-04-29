@@ -1,3 +1,5 @@
+import Utils from "./Utils";
+
 export default ((brow: typeof browser | typeof chrome) => {
     let storage: any = {};
 
@@ -75,4 +77,4 @@ export default ((brow: typeof browser | typeof chrome) => {
             await ensureHasStorage();
         }
     };
-})(chrome || browser);
+})(Utils.GetBrowser());

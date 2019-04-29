@@ -24,7 +24,7 @@ export default class Injectables {
     public CallFunction =
         (selector: string, controllerName: string, route: string, functionName: string, parameters: any[]): any => {
             const functionSource = this.GetControllerVariable(selector, controllerName, route);
-            return functionSource && functionSource[functionName](...parameters);
+            return functionSource && functionSource[functionName](...(parameters || []));
         }
 
     public GetVariable = (selector: string, controllerName: string, route: string): any => {

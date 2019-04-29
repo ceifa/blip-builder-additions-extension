@@ -54,6 +54,8 @@ export default class Utils {
 
     public static Sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+    public static GetBrowser = () => chrome || browser;
+
     private static resolvers: { [identifier: string]: Array<(value?: any) => void> } = {};
 
     private static isScriptInjected: boolean = false;

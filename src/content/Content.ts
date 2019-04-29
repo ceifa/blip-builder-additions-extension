@@ -66,4 +66,4 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     }, 800);
 
     refreshFeatures();
-})(chrome || browser);
+})(Utils.GetBrowser());

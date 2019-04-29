@@ -1,3 +1,5 @@
+import Utils from "./Utils";
+
 export default ((brow: typeof browser | typeof chrome) => class Communicator {
     public static on = (type: string, callback: (state: any) => void) => {
         brow.runtime.onMessage.addListener((message: any) => {
@@ -14,4 +16,4 @@ export default ((brow: typeof browser | typeof chrome) => class Communicator {
             }
         });
     }
-})(chrome || browser);
+})(Utils.GetBrowser());
