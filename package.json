@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "webpack --mode=development --config webpack.config.js --watch --progress"
+        "start": "cross-env NODE_ENV=development webpack --watch --progress",
+        "build": "cross-env NODE_ENV=production webpack"
     },
     "repository": {
         "type": "git",
@@ -20,6 +21,7 @@
         "@types/chrome": "0.0.79",
         "@types/firefox-webext-browser": "^65.0.3",
         "copy-webpack-plugin": "^5.0.2",
+        "cross-env": "^5.2.0",
         "css-loader": "^2.1.1",
         "node-sass": "^4.11.0",
         "sass-loader": "^7.1.0",

@@ -3,3 +3,4 @@ node_modules/
 
 # Compiled binaries
 build-dev/
+build/

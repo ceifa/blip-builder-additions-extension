@@ -1,8 +1,10 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
+const env = process.env.NODE_ENV || 'development';
+
 module.exports = {
-    mode: 'development',
+    mode: env,
     entry: {
         popup: './src/popup/js/Popup.ts',
         content: './src/content/Content.ts',
@@ -40,7 +42,7 @@ module.exports = {
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'build-dev', 'js')
+        path: path.resolve(__dirname, 'build' + (env === 'development' ? '-dev' : ''), 'js')
     },
     plugins: [
         new CopyPlugin(
