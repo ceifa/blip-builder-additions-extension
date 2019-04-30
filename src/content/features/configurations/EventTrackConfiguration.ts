@@ -67,7 +67,7 @@ export default class EventTrackConfiguration implements IConfiguration {
         } catch {
             await Utils.SendCommand(Command.CallFunction, "#canvas", null, "LoadingService", "stopLoading");
             await Utils.SendCommand(Command.CallFunction, "#canvas", null, "ngToast", "danger",
-                ["Error when trying to apply event track extras. (nothing was applied)"]);
+                ["Error when trying to apply event track extras. (Maybe nothing has been applied)"]);
         }
     }
 

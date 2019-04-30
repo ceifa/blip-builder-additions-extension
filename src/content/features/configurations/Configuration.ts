@@ -8,42 +8,71 @@ export const configurations: IConfiguration[] = [
 ];
 
 export default class Configuration extends FeatureBase {
+    private isCustomTabOpened: boolean = false;
+
     public async OnLoadBuilder(): Promise<void> {
         await Utils.InterceptFunction(
             "#canvas", null, "SidebarContentService", "showSidebar", this.AddCustomConfiguration);
     }
 
-    private AddCustomConfiguration = (): void => {
+    private AddCustomConfiguration = async (): Promise<void> => {
         const configurationTab = document.getElementById("flow-config-tab");
-        const contentTabItems = document.querySelector("ul.content-tabs-items");
+        const contentTabItems = document.querySelectorAll("ul.content-tabs-items");
 
-        if (configurationTab && contentTabItems.childElementCount === 2) {
-            const customTab = document.createElement("li");
-            contentTabItems.childNodes.forEach((c: ChildNode) =>
-                c.addEventListener("click", () => {
-                    const customContent = document.getElementById("customContent");
+        if (configurationTab) {
+            this.isCustomTabOpened = false;
 
-                    if (customContent) {
-                        customContent.remove();
-                        customTab.classList.remove("active");
-                    }
-                }));
+            contentTabItems.forEach((contentTab) => {
+                if (contentTab.childElementCount === 2) {
+                    let currentActive: Element;
 
-            customTab.id = "addictionsTab";
-            customTab.innerHTML = "<span>Addictions</span>";
-            customTab.classList.add("cursor-pointer");
-            customTab.addEventListener("click", async () => {
-                contentTabItems.childNodes.forEach((t: Element) => t && t.classList && t.classList.remove("active"));
-                customTab.classList.add("active");
+                    const customTab = document.createElement("li");
+                    contentTab.childNodes.forEach((c) => c.addEventListener("click", async () => {
+                        if (this.isCustomTabOpened) {
+                            this.isCustomTabOpened = false;
 
-                const contents = document.querySelectorAll(".tab-content");
-                contents.forEach((c: Element) => !c.classList.contains("ng-hide") && c.classList.add("ng-hide"));
+                            const customContent = document.getElementById("customContent");
+                            if (customContent) {
+                                customContent.remove();
+                            }
 
-                await this.RenderCustomConfiguration();
-                configurations.forEach((c: IConfiguration) => c.OnLoadConfiguration());
+                            customTab.classList.remove("active");
+
+                            await Utils.Sleep(50);
+                            const contents = document.querySelectorAll(".tab-content");
+                            if (Array.from(contents)
+                                .every((content: Element) => content.classList.contains("ng-hide"))) {
+                                currentActive.classList.remove("ng-hide");
+                            }
+                        }
+                    }));
+
+                    customTab.id = "addictionsTab";
+                    customTab.innerHTML = "<span>Addictions</span>";
+                    customTab.classList.add("cursor-pointer");
+                    customTab.addEventListener("click", async () => {
+                        if (!this.isCustomTabOpened) {
+                            this.isCustomTabOpened = true;
+
+                            contentTab.childNodes.forEach((t: Element) =>
+                                t && t.classList && t.classList.remove("active"));
+
+                            customTab.classList.add("active");
+
+                            const contents = document.querySelectorAll(".tab-content");
+                            currentActive = Array.from(contents).find((c) => !c.classList.contains("ng-hide"));
+                            if (currentActive) {
+                                currentActive.classList.add("ng-hide");
+                            }
+
+                            await this.RenderCustomConfiguration();
+                            configurations.forEach((c: IConfiguration) => c.OnLoadConfiguration());
+                        }
+                    });
+
+                    contentTab.appendChild(customTab);
+                }
             });
-
-            contentTabItems.appendChild(customTab);
         }
     }
 
