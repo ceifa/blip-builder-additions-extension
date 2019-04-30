@@ -4,9 +4,7 @@ import FeatureBase from "./FeatureBase";
 
 export default class AutoTag extends FeatureBase {
     public OnLoadBuilder(): void {
-        if (this.isEnabled) {
-            this.StartAsync();
-        }
+        this.StartAsync();
     }
 
     private async StartAsync(): Promise<void> {
@@ -45,13 +43,13 @@ export default class AutoTag extends FeatureBase {
                 .map((a) => a.getAttribute("ng-click").match("'(.*)'")[1]))];
 
         const shouldFixTags = tags.filter((t) => !actions.includes(t) && possibleActions.includes(t));
-        shouldFixTags.forEach(this.removeTag);
+        shouldFixTags.forEach(this.RemoveTag);
 
         const shouldFixActions = actions.filter((a) => !tags.includes(a));
-        shouldFixActions.forEach(this.addTag);
+        shouldFixActions.forEach(this.AddTag);
     }
 
-    private removeTag = (tagName: string) => {
+    private RemoveTag = (tagName: string) => {
         const tagElements = Array.from(document.querySelectorAll(".sidebar-content-header .blip-tag__label"));
         const correctTagElement = tagElements.find((t) => t.textContent.trim() === tagName);
         if (correctTagElement && correctTagElement.nextElementSibling) {
@@ -59,7 +57,7 @@ export default class AutoTag extends FeatureBase {
         }
     }
 
-    private addTag = async (tagName: string) => {
+    private AddTag = async (tagName: string) => {
         const tab = document.getElementById("node-content-tab");
 
         const header = tab.getElementsByClassName("sidebar-content-header")[0];

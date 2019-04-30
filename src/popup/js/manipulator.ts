@@ -57,6 +57,14 @@ export default (() => {
 
             if (value === null) {
                 value = input.getAttribute("default");
+
+                switch (value.toLowerCase()) {
+                    case "true":
+                        value = true;
+                    case "false":
+                        value = false;
+                }
+
                 await Storager.set(configKey, value);
             }
 

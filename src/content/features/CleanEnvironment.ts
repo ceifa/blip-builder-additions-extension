@@ -25,7 +25,7 @@ export default class CleanEnvironment extends FeatureBase {
     }
 
     public OnLoadBuilder(): void {
-        this.StartAsync();
+        // not using yet
     }
 
     public OnUnloadBuilder(): void {

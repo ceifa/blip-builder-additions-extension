@@ -22,9 +22,7 @@ export default class WhatsappMarkdown extends FeatureBase {
     ];
 
     public OnLoadBuilder(): void {
-        if (this.isEnabled) {
-            this.StartAsync();
-        }
+        this.StartAsync();
     }
 
     private async StartAsync(): Promise<void> {
