@@ -18,7 +18,10 @@ export default class EventTrackConfiguration implements IConfiguration {
 
         const listItem = document.createElement("li");
         listItem.innerHTML = template.innerHTML;
-        listItem.querySelector("i").addEventListener("click", listItem.remove);
+        listItem.querySelector("i").addEventListener("click", () => {
+            listItem.remove();
+            this.saveCurrentExtras();
+        });
 
         Array.from(listItem.getElementsByTagName("input"))
             .forEach((i) => i.addEventListener("blur", this.saveCurrentExtras));

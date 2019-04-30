@@ -2,9 +2,11 @@ import Utils from "../../../shared/Utils";
 import FeatureBase from "../FeatureBase";
 import EventTrackConfiguration from "./EventTrackConfiguration";
 import IConfiguration from "./IConfiguration";
+import LoopIdentifierConfiguration from "./LoopIdentifierConfiguration";
 
 export const configurations: IConfiguration[] = [
     new EventTrackConfiguration(),
+    new LoopIdentifierConfiguration(),
 ];
 
 export default class Configuration extends FeatureBase {

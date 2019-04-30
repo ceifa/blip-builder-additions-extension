@@ -1,7 +1,9 @@
 export const cloneObject = (source: any): any => {
     let copy: any;
 
-    if (source == null || typeof source !== "object") {
+    if (source instanceof Function) {
+        copy = null;
+    } else if (source == null || typeof source !== "object") {
         copy = source;
     } else if (source instanceof Date) {
         copy = new Date();

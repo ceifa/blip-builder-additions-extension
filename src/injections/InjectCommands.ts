@@ -27,6 +27,24 @@ export default class Injectables {
             return functionSource && functionSource[functionName](...(parameters || []));
         }
 
+    public SetVariable = (selector: string, controllerName: string, route: string, value: any): any => {
+        const controller = this.GetController(selector, controllerName);
+        if (controller) {
+            const paths = route && route.split(".");
+            let current = controller;
+
+            if (paths) {
+                for (const path of paths.slice(0, -1)) {
+                    current = current[path];
+                }
+            }
+
+            current[paths[paths.length - 1]] = value;
+        }
+
+        return true;
+    }
+
     public GetVariable = (selector: string, controllerName: string, route: string): any => {
         return cloneObject(this.GetControllerVariable(selector, controllerName, route));
     }
