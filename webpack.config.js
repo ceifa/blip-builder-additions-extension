@@ -1,5 +1,7 @@
 const path = require('path');
+
 const CopyPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -10,7 +12,7 @@ module.exports = {
         content: './src/content/Content.ts',
         injected: './src/injections/Inject.ts'
     },
-    devtool: "source-map",
+    devtool: env === 'development' && 'source-map',
     module: {
         rules: [
             {
@@ -31,7 +33,7 @@ module.exports = {
             {
                 test: /\.scss$/,
                 use: [{
-                    loader: "sass-loader",
+                    loader: 'sass-loader',
                 }],
                 include: /src/
             }
@@ -45,6 +47,7 @@ module.exports = {
         path: path.resolve(__dirname, 'build' + (env === 'development' ? '-dev' : ''), 'js')
     },
     plugins: [
+        new CleanWebpackPlugin(),
         new CopyPlugin(
             [
                 { from: './src/resources', to: '../resources', flatten: true },
