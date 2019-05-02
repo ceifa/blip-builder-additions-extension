@@ -25,7 +25,7 @@ export default class CleanEnvironment extends FeatureBase {
     }
 
     public OnLoadBuilder(): void {
-        // not using yet
+        this.StartAsync();
     }
 
     public OnUnloadBuilder(): void {
@@ -36,10 +36,11 @@ export default class CleanEnvironment extends FeatureBase {
     private async StopAsync(): Promise<void> {
         this.ToggleHidables(false);
         this.RemoveHeaderCollapser();
+        this.isShowingNavbar = false;
     }
 
     private async StartAsync(): Promise<void> {
-        if (!this.isEnabled) {
+        if (!this.isEnabled || document.getElementById("addictions-cleanenv-collapser")) {
             return;
         }
 
@@ -75,7 +76,9 @@ export default class CleanEnvironment extends FeatureBase {
             this.ToggleElementDisplay(document.querySelector(USER_HEADER_SELECTOR), this.isShowingNavbar);
         });
 
-        button.click();
+        if (!this.isShowingNavbar) {
+            button.click();
+        }
     }
 
     private RemoveHeaderCollapser(): void {
