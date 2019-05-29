@@ -31,7 +31,17 @@ export default class WhatsappMarkdown extends FeatureBase {
 
     private OnOpenSidebar = async () => {
         this.AddWhatsappMarkdown();
-        await Utils.InterceptFunction("contents", "contents", null, "onUpdateAndSave", this.AddWhatsappMarkdown);
+        const editIconElements = document.querySelectorAll(".blip-container:not(.chat-state) .editIco:not(.trashIco)");
+        editIconElements.forEach((e) => e.addEventListener("click", (_) => {
+            document.querySelectorAll("form textarea")
+                .forEach((fe) => fe.addEventListener("keydown", (ev: KeyboardEvent) => {
+                    if (ev.keyCode === 13) {
+                        this.OnOpenSidebar();
+                    }
+                }));
+            document.querySelectorAll(".bubble.left form")
+                .forEach((fe) => fe.addEventListener("submit", this.OnOpenSidebar));
+        }));
     }
 
     private AddWhatsappMarkdown = () => {
