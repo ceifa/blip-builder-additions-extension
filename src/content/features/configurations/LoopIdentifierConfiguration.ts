@@ -3,14 +3,14 @@ import Utils from "../../../shared/Utils";
 import IConfiguration from "./IConfiguration";
 
 export default class EventTrackConfiguration implements IConfiguration {
+    private loopTail: Set<string> = new Set<string>();
+
     public OnLoadConfiguration = (): void => {
         document.getElementById("identify-loops").addEventListener("click", this.StartSearchingForFlowLoops);
     }
 
     private StartSearchingForFlowLoops = async () => {
         const flow = await Utils.SendCommand(Command.GetVariable, "#canvas", null, "flow");
-
-        const currentTail: Set<string> = new Set<string>();
         let hasLoop: boolean = false;
 
         for (const stateKey of Object.keys(flow)) {
@@ -20,8 +20,8 @@ export default class EventTrackConfiguration implements IConfiguration {
 
             if (!hasInput) {
                 for (const output of this.GetStateOutputs(state)) {
-                    currentTail.clear();
-                    if (this.HasStateLoop(flow, state, output, currentTail)) {
+                    this.loopTail.clear();
+                    if (this.HasStateLoop(flow, state, output)) {
                         hasLoop = true;
                         break;
                     }
@@ -34,7 +34,7 @@ export default class EventTrackConfiguration implements IConfiguration {
         }
 
         if (hasLoop) {
-            const currentTailArr = Array.from(currentTail);
+            const currentTailArr = Array.from(this.loopTail);
             const loopTailLog = [...currentTailArr, currentTailArr[0]]
                 .map((c) => `<li>${flow[c].$title}</li>`).join("");
 
@@ -55,8 +55,10 @@ export default class EventTrackConfiguration implements IConfiguration {
         }
     }
 
-    private HasStateLoop = (flow: any, state: any, output: any, currentTail: Set<string>) => {
-        if (Array.from(currentTail).some((s) => s === output.stateId)) {
+    private HasStateLoop = (flow: any, state: any, output: any) => {
+        this.loopTail = new Set<string>(this.loopTail);
+
+        if (Array.from(this.loopTail).some((s) => s === output.stateId)) {
             return false;
         }
 
@@ -73,14 +75,14 @@ export default class EventTrackConfiguration implements IConfiguration {
         }
 
         if (outputStateOutputs.some((o: any) => o.stateId === state.id)) {
-            currentTail.add(output.stateId);
-            currentTail.add(state.id);
+            this.loopTail.add(output.stateId);
+            this.loopTail.add(state.id);
             return true;
         }
 
-        currentTail.add(output.stateId);
+        this.loopTail.add(output.stateId);
 
-        return outputStateOutputs.some((o: any) => this.HasStateLoop(flow, state, o, currentTail));
+        return outputStateOutputs.some((o: any) => this.HasStateLoop(flow, state, o));
     }
 
     private GetStateInput = (state: any) => {
