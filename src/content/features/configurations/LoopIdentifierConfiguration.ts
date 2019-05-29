@@ -41,7 +41,6 @@ export default class EventTrackConfiguration implements IConfiguration {
             document.getElementById("found-loops").classList.remove("dn");
             document.getElementById("found-loops-container").innerHTML = loopTailLog;
 
-            await Utils.SendCommand(Command.SetVariable, "#canvas", null, "searchedStates", currentTailArr);
             await Utils.SendCommand(Command.CallFunction, "#canvas", null, "ngToast", "danger",
                 ["Your flow has loops. See the loop tail."]);
         } else {
@@ -49,6 +48,10 @@ export default class EventTrackConfiguration implements IConfiguration {
 
             await Utils.SendCommand(Command.CallFunction, "#canvas", null, "ngToast", "success",
                 ["Your flow doesn't has loops. Nice!"]);
+        }
+
+        for (let i = 0; i < 2; i++) {
+            (document.querySelector(".zoom.zoom-display") as HTMLElement).click();
         }
     }
 
