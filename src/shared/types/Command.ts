@@ -3,4 +3,6 @@ export enum Command {
     SetVariable = "SetVariable",
     CallFunction = "CallFunction",
     InterceptFunction = "InterceptFunction",
+    StartZoom = "StartZoom",
+    StopZoom = "StopZoom",
 }

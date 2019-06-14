@@ -7,6 +7,7 @@ import CleanEnvironment from "./features/CleanEnvironment";
 import Configuration from "./features/configurations/Configuration";
 import FeatureBase from "./features/FeatureBase";
 import WhatsappMarkdown from "./features/WhatsappMarkdown";
+import ZoomFixer from "./features/ZoomFixer";
 
 export let isBuilderLoaded = false;
 export const features: Array<{ name: string, processor: FeatureBase }> = [
@@ -25,6 +26,10 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     {
         name: "configuration",
         processor: new Configuration(),
+    },
+    {
+        name: "zoomfixer",
+        processor: new ZoomFixer(),
     },
 ];
 
@@ -55,14 +60,14 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
         const isLoaded = isLoading === false;
 
         if (isLoaded !== isBuilderLoaded) {
+            isBuilderLoaded = isLoaded;
+
             if (isLoaded) {
                 features.forEach((f) => f.processor.OnLoadBuilder());
             } else {
                 features.forEach((f) => f.processor.OnUnloadBuilder());
             }
         }
-
-        isBuilderLoaded = isLoaded;
     }, 800);
 
     refreshFeatures();
