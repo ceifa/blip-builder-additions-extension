@@ -53,14 +53,14 @@ export default class Injectables {
         this.StopZoom();
 
         const builderContainer = document.querySelector(".builder-container");
-        builderContainer.addEventListener("mousewheel", this.ZoomHandler);
-        builderContainer.addEventListener("DOMMouseScroll", this.ZoomHandler);
+        builderContainer.addEventListener("mousewheel", this.ZoomHandler, true);
+        builderContainer.addEventListener("DOMMouseScroll", this.ZoomHandler, true);
     }
 
     public StopZoom = () => {
         const builderContainer = document.querySelector(".builder-container");
-        builderContainer.removeEventListener("mousewheel", this.ZoomHandler);
-        builderContainer.removeEventListener("DOMMouseScroll", this.ZoomHandler);
+        builderContainer.removeEventListener("mousewheel", this.ZoomHandler, true);
+        builderContainer.removeEventListener("DOMMouseScroll", this.ZoomHandler, true);
     }
 
     private ZoomHandler = async (ev: MouseWheelEvent) => {
