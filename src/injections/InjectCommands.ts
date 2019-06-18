@@ -49,44 +49,6 @@ export default class Injectables {
         return cloneObject(this.GetControllerVariable(selector, controllerName, route));
     }
 
-    public StartZoom = async () => {
-        this.StopZoom();
-
-        const builderContainer = document.querySelector(".builder-container");
-        builderContainer.addEventListener("mousewheel", this.ZoomHandler, true);
-        builderContainer.addEventListener("DOMMouseScroll", this.ZoomHandler, true);
-    }
-
-    public StopZoom = () => {
-        const builderContainer = document.querySelector(".builder-container");
-        builderContainer.removeEventListener("mousewheel", this.ZoomHandler, true);
-        builderContainer.removeEventListener("DOMMouseScroll", this.ZoomHandler, true);
-    }
-
-    private ZoomHandler = async (ev: MouseWheelEvent) => {
-        try {
-            ev.stopImmediatePropagation();
-            ev.stopPropagation();
-            ev.preventDefault();
-            return false;
-        } finally {
-            const incrementValue = 10;
-            await this.SetZoom(ev.deltaY > 0 ? incrementValue : -incrementValue);
-        }
-    }
-
-    private SetZoom = async (increment: number) => {
-        const currentZoomValue = await this.GetVariable("#canvas", null, "zoomValue");
-        const value = Math.max(Math.min(currentZoomValue + increment, 100), 20);
-
-        await this.CallFunction("#canvas", null, null, "setZoomValue", [value]);
-        await this.SetVariable("#canvas", null, "zoomValue", value);
-
-        for (let i = 0; i < 2; i++) {
-            (document.querySelector(".zoom.zoom-display") as HTMLElement).click();
-        }
-    }
-
     private GetController = (selector: string, controllerName: string): any => {
         const element = window.angular && window.angular.element(document.querySelector(selector));
         return element && (controllerName ? element.controller(controllerName) : element.controller());

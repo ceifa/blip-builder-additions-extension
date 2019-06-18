@@ -1,5 +1,4 @@
 import { Command } from "../../shared/types/Command";
-import Utils from "../../shared/Utils";
 import { isBuilderLoaded } from "../Content";
 import FeatureBase from "./FeatureBase";
 
@@ -18,15 +17,19 @@ export default class ZoomFixer extends FeatureBase {
         this.Start();
     }
 
+    public OnUnloadBuilder(): void {
+        this.Stop();
+    }
+
     private async Start() {
         if (!this.isEnabled || !isBuilderLoaded) {
             return;
         }
 
-        await Utils.SendCommand(Command.StartZoom);
+        chrome.runtime.sendMessage("StartZoomBlock");
     }
 
     private async Stop() {
-        await Utils.SendCommand(Command.StopZoom);
+        chrome.runtime.sendMessage("StopZoomBlock");
     }
 }
