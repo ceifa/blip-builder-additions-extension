@@ -1,34 +1,34 @@
+import IInjectCommands from "./IInjectCommands";
 import { cloneObject } from "./InjectHelper";
 
-export default class Injectables {
+export default class Injectables implements IInjectCommands {
     [key: string]: any;
 
-    public InterceptFunction =
-        (selector: string, controllerName: string, route: string, functionName: string): void => {
-            const source = this.GetControllerVariable(selector, controllerName, route);
-            const functionToWrap = source[functionName];
+    public InterceptFunction(route: string, functionName: string): void {
+        const source = this.GetControllerVariable("#canvas", null, route);
+        const functionToWrap = source[functionName];
 
-            source[functionName] = function() {
-                const result = functionToWrap.apply(this, arguments);
+        source[functionName] = function() {
+            const result = functionToWrap.apply(this, arguments);
 
-                window.postMessage({
-                    identifier: `${route}_${functionName}`,
-                    isAddiction: true,
-                    type: "intercept-function-call",
-                }, "*");
+            window.postMessage({
+                identifier: `${route}_${functionName}`,
+                isAddiction: true,
+                type: "intercept-function-call",
+            }, "*");
 
-                return result;
-            };
-        }
+            return result;
+        };
+    }
 
-    public CallFunction =
-        (selector: string, controllerName: string, route: string, functionName: string, parameters: any[]): any => {
-            const functionSource = this.GetControllerVariable(selector, controllerName, route);
-            return functionSource && functionSource[functionName](...(parameters || []));
-        }
+    public CallFunction(route: string, functionName: string, parameters: any[]): any {
+        const functionSource = this.GetControllerVariable("#canvas", null, route);
+        return functionSource && functionSource[functionName](...(parameters || []));
+    }
 
-    public SetVariable = (selector: string, controllerName: string, route: string, value: any): any => {
-        const controller = this.GetController(selector, controllerName);
+    public SetVariable(route: string, value: any): void {
+        const controller = this.GetController("#canvas", null);
+
         if (controller) {
             const paths = route && route.split(".");
             let current = controller;
@@ -41,12 +41,10 @@ export default class Injectables {
 
             current[paths[paths.length - 1]] = value;
         }
-
-        return true;
     }
 
-    public GetVariable = (selector: string, controllerName: string, route: string): any => {
-        return cloneObject(this.GetControllerVariable(selector, controllerName, route));
+    public GetVariable(route: string): any {
+        return cloneObject(this.GetControllerVariable("#canvas", null, route));
     }
 
     private GetController = (selector: string, controllerName: string): any => {

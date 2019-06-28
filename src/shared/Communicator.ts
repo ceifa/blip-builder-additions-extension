@@ -12,7 +12,7 @@ export default ((brow: typeof browser | typeof chrome) => class Communicator {
     public static emit = (type: string, state: any) => {
         brow.tabs.query({ url: "*://*.blip.ai/*" }, (tabs: chrome.tabs.Tab[]) => {
             for (const tab of tabs) {
-                chrome.tabs.sendMessage(tab.id, { type, state });
+                Utils.GetBrowser().tabs.sendMessage(tab.id, { type, state }, {});
             }
         });
     }

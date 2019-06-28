@@ -1,7 +1,8 @@
+import Inject from "../Inject";
 import Communicator from "../shared/Communicator";
 import Storager from "../shared/Storager";
-import { Command } from "../shared/types/Command";
 import Utils from "../shared/Utils";
+
 import AutoTag from "./features/AutoTag";
 import CleanEnvironment from "./features/CleanEnvironment";
 import Configuration from "./features/configurations/Configuration";
@@ -33,8 +34,10 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     },
 ];
 
+export const inject = new Inject();
+
 (async (brow: typeof chrome | typeof browser) => {
-    Utils.StartListeningCommands();
+    inject.StartListeningCommands();
 
     const refreshFeatures = async (): Promise<void> => {
         await Storager.refresh();
@@ -56,7 +59,7 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     Communicator.on("change-settings", refreshFeatures);
 
     setInterval(async (): Promise<void> => {
-        const isLoading: any = await Utils.SendCommand(Command.GetVariable, "#canvas", null, "isLoading");
+        const isLoading: any = await inject.GetVariable("isLoading");
         const isLoaded = isLoading === false;
 
         if (isLoaded !== isBuilderLoaded) {

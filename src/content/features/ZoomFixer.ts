@@ -1,4 +1,3 @@
-import { Command } from "../../shared/types/Command";
 import { isBuilderLoaded } from "../Content";
 import FeatureBase from "./FeatureBase";
 
@@ -26,10 +25,18 @@ export default class ZoomFixer extends FeatureBase {
             return;
         }
 
-        chrome.runtime.sendMessage("StartZoomBlock");
+        this.SendMessage("StartZoomBlock");
     }
 
     private async Stop() {
-        chrome.runtime.sendMessage("StopZoomBlock");
+        this.SendMessage("StopZoomBlock");
+    }
+
+    private SendMessage(message: any) {
+        if (chrome) {
+            chrome.runtime.sendMessage(message);
+        } else if (browser) {
+            browser.runtime.sendMessage(message);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import Storager from "../../../shared/Storager";
-import { Command } from "../../../shared/types/Command";
 import Utils from "../../../shared/Utils";
+import { inject } from "../../Content";
 import IConfiguration from "./IConfiguration";
 
 export default class EventTrackConfiguration implements IConfiguration {
@@ -33,8 +33,7 @@ export default class EventTrackConfiguration implements IConfiguration {
 
     private handleApplyExtras = async () => {
         try {
-            await Utils.SendCommand(
-                Command.CallFunction, "#canvas", null, "LoadingService", "startLoading", [false]);
+            await inject.CallFunction("LoadingService", "startLoading", [false]);
 
             const extras = this.getCurrentExtras();
 
@@ -56,27 +55,26 @@ export default class EventTrackConfiguration implements IConfiguration {
                 return newActions;
             };
 
-            const flow = await Utils.SendCommand(Command.GetVariable, "#canvas", null, "flow");
+            const flow = await inject.GetVariable("flow");
             Object.keys(flow).forEach((k: string) => {
                 flow[k].$enteringCustomActions = replaceExtras(flow[k].$enteringCustomActions);
                 flow[k].$leavingCustomActions = replaceExtras(flow[k].$leavingCustomActions);
             });
 
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "BuilderService", "setFlow", [flow]);
+            await inject.CallFunction("BuilderService", "setFlow", [flow]);
 
             await Utils.Sleep(500);
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "LoadingService", "stopLoading");
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "$state", "reload");
+            await inject.CallFunction("LoadingService", "stopLoading", []);
+            await inject.CallFunction("$state", "reload", []);
         } catch {
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "LoadingService", "stopLoading");
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "ngToast", "danger",
+            await inject.CallFunction("LoadingService", "stopLoading", []);
+            await inject.CallFunction("ngToast", "danger",
                 ["Error when trying to apply event track extras. (Maybe nothing has been applied)"]);
         }
     }
 
     private populateExtras = async () => {
-        const currentBotIdentifier =
-            await Utils.SendCommand(Command.GetVariable, "#canvas", null, "application.shortName");
+        const currentBotIdentifier = await inject.GetVariable("application.shortName");
         const extras = await Storager.get(`${currentBotIdentifier}_${this.storageKey}`);
 
         if (extras && extras.length > 0) {
@@ -94,8 +92,7 @@ export default class EventTrackConfiguration implements IConfiguration {
     }
 
     private saveCurrentExtras = async () => {
-        const currentBotIdentifier =
-            await Utils.SendCommand(Command.GetVariable, "#canvas", null, "application.shortName");
+        const currentBotIdentifier = await inject.GetVariable("application.shortName");
         await Storager.set(`${currentBotIdentifier}_${this.storageKey}`, this.getCurrentExtras());
     }
 

@@ -1,4 +1,4 @@
-import Utils from "../../shared/Utils";
+import { inject } from "../Content";
 import FeatureBase from "./FeatureBase";
 
 export default class WhatsappMarkdown extends FeatureBase {
@@ -26,7 +26,7 @@ export default class WhatsappMarkdown extends FeatureBase {
     }
 
     private async StartAsync(): Promise<void> {
-        await Utils.InterceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.OnOpenSidebar);
+        await inject.InterceptFunction("SidebarContentService", "showSidebar", this.OnOpenSidebar);
     }
 
     private OnOpenSidebar = async () => {

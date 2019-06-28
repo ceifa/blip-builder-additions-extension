@@ -1,5 +1,5 @@
-import { Command } from "../../../shared/types/Command";
 import Utils from "../../../shared/Utils";
+import { inject } from "../../Content";
 import IConfiguration from "./IConfiguration";
 
 export default class EventTrackConfiguration implements IConfiguration {
@@ -8,7 +8,7 @@ export default class EventTrackConfiguration implements IConfiguration {
     }
 
     private StartSearchingForFlowLoops = async () => {
-        const flow = await Utils.SendCommand(Command.GetVariable, "#canvas", null, "flow");
+        const flow = await inject.GetVariable("flow");
         let loopTail: Set<string> = new Set<string>();
 
         for (const stateKey of Object.keys(flow)) {
@@ -40,13 +40,11 @@ export default class EventTrackConfiguration implements IConfiguration {
             document.getElementById("found-loops").classList.remove("dn");
             document.getElementById("found-loops-container").innerHTML = loopTailLog;
 
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "ngToast", "danger",
-                ["Your flow has loops. See the loop tail."]);
+            await inject.CallFunction("ngToast", "danger", ["Your flow has loops. See the loop tail."]);
         } else {
             document.getElementById("found-loops").classList.add("dn");
 
-            await Utils.SendCommand(Command.CallFunction, "#canvas", null, "ngToast", "success",
-                ["Your flow doesn't has loops. Nice!"]);
+            await inject.CallFunction("ngToast", "success", ["Your flow doesn't has loops. Nice!"]);
         }
 
         for (let i = 0; i < 2; i++) {

@@ -1,5 +1,5 @@
-import { Command } from "../../shared/types/Command";
 import Utils from "../../shared/Utils";
+import { inject } from "../Content";
 import FeatureBase from "./FeatureBase";
 
 export default class AutoTag extends FeatureBase {
@@ -8,7 +8,7 @@ export default class AutoTag extends FeatureBase {
     }
 
     private async StartAsync(): Promise<void> {
-        await Utils.InterceptFunction("#canvas", null, "SidebarContentService", "showSidebar", this.AddEventListeners);
+        await inject.InterceptFunction("SidebarContentService", "showSidebar", this.AddEventListeners);
     }
 
     private AddEventListeners = () => {
@@ -26,16 +26,13 @@ export default class AutoTag extends FeatureBase {
             return;
         }
 
-        const enteringCustomActions: [] = await Utils.SendCommand(
-            Command.GetVariable, "#canvas", null, "editingState.$enteringCustomActions");
-        const leavingCustomAction: [] = await Utils.SendCommand(
-            Command.GetVariable, "#canvas", null, "editingState.$leavingCustomActions");
+        const enteringCustomActions: [] = await inject.GetVariable("editingState.$enteringCustomActions");
+        const leavingCustomAction: [] = await inject.GetVariable("editingState.$leavingCustomActions");
 
         let actions: any[] = [...enteringCustomActions, ...leavingCustomAction];
         actions = actions.map((a) => a.type);
 
-        let tags: any[] = await Utils.SendCommand(
-            Command.GetVariable, "#canvas", null, "editingState.$tags");
+        let tags: any[] = await inject.GetVariable("editingState.$tags");
         tags = tags.map((t) => t.label);
 
         const possibleActions = [

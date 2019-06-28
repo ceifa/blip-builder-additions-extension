@@ -1,4 +1,5 @@
 import Utils from "../../../shared/Utils";
+import { inject } from "../../Content";
 import FeatureBase from "../FeatureBase";
 import EventTrackConfiguration from "./EventTrackConfiguration";
 import IConfiguration from "./IConfiguration";
@@ -13,8 +14,7 @@ export default class Configuration extends FeatureBase {
     private isCustomTabOpened: boolean = false;
 
     public async OnLoadBuilder(): Promise<void> {
-        await Utils.InterceptFunction(
-            "#canvas", null, "SidebarContentService", "showSidebar", this.AddCustomConfiguration);
+        await inject.InterceptFunction("SidebarContentService", "showSidebar", this.AddCustomConfiguration);
     }
 
     private AddCustomConfiguration = async (): Promise<void> => {
