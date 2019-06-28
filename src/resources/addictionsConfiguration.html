@@ -1,7 +1,7 @@
 <div class="sidebar-inner-content pa5">
     <div class="flex flex-column">
         <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Identify flow loops</span>
-        <span>Search for possible state loops in the entire flow</span>
+        <span>Search for possible state loops in the entire flow. It will not remove existing extras with different keys</span>
         <div id="identify-loops" class="mt3 pv3 ph4 br4 bp-fs-6 flex items-center shadow-6 bp-bg-white custom-action-item cursor-pointer">
             <i alt="Identify loops" class="mr4 icon icon-search"></i>
             <span class="w-100">Search for loops</span>
@@ -10,6 +10,15 @@
             <ul id="found-loops-container" class="mt3 mb0">
             </ul>
         </div>
+        
+        <div class="bp-divider-h bp-divider w-100 mv4"></div>
+        <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Fix action names</span>
+        <span>Automatically add an suggestive name to actions with default name</span>
+        <div id="fix-action-names" class="mt3 pv3 ph4 br4 bp-fs-6 flex items-center shadow-6 bp-bg-white custom-action-item cursor-pointer">
+            <i alt="Fix action names" class="mr4 icon icon-refresh"></i>
+            <span class="w-100">Fix action names</span>
+        </div>
+        
         <div class="bp-divider-h bp-divider w-100 mv4"></div>
         <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Extras</span>
         <span>Apply extras information for all event tracks</span>
