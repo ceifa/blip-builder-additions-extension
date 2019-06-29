@@ -1,25 +1,25 @@
 import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
-import IConfiguration from "./IConfiguration";
+import Configuration from "./Configuration";
 
-export default class EventTrackConfiguration implements IConfiguration {
-    public OnLoadConfiguration = (): void => {
-        document.getElementById("identify-loops").addEventListener("click", this.StartSearchingForFlowLoops);
+export default class EventTrackConfiguration implements Configuration {
+    public onLoadConfiguration = (): void => {
+        document.getElementById("identify-loops").addEventListener("click", this.startSearchingForFlowLoops);
     }
 
-    private StartSearchingForFlowLoops = async () => {
-        const flow = await inject.GetVariable("flow");
+    private startSearchingForFlowLoops = async () => {
+        const flow = await inject.getVariable("flow");
         let loopTail: Set<string> = new Set<string>();
 
         for (const stateKey of Object.keys(flow)) {
             const state = flow[stateKey];
 
-            const hasInput = this.GetStateInput(state);
+            const hasInput = this.getStateInput(state);
 
             if (!hasInput) {
-                for (const output of this.GetStateOutputs(state)) {
+                for (const output of this.getStateOutputs(state)) {
                     loopTail.clear();
-                    const stateLoopTail = this.HasStateLoop(flow, state, output, loopTail);
+                    const stateLoopTail = this.hasStateLoop(flow, state, output, loopTail);
                     if (stateLoopTail) {
                         loopTail = stateLoopTail;
                         break;
@@ -40,11 +40,11 @@ export default class EventTrackConfiguration implements IConfiguration {
             document.getElementById("found-loops").classList.remove("dn");
             document.getElementById("found-loops-container").innerHTML = loopTailLog;
 
-            await inject.CallFunction("ngToast", "danger", ["Your flow has loops. See the loop tail."]);
+            await inject.callFunction("ngToast", "danger", ["Your flow has loops. See the loop tail."]);
         } else {
             document.getElementById("found-loops").classList.add("dn");
 
-            await inject.CallFunction("ngToast", "success", ["Your flow doesn't has loops. Nice!"]);
+            await inject.callFunction("ngToast", "success", ["Your flow doesn't has loops. Nice!"]);
         }
 
         for (let i = 0; i < 2; i++) {
@@ -52,7 +52,7 @@ export default class EventTrackConfiguration implements IConfiguration {
         }
     }
 
-    private HasStateLoop = (flow: any, state: any, output: any, loopTail: Set<string>) => {
+    private hasStateLoop = (flow: any, state: any, output: any, loopTail: Set<string>) => {
         loopTail = new Set<string>(loopTail);
 
         if (Array.from(loopTail).some((s) => s === output.stateId)) {
@@ -61,12 +61,12 @@ export default class EventTrackConfiguration implements IConfiguration {
 
         const outputState = flow[output.stateId];
 
-        const outputStateOutputs = this.GetStateOutputs(outputState);
+        const outputStateOutputs = this.getStateOutputs(outputState);
         if (!outputStateOutputs || outputStateOutputs.length === 0) {
             return false;
         }
 
-        const hasInput = this.GetStateInput(outputState);
+        const hasInput = this.getStateInput(outputState);
         if (hasInput) {
             return false;
         }
@@ -81,7 +81,7 @@ export default class EventTrackConfiguration implements IConfiguration {
 
         let nextTail;
         if (outputStateOutputs.some((o: any) => {
-            nextTail = this.HasStateLoop(flow, state, o, loopTail);
+            nextTail = this.hasStateLoop(flow, state, o, loopTail);
             return nextTail;
         })) {
             return nextTail;
@@ -90,11 +90,11 @@ export default class EventTrackConfiguration implements IConfiguration {
         return false;
     }
 
-    private GetStateInput = (state: any) => {
+    private getStateInput = (state: any) => {
         return state.$contentActions.find((a: any) => a.input && !a.input.bypass);
     }
 
-    private GetStateOutputs = (state: any) => {
+    private getStateOutputs = (state: any) => {
         let outputs = state.$conditionOutputs;
         if (state.$defaultOutput) {
             outputs = [...(outputs || []), state.$defaultOutput];

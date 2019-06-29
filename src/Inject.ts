@@ -1,35 +1,34 @@
-import IInjectCommands from "./injections/IInjectCommands";
+import Commands from "./injections/Commands";
 import Utils from "./shared/Utils";
 
-export default class Inject implements IInjectCommands {
+export default class Inject implements Commands {
     private resolvers: { [identifier: string]: Array<(value?: any) => void> } = {};
 
     private isScriptInjected: boolean = false;
 
-    public InterceptFunction(route: string, functionName: string, callback: () => any): void {
-        // tslint:disable-next-line: no-arg
-        this.SendCommand(this.InterceptFunction.name, route, functionName);
+    public interceptFunction(route: string, functionName: string, callback: () => any): void {
+        this.sendCommand(this.interceptFunction.name, route, functionName);
 
         const key = `${route}_${functionName}`;
         this.resolvers[key] = [...(this.resolvers[key] || []), callback];
     }
 
-    public CallFunction(route: string, functionName: string, parameters: any[]) {
+    public callFunction(route: string, functionName: string, parameters: any[]) {
         // tslint:disable-next-line: no-arg
-        return this.SendCommand(this.CallFunction.name, ...arguments);
+        return this.sendCommand(this.callFunction.name, ...arguments);
     }
 
-    public SetVariable(route: string, value: any): void {
+    public setVariable(route: string, value: any): void {
         // tslint:disable-next-line: no-arg
-        this.SendCommand(this.SetVariable.name, ...arguments);
+        this.sendCommand(this.setVariable.name, ...arguments);
     }
 
-    public GetVariable(route: string): any {
+    public getVariable(route: string): any {
         // tslint:disable-next-line: no-arg
-        return this.SendCommand(this.GetVariable.name, ...arguments);
+        return this.sendCommand(this.getVariable.name, ...arguments);
     }
 
-    public StartListeningCommands() {
+    public startListeningCommands() {
         window.addEventListener("message", (message: MessageEvent) => {
             if (message.data.isAddiction && !message.data.fromExtension) {
                 this.resolvers[message.data.identifier].forEach((f) => f(message.data.result));
@@ -41,14 +40,14 @@ export default class Inject implements IInjectCommands {
         });
     }
 
-    private SendCommand(command: string, ...parameters: any[]): Promise<any> {
+    private sendCommand(command: string, ...parameters: any[]): Promise<any> {
         return new Promise(async (resolve) => {
             if (!this.isScriptInjected) {
-                await Utils.InjectPageScript("js/injected.js");
+                await Utils.injectPageScript("js/injected.js");
                 this.isScriptInjected = true;
             }
 
-            const identifier = Utils.GetRandomIdentifier();
+            const identifier = Utils.getRandomIdentifier();
             this.resolvers[identifier] = [...(this.resolvers[identifier] || []), resolve];
 
             window.postMessage({

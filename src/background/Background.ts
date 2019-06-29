@@ -1,6 +1,6 @@
 import Utils from "../shared/Utils";
 
-const browser = Utils.GetBrowser();
+const browser = Utils.getBrowser();
 
 const zoomConfig = (enabled: boolean): browser.tabs.ZoomSettings => ({
     mode: enabled ? "automatic" : "disabled",

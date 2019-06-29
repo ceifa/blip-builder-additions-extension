@@ -1,12 +1,12 @@
 import Storager from "../../../shared/Storager";
 import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
-import IConfiguration from "./IConfiguration";
+import Configuration from "./Configuration";
 
-export default class EventTrackConfiguration implements IConfiguration {
+export default class EventTrackConfiguration implements Configuration {
     private readonly storageKey: string = "event-track-extras";
 
-    public OnLoadConfiguration = (): void => {
+    public onLoadConfiguration = (): void => {
         document.getElementById("extras-add-btn").addEventListener("click", this.handleAddExtras);
         document.getElementById("extras-apply-btn").addEventListener("click", this.handleApplyExtras);
         this.populateExtras();
@@ -33,7 +33,7 @@ export default class EventTrackConfiguration implements IConfiguration {
 
     private handleApplyExtras = async () => {
         try {
-            await inject.CallFunction("LoadingService", "startLoading", [false]);
+            await inject.callFunction("LoadingService", "startLoading", [false]);
 
             const extras = this.getCurrentExtras();
 
@@ -55,26 +55,26 @@ export default class EventTrackConfiguration implements IConfiguration {
                 return newActions;
             };
 
-            const flow = await inject.GetVariable("flow");
+            const flow = await inject.getVariable("flow");
             Object.keys(flow).forEach((k: string) => {
                 flow[k].$enteringCustomActions = replaceExtras(flow[k].$enteringCustomActions);
                 flow[k].$leavingCustomActions = replaceExtras(flow[k].$leavingCustomActions);
             });
 
-            await inject.CallFunction("BuilderService", "setFlow", [flow]);
+            await inject.callFunction("BuilderService", "setFlow", [flow]);
 
-            await Utils.Sleep(500);
-            await inject.CallFunction("LoadingService", "stopLoading", []);
-            await inject.CallFunction("$state", "reload", []);
+            await Utils.sleep(500);
+            await inject.callFunction("LoadingService", "stopLoading", []);
+            await inject.callFunction("$state", "reload", []);
         } catch {
-            await inject.CallFunction("LoadingService", "stopLoading", []);
-            await inject.CallFunction("ngToast", "danger",
+            await inject.callFunction("LoadingService", "stopLoading", []);
+            await inject.callFunction("ngToast", "danger",
                 ["Error when trying to apply event track extras. (Maybe nothing has been applied)"]);
         }
     }
 
     private populateExtras = async () => {
-        const currentBotIdentifier = await inject.GetVariable("application.shortName");
+        const currentBotIdentifier = await inject.getVariable("application.shortName");
         const extras = await Storager.get(`${currentBotIdentifier}_${this.storageKey}`);
 
         if (extras && extras.length > 0) {
@@ -92,7 +92,7 @@ export default class EventTrackConfiguration implements IConfiguration {
     }
 
     private saveCurrentExtras = async () => {
-        const currentBotIdentifier = await inject.GetVariable("application.shortName");
+        const currentBotIdentifier = await inject.getVariable("application.shortName");
         await Storager.set(`${currentBotIdentifier}_${this.storageKey}`, this.getCurrentExtras());
     }
 

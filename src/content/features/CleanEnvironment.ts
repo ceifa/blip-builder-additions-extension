@@ -12,51 +12,51 @@ export default class CleanEnvironment extends FeatureBase {
 
     private isShowingNavbar: boolean;
 
-    public OnEnableFeature(): void {
-        super.OnEnableFeature();
+    public onEnableFeature(): void {
+        super.onEnableFeature();
         if (isBuilderLoaded) {
-            this.StartAsync();
+            this.startAsync();
         }
     }
 
-    public OnDisableFeature(): void {
-        super.OnDisableFeature();
-        this.StopAsync();
+    public onDisableFeature(): void {
+        super.onDisableFeature();
+        this.stopAsync();
     }
 
-    public OnLoadBuilder(): void {
-        this.StartAsync();
+    public onLoadBuilder(): void {
+        this.startAsync();
     }
 
-    public OnUnloadBuilder(): void {
-        super.OnUnloadBuilder();
-        this.StopAsync();
+    public onUnloadBuilder(): void {
+        super.onUnloadBuilder();
+        this.stopAsync();
     }
 
-    private async StopAsync(): Promise<void> {
-        this.ToggleHidables(false);
-        this.RemoveHeaderCollapser();
+    private async stopAsync(): Promise<void> {
+        this.toggleHidables(false);
+        this.removeHeaderCollapser();
         this.isShowingNavbar = false;
     }
 
-    private async StartAsync(): Promise<void> {
+    private async startAsync(): Promise<void> {
         if (!this.isEnabled || document.getElementById("addictions-cleanenv-collapser")) {
             return;
         }
 
-        this.ToggleHidables(true);
-        await this.AddHeaderCollapser();
+        this.toggleHidables(true);
+        await this.addHeaderCollapser();
     }
 
-    private async AddHeaderCollapser(): Promise<void> {
-        const res = await fetch(Utils.GetUrl("resources/collapser.html"));
+    private async addHeaderCollapser(): Promise<void> {
+        const res = await fetch(Utils.getUrl("resources/collapser.html"));
         const html = await res.text();
 
         const icons = document.querySelector(".bot-header-details");
         const collapserContainer = document.createElement("div");
         collapserContainer.innerHTML = html;
         icons.prepend(collapserContainer);
-        await Utils.Sleep(20);
+        await Utils.sleep(20);
 
         const button = document.getElementById("addictions-cleanenv-collapser");
         button.addEventListener("click", () => {
@@ -73,7 +73,7 @@ export default class CleanEnvironment extends FeatureBase {
             }
 
             this.isShowingNavbar = !this.isShowingNavbar;
-            this.ToggleElementDisplay(document.querySelector(USER_HEADER_SELECTOR), this.isShowingNavbar);
+            this.toggleElementDisplay(document.querySelector(USER_HEADER_SELECTOR), this.isShowingNavbar);
         });
 
         if (!this.isShowingNavbar) {
@@ -81,8 +81,8 @@ export default class CleanEnvironment extends FeatureBase {
         }
     }
 
-    private RemoveHeaderCollapser(): void {
-        this.ToggleElementDisplay(document.querySelector(USER_HEADER_SELECTOR), false);
+    private removeHeaderCollapser(): void {
+        this.toggleElementDisplay(document.querySelector(USER_HEADER_SELECTOR), false);
 
         const canvas = document.getElementById("canvas");
         if (canvas) {
@@ -100,14 +100,14 @@ export default class CleanEnvironment extends FeatureBase {
         }
     }
 
-    private ToggleHidables(toggle: boolean): void {
+    private toggleHidables(toggle: boolean): void {
         this.shouldHide.forEach((s) => {
             const element = document.querySelector(s);
-            this.ToggleElementDisplay(element, toggle);
+            this.toggleElementDisplay(element, toggle);
         });
     }
 
-    private ToggleElementDisplay(element: Element, toggle: boolean): void {
+    private toggleElementDisplay(element: Element, toggle: boolean): void {
         if (element && element.classList) {
             if (toggle) {
                 element.classList.add("dn");

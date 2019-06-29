@@ -2,21 +2,21 @@ export default abstract class FeatureBase {
     public isEnabled: boolean = false;
     protected configuration: any;
 
-    public OnEnableFeature(): void {
+    public onEnableFeature(): void {
         this.isEnabled = true;
     }
 
-    public OnDisableFeature(): void {
+    public onDisableFeature(): void {
         this.isEnabled = false;
     }
 
-    public OnReceiveConfiguration(configuration: any): void {
+    public onReceiveConfiguration(configuration: any): void {
         this.configuration = configuration;
     }
 
-    public OnUnloadBuilder(): void {
+    public onUnloadBuilder(): void {
         // I don't know what to do here
     }
 
-    public abstract OnLoadBuilder(): void;
+    public abstract onLoadBuilder(): void;
 }

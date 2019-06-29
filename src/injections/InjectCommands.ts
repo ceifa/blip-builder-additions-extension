@@ -1,10 +1,10 @@
-import IInjectCommands from "./IInjectCommands";
+import Commands from "./Commands";
 import { cloneObject } from "./InjectHelper";
 
-export default class Injectables implements IInjectCommands {
+export default class Injectables implements Commands {
     [key: string]: any;
 
-    public InterceptFunction(route: string, functionName: string): void {
+    public interceptFunction(route: string, functionName: string): void {
         const source = this.GetControllerVariable("#canvas", null, route);
         const functionToWrap = source[functionName];
 
@@ -21,12 +21,12 @@ export default class Injectables implements IInjectCommands {
         };
     }
 
-    public CallFunction(route: string, functionName: string, parameters: any[]): any {
+    public callFunction(route: string, functionName: string, parameters: any[]): any {
         const functionSource = this.GetControllerVariable("#canvas", null, route);
         return functionSource && functionSource[functionName](...(parameters || []));
     }
 
-    public SetVariable(route: string, value: any): void {
+    public setVariable(route: string, value: any): void {
         const controller = this.GetController("#canvas", null);
 
         if (controller) {
@@ -43,16 +43,16 @@ export default class Injectables implements IInjectCommands {
         }
     }
 
-    public GetVariable(route: string): any {
+    public getVariable(route: string): any {
         return cloneObject(this.GetControllerVariable("#canvas", null, route));
     }
 
-    private GetController = (selector: string, controllerName: string): any => {
+    private getController = (selector: string, controllerName: string): any => {
         const element = window.angular && window.angular.element(document.querySelector(selector));
         return element && (controllerName ? element.controller(controllerName) : element.controller());
     }
 
-    private GetControllerVariable = (selector: string, controllerName: string, route: string): any => {
+    private getControllerVariable = (selector: string, controllerName: string, route: string): any => {
         const controller = this.GetController(selector, controllerName);
 
         if (controller) {

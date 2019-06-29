@@ -77,4 +77,4 @@ export default ((brow: typeof browser | typeof chrome) => {
             await ensureHasStorage();
         }
     };
-})(Utils.GetBrowser());
+})(Utils.getBrowser());

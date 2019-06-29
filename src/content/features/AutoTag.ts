@@ -3,36 +3,36 @@ import { inject } from "../Content";
 import FeatureBase from "./FeatureBase";
 
 export default class AutoTag extends FeatureBase {
-    public OnLoadBuilder(): void {
-        this.StartAsync();
+    public onLoadBuilder(): void {
+        this.startAsync();
     }
 
-    private async StartAsync(): Promise<void> {
-        await inject.InterceptFunction("SidebarContentService", "showSidebar", this.AddEventListeners);
+    private async startAsync(): Promise<void> {
+        await inject.interceptFunction("SidebarContentService", "showSidebar", this.addEventListeners);
     }
 
-    private AddEventListeners = () => {
+    private addEventListeners = () => {
         const elements: NodeListOf<Element> =
             document.querySelectorAll("li[ng-click^='$ctrl.onAddAction'], i[ng-click^='$ctrl.onDeleteAction']");
 
         elements.forEach((e: Element) => {
-            e.removeEventListener("click", this.RepairWrongTags);
-            e.addEventListener("click", this.RepairWrongTags);
+            e.removeEventListener("click", this.repairWrongTags);
+            e.addEventListener("click", this.repairWrongTags);
         });
     }
 
-    private RepairWrongTags = async () => {
+    private repairWrongTags = async () => {
         if (!this.isEnabled) {
             return;
         }
 
-        const enteringCustomActions: [] = await inject.GetVariable("editingState.$enteringCustomActions");
-        const leavingCustomAction: [] = await inject.GetVariable("editingState.$leavingCustomActions");
+        const enteringCustomActions: [] = await inject.getVariable("editingState.$enteringCustomActions");
+        const leavingCustomAction: [] = await inject.getVariable("editingState.$leavingCustomActions");
 
         let actions: any[] = [...enteringCustomActions, ...leavingCustomAction];
         actions = actions.map((a) => a.type);
 
-        let tags: any[] = await inject.GetVariable("editingState.$tags");
+        let tags: any[] = await inject.getVariable("editingState.$tags");
         tags = tags.map((t) => t.label);
 
         const possibleActions = [
@@ -69,11 +69,11 @@ export default class AutoTag extends FeatureBase {
         const input = tagMenu.getElementsByTagName("input")[0];
         input.value = tagName;
 
-        await Utils.Sleep(10);
+        await Utils.sleep(10);
 
         input.dispatchEvent(new Event("input"));
 
-        await Utils.Sleep(30);
+        await Utils.sleep(30);
 
         const options = tagMenu.getElementsByClassName("blip-select__options") as HTMLCollectionOf<HTMLElement>;
 
@@ -86,7 +86,7 @@ export default class AutoTag extends FeatureBase {
             if (correctTagOption.length > 0) {
                 correctTagOption[0].click();
 
-                await Utils.Sleep(20);
+                await Utils.sleep(20);
 
                 const color = this.configuration[tagName.toLowerCase()];
 

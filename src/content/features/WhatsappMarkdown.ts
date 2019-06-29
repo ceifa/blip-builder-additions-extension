@@ -21,30 +21,30 @@ export default class WhatsappMarkdown extends FeatureBase {
         },
     ];
 
-    public OnLoadBuilder(): void {
-        this.StartAsync();
+    public onLoadBuilder(): void {
+        this.startAsync();
     }
 
-    private async StartAsync(): Promise<void> {
-        await inject.InterceptFunction("SidebarContentService", "showSidebar", this.OnOpenSidebar);
+    private async startAsync(): Promise<void> {
+        await inject.interceptFunction("SidebarContentService", "showSidebar", this.onOpenSidebar);
     }
 
-    private OnOpenSidebar = async () => {
-        this.AddWhatsappMarkdown();
+    private onOpenSidebar = async () => {
+        this.addWhatsappMarkdown();
         const editIconElements = document.querySelectorAll(".blip-container:not(.chat-state) .editIco:not(.trashIco)");
         editIconElements.forEach((e) => e.addEventListener("click", (_) => {
             document.querySelectorAll("form textarea")
                 .forEach((fe) => fe.addEventListener("keydown", (ev: KeyboardEvent) => {
                     if (ev.keyCode === 13) {
-                        this.OnOpenSidebar();
+                        this.onOpenSidebar();
                     }
                 }));
             document.querySelectorAll(".bubble.left form")
-                .forEach((fe) => fe.addEventListener("submit", this.OnOpenSidebar));
+                .forEach((fe) => fe.addEventListener("submit", this.onOpenSidebar));
         }));
     }
 
-    private AddWhatsappMarkdown = () => {
+    private addWhatsappMarkdown = () => {
         if (!this.isEnabled) {
             return;
         }
@@ -60,12 +60,12 @@ export default class WhatsappMarkdown extends FeatureBase {
 
             if (!isTypingOrAreEditing) {
                 const contentElement = m.lastElementChild;
-                contentElement.innerHTML = this.ProcessMarkdown(contentElement.innerHTML);
+                contentElement.innerHTML = this.processMarkdown(contentElement.innerHTML);
             }
         });
     }
 
-    private ProcessMarkdown = (text: string) => {
+    private processMarkdown = (text: string) => {
         for (const rule of this.MarkdownRules) {
             const rgx = new RegExp(`${rule.char}(.+?)${rule.char}`, "g");
             text = text.replace(rgx, `<${rule.tag}>$1</${rule.tag}>`);

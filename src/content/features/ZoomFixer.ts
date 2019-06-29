@@ -2,37 +2,37 @@ import { isBuilderLoaded } from "../Content";
 import FeatureBase from "./FeatureBase";
 
 export default class ZoomFixer extends FeatureBase {
-    public OnDisableFeature() {
-        super.OnDisableFeature();
-        this.Stop();
+    public onDisableFeature() {
+        super.onDisableFeature();
+        this.stop();
     }
 
-    public OnEnableFeature() {
-        super.OnEnableFeature();
-        this.Start();
+    public onEnableFeature() {
+        super.onEnableFeature();
+        this.start();
     }
 
-    public OnLoadBuilder(): void {
-        this.Start();
+    public onLoadBuilder(): void {
+        this.start();
     }
 
-    public OnUnloadBuilder(): void {
-        this.Stop();
+    public onUnloadBuilder(): void {
+        this.stop();
     }
 
-    private async Start() {
+    private async start() {
         if (!this.isEnabled || !isBuilderLoaded) {
             return;
         }
 
-        this.SendMessage("StartZoomBlock");
+        this.sendMessage("StartZoomBlock");
     }
 
-    private async Stop() {
-        this.SendMessage("StopZoomBlock");
+    private async stop() {
+        this.sendMessage("StopZoomBlock");
     }
 
-    private SendMessage(message: any) {
+    private sendMessage(message: any) {
         if (chrome) {
             chrome.runtime.sendMessage(message);
         } else if (browser) {
