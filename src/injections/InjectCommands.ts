@@ -5,7 +5,7 @@ export default class Injectables implements Commands {
     [key: string]: any;
 
     public interceptFunction(route: string, functionName: string): void {
-        const source = this.GetControllerVariable("#canvas", null, route);
+        const source = this.getControllerVariable("#canvas", null, route);
         const functionToWrap = source[functionName];
 
         source[functionName] = function() {
@@ -22,7 +22,7 @@ export default class Injectables implements Commands {
     }
 
     public callFunction(route: string, functionName: string, parameters: any[]): any {
-        const functionSource = this.GetControllerVariable("#canvas", null, route);
+        const functionSource = this.getControllerVariable("#canvas", null, route);
         return functionSource && functionSource[functionName](...(parameters || []));
     }
 
@@ -44,7 +44,7 @@ export default class Injectables implements Commands {
     }
 
     public getVariable(route: string): any {
-        return cloneObject(this.GetControllerVariable("#canvas", null, route));
+        return cloneObject(this.getControllerVariable("#canvas", null, route));
     }
 
     private getController = (selector: string, controllerName: string): any => {
@@ -53,7 +53,7 @@ export default class Injectables implements Commands {
     }
 
     private getControllerVariable = (selector: string, controllerName: string, route: string): any => {
-        const controller = this.GetController(selector, controllerName);
+        const controller = this.getController(selector, controllerName);
 
         if (controller) {
             const paths = route && route.split(".");
