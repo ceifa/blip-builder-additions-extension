@@ -1,8 +1,8 @@
 import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
-import Configuration from "./Configuration";
+import IConfiguration from "./Configuration";
 
-export default class EventTrackConfiguration implements Configuration {
+export default class EventTrackConfiguration implements IConfiguration {
     public onLoadConfiguration = (): void => {
         document.getElementById("identify-loops").addEventListener("click", this.startSearchingForFlowLoops);
     }

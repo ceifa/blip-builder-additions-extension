@@ -1,4 +1,4 @@
-export default interface Commands {
+export default interface ICommands {
     interceptFunction(route: string, functionName: string, callback: () => void): void;
 
     callFunction(route: string, functionName: string, parameters: any[]): any;

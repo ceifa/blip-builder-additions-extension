@@ -1,3 +1,3 @@
-export default interface Configuration {
+export default interface IConfiguration {
     onLoadConfiguration: () => void;
 }

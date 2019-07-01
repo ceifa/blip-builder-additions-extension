@@ -1,7 +1,7 @@
-import Commands from "./Commands";
+import ICommands from "./Commands";
 import { cloneObject } from "./InjectHelper";
 
-export default class Injectables implements Commands {
+export default class Injectables implements ICommands {
     [key: string]: any;
 
     public interceptFunction(route: string, functionName: string): void {

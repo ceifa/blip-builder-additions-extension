@@ -1,9 +1,9 @@
 import Storager from "../../../shared/Storager";
 import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
-import Configuration from "./Configuration";
+import IConfiguration from "./Configuration";
 
-export default class EventTrackConfiguration implements Configuration {
+export default class EventTrackConfiguration implements IConfiguration {
     private readonly storageKey: string = "event-track-extras";
 
     public onLoadConfiguration = (): void => {

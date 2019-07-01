@@ -1,7 +1,7 @@
-import Commands from "./injections/Commands";
+import ICommands from "./injections/Commands";
 import Utils from "./shared/Utils";
 
-export default class Inject implements Commands {
+export default class Inject implements ICommands {
     private resolvers: { [identifier: string]: Array<(value?: any) => void> } = {};
 
     private isScriptInjected: boolean = false;

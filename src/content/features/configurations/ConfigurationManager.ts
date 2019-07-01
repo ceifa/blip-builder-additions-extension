@@ -1,11 +1,11 @@
 import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
 import FeatureBase from "../FeatureBase";
-import Configuration from "./Configuration";
+import IConfiguration from "./Configuration";
 import EventTrackConfiguration from "./EventTrackConfiguration";
 import LoopIdentifierConfiguration from "./LoopIdentifierConfiguration";
 
-export const configurations: Configuration[] = [
+export const configurations: IConfiguration[] = [
     new EventTrackConfiguration(),
     new LoopIdentifierConfiguration(),
 ];
@@ -68,7 +68,7 @@ export default class ConfigurationManager extends FeatureBase {
                             }
 
                             await this.renderCustomConfiguration();
-                            configurations.forEach((c: Configuration) => c.onLoadConfiguration());
+                            configurations.forEach((c: IConfiguration) => c.onLoadConfiguration());
                         }
                     });
 
