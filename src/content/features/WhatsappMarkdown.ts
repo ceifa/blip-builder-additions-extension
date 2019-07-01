@@ -32,6 +32,7 @@ export default class WhatsappMarkdown extends FeatureBase {
     private onOpenSidebar = async () => {
         this.addWhatsappMarkdown();
         const editIconElements = document.querySelectorAll(".blip-container:not(.chat-state) .editIco:not(.trashIco)");
+
         editIconElements.forEach((e) => e.addEventListener("click", (_) => {
             document.querySelectorAll("form textarea")
                 .forEach((fe) => fe.addEventListener("keydown", (ev: KeyboardEvent) => {
@@ -39,8 +40,8 @@ export default class WhatsappMarkdown extends FeatureBase {
                         this.onOpenSidebar();
                     }
                 }));
-            document.querySelectorAll(".bubble.left form")
-                .forEach((fe) => fe.addEventListener("submit", this.onOpenSidebar));
+            document.querySelectorAll(".bubble.left form button[type=submit]")
+                .forEach((fe) => fe.addEventListener("click", this.onOpenSidebar));
         }));
     }
 
