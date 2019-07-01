@@ -66,7 +66,10 @@ export default class EventTrackConfiguration implements IConfiguration {
             await Utils.sleep(500);
             await inject.callFunction("LoadingService", "stopLoading", []);
             await inject.callFunction("$state", "reload", []);
-        } catch {
+        } catch (e) {
+            // tslint:disable-next-line: no-console
+            console.error(e);
+
             await inject.callFunction("LoadingService", "stopLoading", []);
             await inject.callFunction("ngToast", "danger",
                 ["Error when trying to apply event track extras. (Maybe nothing has been applied)"]);

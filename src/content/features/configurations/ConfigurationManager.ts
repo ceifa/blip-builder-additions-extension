@@ -1,6 +1,7 @@
 import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
 import FeatureBase from "../FeatureBase";
+import ActionNameFixerConfiguration from "./ActionNameFixerConfiguration";
 import IConfiguration from "./Configuration";
 import EventTrackConfiguration from "./EventTrackConfiguration";
 import LoopIdentifierConfiguration from "./LoopIdentifierConfiguration";
@@ -8,6 +9,7 @@ import LoopIdentifierConfiguration from "./LoopIdentifierConfiguration";
 export const configurations: IConfiguration[] = [
     new EventTrackConfiguration(),
     new LoopIdentifierConfiguration(),
+    new ActionNameFixerConfiguration(),
 ];
 
 export default class ConfigurationManager extends FeatureBase {
