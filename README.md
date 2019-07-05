@@ -1,3 +1,11 @@
+## Installation
+
+The extension is available in some browser stores.
+
+**Google Chrome:** https://chrome.google.com/webstore/detail/builder-addictions/nfdmafhaljeeonfglijopeoicnnpgleb
+
+**Mozilla Firefox:** *Sometimes, but not now*
+
 ## Features
 
 - Auto tag state actions
