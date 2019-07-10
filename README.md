@@ -30,6 +30,13 @@ $ npm i
 $ npm start
 ```
 
+#### Chrome
+
+- Type `chrome://extensions/` in addressbar
+- Check "Developer mode"
+- Click in "Load unpacked extension"
+- Select folder from sources
+
 ### Build the app
 
 Builds app binaries for production.
