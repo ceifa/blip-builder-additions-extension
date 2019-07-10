@@ -35,7 +35,7 @@ $ npm start
 - Type `chrome://extensions/` in addressbar
 - Check "Developer mode"
 - Click in "Load unpacked extension"
-- Select folder from sources
+- Select folder `build-dev` from sources
 
 ### Build the app
 
