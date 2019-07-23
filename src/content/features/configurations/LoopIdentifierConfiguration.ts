@@ -1,4 +1,3 @@
-import Utils from "../../../shared/Utils";
 import { inject } from "../../Content";
 import IConfiguration from "./Configuration";
 

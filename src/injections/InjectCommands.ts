@@ -23,7 +23,8 @@ export default class Injectables implements ICommands {
 
     public callFunction(route: string, functionName: string, parameters: any[]): any {
         const functionSource = this.getControllerVariable("#canvas", null, route);
-        return functionSource && functionSource[functionName](...(parameters || []));
+        const result = functionSource && functionSource[functionName](...(parameters || []));
+        return this.resolvePromise(result);
     }
 
     public setVariable(route: string, value: any): void {
@@ -45,6 +46,16 @@ export default class Injectables implements ICommands {
 
     public getVariable(route: string): any {
         return cloneObject(this.getControllerVariable("#canvas", null, route));
+    }
+
+    private resolvePromise = (promise: any): any => {
+        return Promise.resolve(promise).then((r: any) => {
+            if (r && typeof r.then === "function") {
+                return this.resolvePromise(r);
+            }
+
+            return r;
+        });
     }
 
     private getController = (selector: string, controllerName: string): any => {

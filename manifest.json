@@ -31,7 +31,8 @@
     "web_accessible_resources": [
         "/js/injected.js",
         "/resources/collapser.html",
-        "/resources/addictionsConfiguration.html"
+        "/resources/addictionsConfiguration.html",
+        "/resources/menuActionButton.html"
     ],
     "permissions": [
         "*://*.blip.ai/*",

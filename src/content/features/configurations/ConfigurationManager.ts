@@ -13,81 +13,61 @@ export const configurations: IConfiguration[] = [
 ];
 
 export default class ConfigurationManager extends FeatureBase {
-    private isCustomTabOpened: boolean = false;
-
     public async onLoadBuilder(): Promise<void> {
-        await inject.interceptFunction("SidebarContentService", "showSidebar", this.addCustomConfiguration);
+        this.addEventListeners();
+        await this.renderAddictionsMenuButton();
     }
 
-    private addCustomConfiguration = async (): Promise<void> => {
-        const configurationTab = document.getElementById("flow-config-tab");
-        const contentTabItems = document.querySelectorAll("ul.content-tabs-items");
-
-        if (configurationTab) {
-            this.isCustomTabOpened = false;
-
-            contentTabItems.forEach((contentTab) => {
-                if (contentTab.childElementCount === 2) {
-                    let currentActive: Element;
-
-                    const customTab = document.createElement("li");
-                    contentTab.childNodes.forEach((c) => c.addEventListener("click", async () => {
-                        if (this.isCustomTabOpened) {
-                            this.isCustomTabOpened = false;
-
-                            const customContent = document.getElementById("customContent");
-                            if (customContent) {
-                                customContent.remove();
-                            }
-
-                            customTab.classList.remove("active");
-
-                            await Utils.sleep(50);
-                            const contents = document.querySelectorAll(".tab-content");
-                            if (Array.from(contents)
-                                .every((content: Element) => content.classList.contains("ng-hide"))) {
-                                currentActive.classList.remove("ng-hide");
-                            }
-                        }
-                    }));
-
-                    customTab.id = "addictionsTab";
-                    customTab.innerHTML = "<span>Addictions</span>";
-                    customTab.classList.add("cursor-pointer");
-                    customTab.addEventListener("click", async () => {
-                        if (!this.isCustomTabOpened) {
-                            this.isCustomTabOpened = true;
-
-                            contentTab.childNodes.forEach((t: Element) =>
-                                t && t.classList && t.classList.remove("active"));
-
-                            customTab.classList.add("active");
-
-                            const contents = document.querySelectorAll(".tab-content");
-                            currentActive = Array.from(contents).find((c) => !c.classList.contains("ng-hide"));
-                            if (currentActive) {
-                                currentActive.classList.add("ng-hide");
-                            }
-
-                            await this.renderCustomConfiguration();
-                            configurations.forEach((c: IConfiguration) => c.onLoadConfiguration());
-                        }
-                    });
-
-                    contentTab.appendChild(customTab);
-                }
-            });
-        }
+    private addEventListeners = async () => {
+        await inject.interceptFunction(null, "closeSidebar", this.closeAddictionsMenuSidebar);
+        await inject.interceptFunction("SidebarContentService", "showSidebar", this.closeAddictionsMenuSidebar);
     }
 
-    private renderCustomConfiguration = async () => {
+    private renderAddictionsMenuButton = async () => {
+        const res = await fetch(Utils.getUrl("resources/menuActionButton.html"));
+        const html = await res.text();
+
+        const iconButtonList = document.querySelector(".icon-button-list");
+        const addictionsButton = document.createElement("li");
+
+        addictionsButton.id = "addictions-menu-button";
+        addictionsButton.innerHTML = html;
+        addictionsButton.onclick = this.openCustomSidebar;
+
+        iconButtonList.appendChild(addictionsButton);
+    }
+
+    private openCustomSidebar = async () => {
+        await inject.callFunction(null, "closeSidebar", []);
+        const addictionsSidebar = await this.renderAddictionsMenuSidebar();
+
+        const closeButton = addictionsSidebar.querySelector("#addictions-menu-close");
+        closeButton.addEventListener("click", this.closeAddictionsMenuSidebar);
+
+        configurations.forEach((c: IConfiguration) => c.onLoadConfiguration());
+    }
+
+    private renderAddictionsMenuSidebar = async () => {
         const res = await fetch(Utils.getUrl("resources/addictionsConfiguration.html"));
         const html = await res.text();
 
-        const configSection = document.querySelector(".content-tabs div");
-        const content = document.createElement("div");
-        content.id = "customContent";
-        content.innerHTML = html;
-        configSection.appendChild(content);
+        const mainArea = document.getElementById("main-content-area");
+        const addictionsSidebar = document.createElement("div");
+        addictionsSidebar.id = "addictions-menu";
+        addictionsSidebar.innerHTML = html;
+
+        mainArea.appendChild(addictionsSidebar);
+
+        await Utils.sleep(350);
+        addictionsSidebar.children.item(0).classList.add("ng-enter-active");
+
+        return addictionsSidebar;
+    }
+
+    private closeAddictionsMenuSidebar = async () => {
+        const menuElement = document.getElementById("addictions-menu");
+        if (menuElement) {
+            menuElement.remove();
+        }
     }
 }

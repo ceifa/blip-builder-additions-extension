@@ -1,66 +1,82 @@
-<div class="sidebar-inner-content pa5">
-    <div class="flex flex-column">
-        <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Identify flow loops</span>
-        <span>Search for possible state loops in the entire flow. It will not remove existing extras with different
-            keys</span>
-        <div id="identify-loops"
-            class="mt3 pv3 ph4 br4 bp-fs-6 flex items-center shadow-6 bp-bg-white custom-action-item cursor-pointer">
-            <i alt="Identify loops" class="mr4 icon icon-search"></i>
-            <span class="w-100">Search for loops</span>
+<div class="sidebar-content-component right-entrance-animation position-right builder-sidebar ng-enter">
+    <div class="sidebar-content-header background-text-dark-5 bp-c-white ph5 pt2">
+        <div class="sidebar-helper-header">
+            <input class="bp-c-white w-100 sidebar-title" id="sidebar-title" maxlength="50" type="text" name="nodeName"
+                value="Builder Addictions" readonly>
+            <div class="sidebar-helper-header__actions">
+                <span>
+                    <i class="icon-close cursor-pointer" id="addictions-menu-close"></i>
+                </span>
+            </div>
         </div>
-        <div id="found-loops" class="mt3 pv3 ph4 br4 bp-fs-6 items-center shadow-6 bp-bg-white dn">
-            <ul id="found-loops-container" class="mt3 mb0">
-            </ul>
-        </div>
-
-        <div class="bp-divider-h bp-divider w-100 mv4"></div>
-        <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Fix action names</span>
-        <span>Automatically add an suggestive name to actions with default name</span>
-        <button id="fix-action-names-apply-btn"
-            class="bp-btn bp-btn--bot flex mt4 justify-center items-center h3-1 w-100 b">
-            Apply</button>
-
-        <div class="bp-divider-h bp-divider w-100 mv4"></div>
-        <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Extras</span>
-        <span>Apply extras information for all event tracks</span>
-        <div class="mt3">
-            <form>
-                <ul id="extras-key-value-list" class="key-value-list">
-                    <li id="key-value-template" class="dn">
-                        <div class="flex flex-row justify-between">
-                            <div type="text" class="w-45">
-                                <div class="bp-input-wrapper relative">
-                                    <label class="bp-label tl bp-c-rooftop">Key</label>
-                                    <div class="w-100 relative flex flex-row justify-between">
-                                        <input class="w-100 bp-input bp-c-city extras-key" name="key" type="text"
-                                            required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div type="text" class="w-45">
-                                <div class="bp-input-wrapper relative">
-                                    <label class="bp-label tl bp-c-rooftop">Value</label>
-                                    <div class="w-100 relative flex flex-row justify-between">
-                                        <input class="w-100 bp-input bp-c-city extras-value" name="value" type="text"
-                                            required>
-                                    </div>
-                                </div>
-                            </div>
-                            <i class="self-center icon-close lh-solid cursor-pointer"></i>
-                        </div>
-                    </li>
-                </ul>
-            </form>
-            <div class="addictions-extras-button-container">
-                <div class="addictions-extras-button">
-                    <button id="extras-add-btn"
-                        class="bp-btn bp-btn--bot bp-btn--dashed flex justify-center items-center h3-1 w-100 b">
-                        + Add extras</button>
+    </div>
+    <div class="sidebar-content-body">
+        <div class="sidebar-inner-content pa5">
+            <div class="flex flex-column">
+                <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Identify flow loops</span>
+                <span>Search for possible state loops in the entire flow. It will not remove existing extras with
+                    different
+                    keys</span>
+                <div id="identify-loops"
+                    class="mt3 pv3 ph4 br4 bp-fs-6 flex items-center shadow-6 bp-bg-white custom-action-item cursor-pointer">
+                    <i alt="Identify loops" class="mr4 icon icon-search"></i>
+                    <span class="w-100">Search for loops</span>
                 </div>
-                <div class="addictions-extras-button">
-                    <button id="extras-apply-btn"
-                        class="bp-btn bp-btn--bot flex justify-center items-center h3-1 w-100 b">
-                        Apply</button>
+                <div id="found-loops" class="mt3 pv3 ph4 br4 bp-fs-6 items-center shadow-6 bp-bg-white dn">
+                    <ul id="found-loops-container" class="mt3 mb0">
+                    </ul>
+                </div>
+
+                <div class="bp-divider-h bp-divider w-100 mv4"></div>
+                <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Fix action names</span>
+                <span>Automatically add an suggestive name to actions with default name</span>
+                <button id="fix-action-names-apply-btn"
+                    class="bp-btn bp-btn--bot flex mt4 justify-center items-center h3-1 w-100 b">
+                    Apply</button>
+
+                <div class="bp-divider-h bp-divider w-100 mv4"></div>
+                <span class="lh-solid w-100 bp-fs-5 fw7 ttu pb1">Extras</span>
+                <span>Apply extras information for all event tracks</span>
+                <div class="mt3">
+                    <form>
+                        <ul id="extras-key-value-list" class="key-value-list">
+                            <li id="key-value-template" class="dn">
+                                <div class="flex flex-row justify-between">
+                                    <div type="text" class="w-45">
+                                        <div class="bp-input-wrapper relative">
+                                            <label class="bp-label tl bp-c-rooftop">Key</label>
+                                            <div class="w-100 relative flex flex-row justify-between">
+                                                <input class="w-100 bp-input bp-c-city extras-key" name="key"
+                                                    type="text" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div type="text" class="w-45">
+                                        <div class="bp-input-wrapper relative">
+                                            <label class="bp-label tl bp-c-rooftop">Value</label>
+                                            <div class="w-100 relative flex flex-row justify-between">
+                                                <input class="w-100 bp-input bp-c-city extras-value" name="value"
+                                                    type="text" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="self-center icon-close lh-solid cursor-pointer"></i>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+                    <div class="addictions-extras-button-container">
+                        <div class="addictions-extras-button">
+                            <button id="extras-add-btn"
+                                class="bp-btn bp-btn--bot bp-btn--dashed flex justify-center items-center h3-1 w-100 b">
+                                + Add extras</button>
+                        </div>
+                        <div class="addictions-extras-button">
+                            <button id="extras-apply-btn"
+                                class="bp-btn bp-btn--bot flex justify-center items-center h3-1 w-100 b">
+                                Apply</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
