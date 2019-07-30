@@ -25,9 +25,11 @@
         }
     ],
     "background": {
-        "scripts": ["/js/background.js"],
+        "scripts": [
+            "/js/background.js"
+        ],
         "persistent": false
-      },
+    },
     "web_accessible_resources": [
         "/js/injected.js",
         "/resources/collapser.html",
@@ -36,7 +38,6 @@
     ],
     "permissions": [
         "*://*.blip.ai/*",
-        "storage",
-        "tabs"
+        "storage"
     ]
 }
