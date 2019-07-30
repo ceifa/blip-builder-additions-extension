@@ -1,10 +1,24 @@
 const path = require('path');
 
 const CopyPlugin = require('copy-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
 
 const env = process.env.NODE_ENV || 'development';
+
+let plugins = [];
+switch (env) {
+    case "development":
+        plugins = [
+            new ExtensionReloader({
+                entries: {
+                    background: 'background',
+                    contentScript: 'content'
+                }
+            })
+        ];
+        break;
+}
 
 module.exports = {
     mode: env,
@@ -61,11 +75,6 @@ module.exports = {
             {
                 copyUnmodified: true
             }),
-        new ExtensionReloader({
-            entries: {
-                background: 'background',
-                contentScript: 'content'
-            }
-        })
+        ...plugins
     ]
 };
