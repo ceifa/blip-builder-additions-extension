@@ -11,8 +11,7 @@ module.exports = {
     entry: {
         popup: './src/popup/js/Popup.ts',
         content: './src/content/Content.ts',
-        injected: './src/injections/Inject.ts',
-        background: './src/background/Background.ts'
+        injected: './src/injections/Inject.ts'
     },
     devtool: env === 'development' && 'source-map',
     module: {
