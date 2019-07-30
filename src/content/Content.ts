@@ -8,7 +8,6 @@ import CleanEnvironment from "./features/CleanEnvironment";
 import Configuration from "./features/configurations/ConfigurationManager";
 import FeatureBase from "./features/FeatureBase";
 import WhatsappMarkdown from "./features/WhatsappMarkdown";
-import ZoomFixer from "./features/ZoomFixer";
 
 export let isBuilderLoaded = false;
 export const features: Array<{ name: string, processor: FeatureBase }> = [
@@ -27,10 +26,6 @@ export const features: Array<{ name: string, processor: FeatureBase }> = [
     {
         name: "configuration",
         processor: new Configuration(),
-    },
-    {
-        name: "zoomfixer",
-        processor: new ZoomFixer(),
     },
 ];
 
