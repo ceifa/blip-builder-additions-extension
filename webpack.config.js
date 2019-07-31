@@ -11,6 +11,7 @@ switch (env) {
     case "development":
         plugins = [
             new ExtensionReloader({
+                reloadPage: true,
                 entries: {
                     background: 'background',
                     contentScript: 'content'
