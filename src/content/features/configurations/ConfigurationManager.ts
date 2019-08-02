@@ -18,6 +18,10 @@ export default class ConfigurationManager extends FeatureBase {
         await this.renderAddictionsMenuButton();
     }
 
+    public async onUnloadBuilder(): Promise<void> {
+        this.closeAddictionsMenuSidebar();
+    }
+
     private addEventListeners = async () => {
         await inject.interceptFunction(null, "closeSidebar", this.closeAddictionsMenuSidebar);
         await inject.interceptFunction("SidebarContentService", "showSidebar", this.closeAddictionsMenuSidebar);
