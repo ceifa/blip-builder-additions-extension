@@ -33,7 +33,7 @@ export default class AutoTag extends FeatureBase {
         actions = actions.map((a) => a.type);
 
         let tags: any[] = await inject.getVariable("editingState.$tags");
-        tags = tags.map((t) => t.label);
+        tags = (tags || []).map((t) => t.label);
 
         const possibleActions = [
             ...new Set(Array.from(document.querySelectorAll("li[ng-click^='$ctrl.onAddAction']"))
