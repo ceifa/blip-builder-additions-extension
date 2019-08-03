@@ -9,10 +9,11 @@ The extension is available in some browser stores.
 ## Features
 
 - Auto tag state actions
+- Develop in a clean builder environment
 - See the whatsapp markdown in action
-- Clean environment to builder development
-- Find flow loops
-- Add event track extras easily
+- Find possible state loops in the entire flow
+- Automatically add an suggestive name to actions
+- Easily add event track extras to all tracking actions
 
 ## How to Contribute
 
