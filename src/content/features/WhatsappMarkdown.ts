@@ -40,7 +40,7 @@ export default class WhatsappMarkdown extends FeatureBase {
                         this.onOpenSidebar();
                     }
                 }));
-            document.querySelectorAll(".bubble.left form button[type=submit]")
+            document.querySelectorAll(".bubble.left form button.saveIco")
                 .forEach((fe) => fe.addEventListener("click", this.onOpenSidebar));
         }));
     }
