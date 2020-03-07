@@ -10,7 +10,7 @@ import FeatureBase from "./features/FeatureBase";
 import WhatsappMarkdown from "./features/WhatsappMarkdown";
 
 export let isBuilderLoaded = false;
-export const features: Array<{ name: string, processor: FeatureBase }> = [
+export const features: { name: string, processor: FeatureBase }[] = [
     {
         name: "autotag",
         processor: new AutoTag(),

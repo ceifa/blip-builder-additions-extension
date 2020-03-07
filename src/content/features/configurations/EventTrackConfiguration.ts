@@ -103,7 +103,7 @@ export default class EventTrackConfiguration implements IConfiguration {
         const extrasKeys = document.getElementsByClassName("extras-key");
         const extrasValues = document.getElementsByClassName("extras-value");
 
-        let extras: Array<{ key: string, value: string }> = [];
+        let extras: { key: string, value: string }[] = [];
         for (let i = 1; i < extrasKeys.length; i++) {
             extras = [...extras, {
                 key: (extrasKeys[i] as HTMLInputElement).value,
