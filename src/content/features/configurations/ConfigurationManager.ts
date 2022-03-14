@@ -31,7 +31,7 @@ export default class ConfigurationManager extends FeatureBase {
         const res = await fetch(Utils.getUrl("resources/menuActionButton.html"));
         const html = await res.text();
 
-        const iconButtonList = document.querySelector(".icon-button-list");
+        const iconButtonList = document.querySelector(".builder-icon-button-list");
         const addictionsButton = document.createElement("li");
 
         addictionsButton.id = "addictions-menu-button";
